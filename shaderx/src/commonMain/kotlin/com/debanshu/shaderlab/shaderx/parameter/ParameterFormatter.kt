@@ -23,6 +23,20 @@ public object ParameterFormatter {
         is PercentageParameter -> "${(value * 100).toInt()}%"
         is PixelParameter -> "${value.toInt()}px"
         is ToggleParameter -> if (value > 0.5f) "On" else "Off"
+        is ColorParameter -> formatColor(parameter.defaultColor)
+    }
+
+    /**
+     * Formats a color value as a hex string.
+     *
+     * @param color The color in ARGB format
+     * @return Hex string representation (e.g., "#FF5733")
+     */
+    public fun formatColor(color: Long): String {
+        val r = ((color shr 16) and 0xFF).toString(16).padStart(2, '0')
+        val g = ((color shr 8) and 0xFF).toString(16).padStart(2, '0')
+        val b = (color and 0xFF).toString(16).padStart(2, '0')
+        return "#${r}${g}${b}".uppercase()
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.debanshu.shaderlab.shaderx.factory
 
+import com.debanshu.shaderlab.shaderx.ShaderConstants
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
@@ -66,7 +67,7 @@ internal class SkiaImageProcessorImpl : ImageProcessor {
     ): ImageFilter? {
         return when (effect) {
             is BlurEffect -> {
-                val radiusPx = effect.radius.coerceAtLeast(SkiaShaderFactoryImpl.MIN_BLUR_RADIUS)
+                val radiusPx = effect.radius.coerceAtLeast(ShaderConstants.MIN_BLUR_RADIUS)
                 ImageFilter.makeBlur(radiusPx, radiusPx, FilterTileMode.CLAMP)
             }
             is NativeEffect -> null // Other native effects not yet supported
@@ -76,16 +77,12 @@ internal class SkiaImageProcessorImpl : ImageProcessor {
                     val builder = RuntimeShaderBuilder(runtimeEffect)
                     val uniforms = effect.buildUniforms(width, height)
                     SkiaShaderFactoryImpl.applyUniforms(builder, uniforms)
-                    ImageFilter.makeRuntimeShader(builder, CONTENT_UNIFORM_NAME, null)
+                    ImageFilter.makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
                 } catch (e: Exception) {
                     null
                 }
             }
             else -> null
         }
-    }
-
-    private companion object {
-        private const val CONTENT_UNIFORM_NAME = "content"
     }
 }

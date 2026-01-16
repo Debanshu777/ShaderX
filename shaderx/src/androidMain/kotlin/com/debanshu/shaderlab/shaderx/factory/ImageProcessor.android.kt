@@ -7,6 +7,7 @@ import android.graphics.RenderEffect
 import android.graphics.RenderNode
 import android.graphics.RuntimeShader
 import android.graphics.Shader
+import com.debanshu.shaderlab.shaderx.ShaderConstants
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
@@ -73,7 +74,7 @@ internal class AndroidImageProcessor : ImageProcessor {
     ): RenderEffect? {
         return when (effect) {
             is BlurEffect -> {
-                val radiusPx = effect.radius.coerceAtLeast(AndroidShaderFactory.MIN_BLUR_RADIUS)
+                val radiusPx = effect.radius.coerceAtLeast(ShaderConstants.MIN_BLUR_RADIUS)
                 RenderEffect.createBlurEffect(radiusPx, radiusPx, Shader.TileMode.CLAMP)
             }
             is NativeEffect -> null // Other native effects not yet supported
@@ -82,7 +83,7 @@ internal class AndroidImageProcessor : ImageProcessor {
                     val shader = RuntimeShader(effect.shaderSource)
                     val uniforms = effect.buildUniforms(width, height)
                     AndroidShaderFactory.applyUniforms(shader, uniforms)
-                    RenderEffect.createRuntimeShaderEffect(shader, CONTENT_UNIFORM_NAME)
+                    RenderEffect.createRuntimeShaderEffect(shader, ShaderConstants.CONTENT_UNIFORM_NAME)
                 } catch (e: Exception) {
                     null
                 }
@@ -117,9 +118,6 @@ internal class AndroidImageProcessor : ImageProcessor {
         }
     }
 
-    private companion object {
-        private const val CONTENT_UNIFORM_NAME = "content"
-    }
 }
 
 public actual fun ImageProcessor.Companion.create(): ImageProcessor = AndroidImageProcessor()

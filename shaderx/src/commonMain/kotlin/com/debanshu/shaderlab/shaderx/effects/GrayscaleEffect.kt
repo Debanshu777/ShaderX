@@ -16,11 +16,11 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
 public data class GrayscaleEffect(
     private val intensity: Float = 1f,
 ) : RuntimeShaderEffect {
-
     override val id: String = ID
     override val displayName: String = "Grayscale"
 
-    override val shaderSource: String = """
+    override val shaderSource: String =
+        """
         uniform shader content;
         uniform float intensity;
         
@@ -31,21 +31,29 @@ public data class GrayscaleEffect(
             half3 result = mix(color.rgb, grayscaleColor, intensity);
             return half4(result, color.a);
         }
-    """
+        """.trimIndent()
 
-    override val parameters: List<ParameterSpec> = listOf(
-        PercentageParameter(
-            id = PARAM_INTENSITY,
-            label = "Intensity",
-            defaultValue = intensity,
-        ),
-    )
+    override val parameters: List<ParameterSpec> =
+        listOf(
+            PercentageParameter(
+                id = PARAM_INTENSITY,
+                label = "Intensity",
+                defaultValue = intensity,
+            ),
+        )
 
-    override fun buildUniforms(width: Float, height: Float): List<Uniform> = listOf(
-        FloatUniform("intensity", intensity),
-    )
+    override fun buildUniforms(
+        width: Float,
+        height: Float,
+    ): List<Uniform> =
+        listOf(
+            FloatUniform("intensity", intensity),
+        )
 
-    override fun withParameter(parameterId: String, value: Float): GrayscaleEffect =
+    override fun withParameter(
+        parameterId: String,
+        value: Float,
+    ): GrayscaleEffect =
         when (parameterId) {
             PARAM_INTENSITY -> copy(intensity = value)
             else -> this

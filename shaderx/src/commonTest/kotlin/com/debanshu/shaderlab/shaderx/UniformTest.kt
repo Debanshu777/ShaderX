@@ -1,5 +1,7 @@
 package com.debanshu.shaderlab.shaderx
 
+import androidx.compose.ui.graphics.Color
+import com.debanshu.shaderlab.shaderx.uniform.ColorUniform
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
 import com.debanshu.shaderlab.shaderx.uniform.IntUniform
 import kotlin.test.Test
@@ -78,6 +80,133 @@ class UniformTest {
         assertTrue(str.contains("test"))
         assertTrue(str.contains("1.0"))
         assertTrue(str.contains("2.0"))
+    }
+
+    // ColorUniform tests
+
+    @Test
+    fun colorUniform_componentConstructor_storesValues() {
+        val uniform = ColorUniform("tint", 1f, 0.5f, 0.25f, 0.8f)
+        assertEquals("tint", uniform.name)
+        assertEquals(1f, uniform.red)
+        assertEquals(0.5f, uniform.green)
+        assertEquals(0.25f, uniform.blue)
+        assertEquals(0.8f, uniform.alpha)
+    }
+
+    @Test
+    fun colorUniform_defaultAlpha_isOne() {
+        val uniform = ColorUniform("color", 1f, 0.5f, 0.25f)
+        assertEquals(1f, uniform.alpha)
+    }
+
+    @Test
+    fun colorUniform_longConstructor_extractsComponents() {
+        // Test with 0xFFFF5733 (Coral color)
+        // A=FF (255), R=FF (255), G=57 (87), B=33 (51)
+        val uniform = ColorUniform("coral", 0xFFFF5733)
+        assertEquals("coral", uniform.name)
+        assertEquals(1f, uniform.red, 0.01f)  // FF = 255 -> 1.0
+        assertEquals(87f / 255f, uniform.green, 0.01f)  // 57 = 87
+        assertEquals(51f / 255f, uniform.blue, 0.01f)  // 33 = 51
+        assertEquals(1f, uniform.alpha, 0.01f)  // FF = 255 -> 1.0
+    }
+
+    @Test
+    fun colorUniform_longConstructor_handlesTransparentColors() {
+        // Test with 0x80FF0000 (Semi-transparent red)
+        val uniform = ColorUniform("semiRed", 0x80FF0000)
+        assertEquals(1f, uniform.red, 0.01f)
+        assertEquals(0f, uniform.green, 0.01f)
+        assertEquals(0f, uniform.blue, 0.01f)
+        assertEquals(128f / 255f, uniform.alpha, 0.01f)  // 80 = 128 -> ~0.5
+    }
+
+    @Test
+    fun colorUniform_toFloatArray_returnsCorrectOrder() {
+        val uniform = ColorUniform("test", 0.1f, 0.2f, 0.3f, 0.4f)
+        val array = uniform.toFloatArray()
+        assertEquals(4, array.size)
+        assertEquals(0.1f, array[0])  // red
+        assertEquals(0.2f, array[1])  // green
+        assertEquals(0.3f, array[2])  // blue
+        assertEquals(0.4f, array[3])  // alpha
+    }
+
+    @Test
+    fun colorUniform_equality_works() {
+        val uniform1 = ColorUniform("test", 1f, 0.5f, 0.25f, 1f)
+        val uniform2 = ColorUniform("test", 1f, 0.5f, 0.25f, 1f)
+        val uniform3 = ColorUniform("test", 1f, 0.5f, 0.5f, 1f)
+
+        assertEquals(uniform1, uniform2)
+        assertEquals(uniform1.hashCode(), uniform2.hashCode())
+        assertNotEquals(uniform1, uniform3)
+    }
+
+    @Test
+    fun colorUniform_toString_includesComponents() {
+        val uniform = ColorUniform("myColor", 1f, 0.5f, 0.25f, 0.8f)
+        val str = uniform.toString()
+        assertTrue(str.contains("myColor"))
+        assertTrue(str.contains("1.0") || str.contains("1"))  // red
+        assertTrue(str.contains("0.5"))  // green
+    }
+
+    // Compose Color integration tests
+
+    @Test
+    fun colorUniform_fromColor_extractsComponents() {
+        val composeColor = Color(red = 1f, green = 0.5f, blue = 0.25f, alpha = 0.8f)
+        val uniform = ColorUniform.fromColor("test", composeColor)
+
+        assertEquals("test", uniform.name)
+        assertEquals(1f, uniform.red, 0.01f)
+        assertEquals(0.5f, uniform.green, 0.01f)
+        assertEquals(0.25f, uniform.blue, 0.01f)
+        assertEquals(0.8f, uniform.alpha, 0.01f)
+    }
+
+    @Test
+    fun colorUniform_fromColor_handlesRed() {
+        val uniform = ColorUniform.fromColor("red", Color.Red)
+        assertEquals(1f, uniform.red, 0.01f)
+        assertEquals(0f, uniform.green, 0.01f)
+        assertEquals(0f, uniform.blue, 0.01f)
+        assertEquals(1f, uniform.alpha, 0.01f)
+    }
+
+    @Test
+    fun colorUniform_fromColor_handlesGreen() {
+        val uniform = ColorUniform.fromColor("green", Color.Green)
+        assertEquals(0f, uniform.red, 0.01f)
+        assertEquals(1f, uniform.green, 0.01f)
+        assertEquals(0f, uniform.blue, 0.01f)
+        assertEquals(1f, uniform.alpha, 0.01f)
+    }
+
+    @Test
+    fun colorUniform_fromColor_handlesBlue() {
+        val uniform = ColorUniform.fromColor("blue", Color.Blue)
+        assertEquals(0f, uniform.red, 0.01f)
+        assertEquals(0f, uniform.green, 0.01f)
+        assertEquals(1f, uniform.blue, 0.01f)
+        assertEquals(1f, uniform.alpha, 0.01f)
+    }
+
+    @Test
+    fun colorUniform_fromColor_handlesTransparent() {
+        val uniform = ColorUniform.fromColor("transparent", Color.Transparent)
+        assertEquals(0f, uniform.alpha, 0.01f)
+    }
+
+    @Test
+    fun colorUniform_fromColor_handlesWhite() {
+        val uniform = ColorUniform.fromColor("white", Color.White)
+        assertEquals(1f, uniform.red, 0.01f)
+        assertEquals(1f, uniform.green, 0.01f)
+        assertEquals(1f, uniform.blue, 0.01f)
+        assertEquals(1f, uniform.alpha, 0.01f)
     }
 }
 

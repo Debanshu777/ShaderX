@@ -24,12 +24,12 @@ public data class WaveEffect(
     private val animate: Boolean = true,
     override val time: Float = 0f,
 ) : AnimatedShaderEffect {
-
     override val id: String = ID
     override val displayName: String = "Wave"
     override val isAnimating: Boolean = animate
 
-    override val shaderSource: String = """
+    override val shaderSource: String =
+        """
         uniform shader content;
         uniform float2 resolution;
         uniform float amplitude;
@@ -50,36 +50,44 @@ public data class WaveEffect(
             
             return content.eval(distortedCoord);
         }
-    """
+        """.trimIndent()
 
-    override val parameters: List<ParameterSpec> = listOf(
-        PixelParameter(
-            id = PARAM_AMPLITUDE,
-            label = "Amplitude",
-            range = 0f..50f,
-            defaultValue = amplitude,
-        ),
-        FloatParameter(
-            id = PARAM_FREQUENCY,
-            label = "Frequency",
-            range = 1f..20f,
-            defaultValue = frequency,
-        ),
-        ToggleParameter(
-            id = PARAM_ANIMATE,
-            label = "Animate",
-            isEnabledByDefault = animate,
-        ),
-    )
+    override val parameters: List<ParameterSpec> =
+        listOf(
+            PixelParameter(
+                id = PARAM_AMPLITUDE,
+                label = "Amplitude",
+                range = 0f..50f,
+                defaultValue = amplitude,
+            ),
+            FloatParameter(
+                id = PARAM_FREQUENCY,
+                label = "Frequency",
+                range = 1f..20f,
+                defaultValue = frequency,
+            ),
+            ToggleParameter(
+                id = PARAM_ANIMATE,
+                label = "Animate",
+                isEnabledByDefault = animate,
+            ),
+        )
 
-    override fun buildUniforms(width: Float, height: Float): List<Uniform> = listOf(
-        FloatUniform("resolution", width, height),
-        FloatUniform("amplitude", amplitude),
-        FloatUniform("frequency", frequency),
-        FloatUniform("time", time),
-    )
+    override fun buildUniforms(
+        width: Float,
+        height: Float,
+    ): List<Uniform> =
+        listOf(
+            FloatUniform("resolution", width, height),
+            FloatUniform("amplitude", amplitude),
+            FloatUniform("frequency", frequency),
+            FloatUniform("time", time),
+        )
 
-    override fun withParameter(parameterId: String, value: Float): WaveEffect =
+    override fun withParameter(
+        parameterId: String,
+        value: Float,
+    ): WaveEffect =
         when (parameterId) {
             PARAM_AMPLITUDE -> copy(amplitude = value)
             PARAM_FREQUENCY -> copy(frequency = value)

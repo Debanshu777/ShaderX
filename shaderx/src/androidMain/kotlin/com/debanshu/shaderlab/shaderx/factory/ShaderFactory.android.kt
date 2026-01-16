@@ -11,6 +11,8 @@ import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.result.ShaderError
 import com.debanshu.shaderlab.shaderx.result.ShaderResult
+import com.debanshu.shaderlab.shaderx.ShaderConstants
+import com.debanshu.shaderlab.shaderx.uniform.ColorUniform
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
 import com.debanshu.shaderlab.shaderx.uniform.IntUniform
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
@@ -20,8 +22,19 @@ import android.graphics.RenderEffect as AndroidRenderEffect
  * Android implementation of [ShaderFactory] using AGSL (Android Graphics Shading Language).
  *
  * Requires Android 13 (API 33) or higher for RuntimeShader support.
+ *
+ * This implementation caches compiled shaders by source code to avoid
+ * recompilation on every frame. Shader compilation is expensive, but
+ * setting uniforms is cheap.
  */
 internal class AndroidShaderFactory : ShaderFactory {
+
+    /**
+     * Cache of compiled RuntimeShaders keyed by shader source code.
+     * Shader compilation is the expensive operation, so we cache compiled shaders
+     * and just update uniforms each frame.
+     */
+    private val shaderCache = mutableMapOf<String, RuntimeShader>()
 
     override fun createRenderEffect(
         effect: ShaderEffect,
@@ -62,7 +75,7 @@ internal class AndroidShaderFactory : ShaderFactory {
 
     private fun createBlurEffect(radius: Float): ShaderResult<RenderEffect> {
         return ShaderResult.runCatching {
-            val radiusPx = radius.coerceAtLeast(MIN_BLUR_RADIUS)
+            val radiusPx = radius.coerceAtLeast(ShaderConstants.MIN_BLUR_RADIUS)
             AndroidRenderEffect
                 .createBlurEffect(radiusPx, radiusPx, Shader.TileMode.CLAMP)
                 .asComposeRenderEffect()
@@ -75,13 +88,13 @@ internal class AndroidShaderFactory : ShaderFactory {
         height: Float,
     ): ShaderResult<RenderEffect> {
         return try {
-            val shader = RuntimeShader(effect.shaderSource)
+            val shader = getOrCreateShader(effect.shaderSource)
             val uniforms = effect.buildUniforms(width, height)
             applyUniforms(shader, uniforms)
 
             ShaderResult.success(
                 AndroidRenderEffect
-                    .createRuntimeShaderEffect(shader, CONTENT_UNIFORM_NAME)
+                    .createRuntimeShaderEffect(shader, ShaderConstants.CONTENT_UNIFORM_NAME)
                     .asComposeRenderEffect()
             )
         } catch (e: Exception) {
@@ -94,12 +107,17 @@ internal class AndroidShaderFactory : ShaderFactory {
         }
     }
 
+    /**
+     * Gets a cached RuntimeShader or creates and caches a new one.
+     * Shader compilation is expensive, so caching provides significant performance benefits.
+     */
+    private fun getOrCreateShader(source: String): RuntimeShader {
+        return shaderCache.getOrPut(source) { RuntimeShader(source) }
+    }
+
     override fun isSupported(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
     internal companion object {
-        private const val CONTENT_UNIFORM_NAME = "content"
-        internal const val MIN_BLUR_RADIUS = 0.1f
-
         /**
          * Applies uniforms to an Android RuntimeShader.
          */
@@ -108,6 +126,15 @@ internal class AndroidShaderFactory : ShaderFactory {
                 when (uniform) {
                     is FloatUniform -> shader.setFloatUniform(uniform.name, uniform.values)
                     is IntUniform -> shader.setIntUniform(uniform.name, uniform.values)
+                    is ColorUniform -> shader.setColorUniform(
+                        uniform.name,
+                        android.graphics.Color.valueOf(
+                            uniform.red,
+                            uniform.green,
+                            uniform.blue,
+                            uniform.alpha
+                        )
+                    )
                 }
             }
         }

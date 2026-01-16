@@ -16,11 +16,11 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
 public data class PixelateEffect(
     private val pixelSize: Float = 10f,
 ) : RuntimeShaderEffect {
-
     override val id: String = ID
     override val displayName: String = "Pixelate"
 
-    override val shaderSource: String = """
+    override val shaderSource: String =
+        """
         uniform shader content;
         uniform float2 resolution;
         uniform float pixelSize;
@@ -34,23 +34,31 @@ public data class PixelateEffect(
             
             return content.eval(pixelCoord);
         }
-    """
+        """.trimIndent()
 
-    override val parameters: List<ParameterSpec> = listOf(
-        PixelParameter(
-            id = PARAM_PIXEL_SIZE,
-            label = "Pixel Size",
-            range = 1f..100f,
-            defaultValue = pixelSize,
-        ),
-    )
+    override val parameters: List<ParameterSpec> =
+        listOf(
+            PixelParameter(
+                id = PARAM_PIXEL_SIZE,
+                label = "Pixel Size",
+                range = 1f..100f,
+                defaultValue = pixelSize,
+            ),
+        )
 
-    override fun buildUniforms(width: Float, height: Float): List<Uniform> = listOf(
-        FloatUniform("resolution", width, height),
-        FloatUniform("pixelSize", pixelSize.coerceAtLeast(1f)),
-    )
+    override fun buildUniforms(
+        width: Float,
+        height: Float,
+    ): List<Uniform> =
+        listOf(
+            FloatUniform("resolution", width, height),
+            FloatUniform("pixelSize", pixelSize.coerceAtLeast(1f)),
+        )
 
-    override fun withParameter(parameterId: String, value: Float): PixelateEffect =
+    override fun withParameter(
+        parameterId: String,
+        value: Float,
+    ): PixelateEffect =
         when (parameterId) {
             PARAM_PIXEL_SIZE -> copy(pixelSize = value.coerceAtLeast(1f))
             else -> this

@@ -18,11 +18,11 @@ public data class VignetteEffect(
     private val radius: Float = 0.5f,
     private val intensity: Float = 0.5f,
 ) : RuntimeShaderEffect {
-
     override val id: String = ID
     override val displayName: String = "Vignette"
 
-    override val shaderSource: String = """
+    override val shaderSource: String =
+        """
         uniform shader content;
         uniform float2 resolution;
         uniform float radius;
@@ -41,28 +41,36 @@ public data class VignetteEffect(
             
             return half4(color.rgb * vignette, color.a);
         }
-    """
+        """.trimIndent()
 
-    override val parameters: List<ParameterSpec> = listOf(
-        PercentageParameter(
-            id = PARAM_RADIUS,
-            label = "Radius",
-            defaultValue = radius,
-        ),
-        PercentageParameter(
-            id = PARAM_INTENSITY,
-            label = "Intensity",
-            defaultValue = intensity,
-        ),
-    )
+    override val parameters: List<ParameterSpec> =
+        listOf(
+            PercentageParameter(
+                id = PARAM_RADIUS,
+                label = "Radius",
+                defaultValue = radius,
+            ),
+            PercentageParameter(
+                id = PARAM_INTENSITY,
+                label = "Intensity",
+                defaultValue = intensity,
+            ),
+        )
 
-    override fun buildUniforms(width: Float, height: Float): List<Uniform> = listOf(
-        FloatUniform("resolution", width, height),
-        FloatUniform("radius", radius),
-        FloatUniform("intensity", intensity),
-    )
+    override fun buildUniforms(
+        width: Float,
+        height: Float,
+    ): List<Uniform> =
+        listOf(
+            FloatUniform("resolution", width, height),
+            FloatUniform("radius", radius),
+            FloatUniform("intensity", intensity),
+        )
 
-    override fun withParameter(parameterId: String, value: Float): VignetteEffect =
+    override fun withParameter(
+        parameterId: String,
+        value: Float,
+    ): VignetteEffect =
         when (parameterId) {
             PARAM_RADIUS -> copy(radius = value)
             PARAM_INTENSITY -> copy(intensity = value)

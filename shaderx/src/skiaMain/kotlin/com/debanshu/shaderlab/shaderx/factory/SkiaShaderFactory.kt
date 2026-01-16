@@ -8,6 +8,8 @@ import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.result.ShaderError
 import com.debanshu.shaderlab.shaderx.result.ShaderResult
+import com.debanshu.shaderlab.shaderx.ShaderConstants
+import com.debanshu.shaderlab.shaderx.uniform.ColorUniform
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
 import com.debanshu.shaderlab.shaderx.uniform.IntUniform
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
@@ -20,8 +22,18 @@ import org.jetbrains.skia.RuntimeShaderBuilder
  * Skia-based implementation of [ShaderFactory] for iOS and Desktop platforms.
  *
  * Uses Skia's RuntimeEffect for custom shader compilation and ImageFilter for effects.
+ *
+ * This implementation caches compiled RuntimeEffects by source code to avoid
+ * recompilation on every frame. Shader compilation is expensive, but
+ * setting uniforms via RuntimeShaderBuilder is cheap.
  */
 internal class SkiaShaderFactoryImpl : ShaderFactory {
+
+    /**
+     * Cache of compiled RuntimeEffects keyed by shader source code.
+     * RuntimeEffect compilation is expensive, so caching provides significant performance benefits.
+     */
+    private val effectCache = mutableMapOf<String, RuntimeEffect>()
 
     override fun createRenderEffect(
         effect: ShaderEffect,
@@ -54,7 +66,7 @@ internal class SkiaShaderFactoryImpl : ShaderFactory {
 
     private fun createBlurEffect(radius: Float): ShaderResult<RenderEffect> {
         return ShaderResult.runCatching {
-            val radiusPx = radius.coerceAtLeast(MIN_BLUR_RADIUS)
+            val radiusPx = radius.coerceAtLeast(ShaderConstants.MIN_BLUR_RADIUS)
             ImageFilter
                 .makeBlur(radiusPx, radiusPx, FilterTileMode.CLAMP)
                 .asComposeRenderEffect()
@@ -67,14 +79,14 @@ internal class SkiaShaderFactoryImpl : ShaderFactory {
         height: Float,
     ): ShaderResult<RenderEffect> {
         return try {
-            val runtimeEffect = RuntimeEffect.makeForShader(effect.shaderSource)
+            val runtimeEffect = getOrCreateEffect(effect.shaderSource)
             val builder = RuntimeShaderBuilder(runtimeEffect)
             val uniforms = effect.buildUniforms(width, height)
             applyUniforms(builder, uniforms)
 
             ShaderResult.success(
                 ImageFilter
-                    .makeRuntimeShader(builder, CONTENT_UNIFORM_NAME, null)
+                    .makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
                     .asComposeRenderEffect()
             )
         } catch (e: Exception) {
@@ -87,12 +99,17 @@ internal class SkiaShaderFactoryImpl : ShaderFactory {
         }
     }
 
+    /**
+     * Gets a cached RuntimeEffect or creates and caches a new one.
+     * RuntimeEffect compilation is expensive, so caching provides significant performance benefits.
+     */
+    private fun getOrCreateEffect(source: String): RuntimeEffect {
+        return effectCache.getOrPut(source) { RuntimeEffect.makeForShader(source) }
+    }
+
     override fun isSupported(): Boolean = true
 
     internal companion object {
-        private const val CONTENT_UNIFORM_NAME = "content"
-        internal const val MIN_BLUR_RADIUS = 0.1f
-
         /**
          * Applies uniforms to a Skia RuntimeShaderBuilder.
          *
@@ -102,7 +119,24 @@ internal class SkiaShaderFactoryImpl : ShaderFactory {
             uniforms.forEach { uniform ->
                 when (uniform) {
                     is FloatUniform -> builder.uniform(uniform.name, uniform.values)
-                    is IntUniform -> builder.uniform(uniform.name, uniform.values.first())
+                    is IntUniform -> {
+                        // Skia's RuntimeShaderBuilder doesn't have a direct int array overload,
+                        // so we handle different sizes explicitly
+                        when (uniform.values.size) {
+                            1 -> builder.uniform(uniform.name, uniform.values[0])
+                            2 -> builder.uniform(
+                                uniform.name,
+                                uniform.values[0],
+                                uniform.values[1]
+                            )
+                            else -> builder.uniform(uniform.name, uniform.values[0])
+                        }
+                    }
+                    is ColorUniform -> {
+                        // Skia doesn't have native color uniform support,
+                        // so we pass as vec4 (r, g, b, a)
+                        builder.uniform(uniform.name, uniform.toFloatArray())
+                    }
                 }
             }
         }

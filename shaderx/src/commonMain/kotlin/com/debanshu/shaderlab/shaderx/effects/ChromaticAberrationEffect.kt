@@ -16,11 +16,11 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
 public data class ChromaticAberrationEffect(
     private val offset: Float = 5f,
 ) : RuntimeShaderEffect {
-
     override val id: String = ID
     override val displayName: String = "Chromatic"
 
-    override val shaderSource: String = """
+    override val shaderSource: String =
+        """
         uniform shader content;
         uniform float2 resolution;
         uniform float offset;
@@ -38,23 +38,31 @@ public data class ChromaticAberrationEffect(
             
             return half4(r, g, b, a);
         }
-    """
+        """.trimIndent()
 
-    override val parameters: List<ParameterSpec> = listOf(
-        PixelParameter(
-            id = PARAM_OFFSET,
-            label = "Offset",
-            range = 0f..20f,
-            defaultValue = offset,
-        ),
-    )
+    override val parameters: List<ParameterSpec> =
+        listOf(
+            PixelParameter(
+                id = PARAM_OFFSET,
+                label = "Offset",
+                range = 0f..20f,
+                defaultValue = offset,
+            ),
+        )
 
-    override fun buildUniforms(width: Float, height: Float): List<Uniform> = listOf(
-        FloatUniform("resolution", width, height),
-        FloatUniform("offset", offset),
-    )
+    override fun buildUniforms(
+        width: Float,
+        height: Float,
+    ): List<Uniform> =
+        listOf(
+            FloatUniform("resolution", width, height),
+            FloatUniform("offset", offset),
+        )
 
-    override fun withParameter(parameterId: String, value: Float): ChromaticAberrationEffect =
+    override fun withParameter(
+        parameterId: String,
+        value: Float,
+    ): ChromaticAberrationEffect =
         when (parameterId) {
             PARAM_OFFSET -> copy(offset = value)
             else -> this

@@ -2,8 +2,8 @@
 
 package com.debanshu.shaderlab.shaderx
 
-import com.debanshu.shaderlab.shaderx.effect.ShaderEffect as IShaderEffect
 import com.debanshu.shaderlab.shaderx.effects.ChromaticAberrationEffect
+import com.debanshu.shaderlab.shaderx.effects.GradientEffect
 import com.debanshu.shaderlab.shaderx.effects.GrayscaleEffect
 import com.debanshu.shaderlab.shaderx.effects.InvertEffect
 import com.debanshu.shaderlab.shaderx.effects.NativeBlurEffect
@@ -11,6 +11,7 @@ import com.debanshu.shaderlab.shaderx.effects.PixelateEffect
 import com.debanshu.shaderlab.shaderx.effects.SepiaEffect
 import com.debanshu.shaderlab.shaderx.effects.VignetteEffect
 import com.debanshu.shaderlab.shaderx.effects.WaveEffect
+import com.debanshu.shaderlab.shaderx.effect.ShaderEffect as IShaderEffect
 
 /**
  * ShaderX - A Kotlin Multiplatform library for GPU shader effects.
@@ -50,14 +51,16 @@ public object ShaderX {
     /**
      * Returns all built-in effects.
      */
-    public fun builtInEffects(): List<IShaderEffect> = listOf(
-        GrayscaleEffect(),
-        SepiaEffect(),
-        VignetteEffect(),
-        PixelateEffect(),
-        ChromaticAberrationEffect(),
-        InvertEffect,
-        WaveEffect(),
-        NativeBlurEffect(),
-    )
+    public fun builtInEffects(): List<IShaderEffect> =
+        listOf(
+            GrayscaleEffect(),
+            SepiaEffect(),
+            GradientEffect(),
+            VignetteEffect(),
+            PixelateEffect(),
+            ChromaticAberrationEffect(),
+            InvertEffect,
+            WaveEffect(),
+            NativeBlurEffect(),
+        )
 }
