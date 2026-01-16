@@ -29,24 +29,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import com.debanshu.shaderlab.imagelib.decodeImageBytes
-import com.debanshu.shaderlab.shaderlib.AnimatableShaderSpec
-import com.debanshu.shaderlab.shaderlib.ShaderSpec
-import com.debanshu.shaderlab.shaderlib.areShadersSupported
-import com.debanshu.shaderlab.shaderlib.createShaderEffect
+import com.debanshu.shaderlab.shaderlib.effect.AnimatedShaderEffect
+import com.debanshu.shaderlab.shaderlib.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderlib.factory.ShaderFactory
+import com.debanshu.shaderlab.shaderlib.factory.create
 import com.debanshu.shaderlab.ui.components.SampleImage
 import com.debanshu.shaderlab.viewmodel.ImageSource
 
 @Composable
 fun ShaderPreview(
     imageSource: ImageSource,
-    effect: ShaderSpec?,
+    effect: ShaderEffect?,
     onWaveTimeUpdate: (Float) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var contentWidth by remember { mutableFloatStateOf(0f) }
     var contentHeight by remember { mutableFloatStateOf(0f) }
+    val factory = remember { ShaderFactory.create() }
 
-    val animatableEffect = effect as? AnimatableShaderSpec
+    val animatableEffect = effect as? AnimatedShaderEffect
     val shouldAnimate = animatableEffect?.isAnimating == true
 
     val infiniteTransition = rememberInfiniteTransition(label = "wave")
@@ -69,8 +70,8 @@ fun ShaderPreview(
 
     val renderEffect =
         remember(effect, contentWidth, contentHeight) {
-            if (effect != null && contentWidth > 0 && contentHeight > 0 && areShadersSupported()) {
-                createShaderEffect(effect, contentWidth, contentHeight)
+            if (effect != null && contentWidth > 0 && contentHeight > 0 && factory.isSupported()) {
+                factory.createRenderEffect(effect, contentWidth, contentHeight).getOrNull()
             } else {
                 null
             }
@@ -113,7 +114,7 @@ fun ShaderPreview(
             }
         }
 
-        if (!areShadersSupported() && effect != null) {
+        if (!factory.isSupported() && effect != null) {
             Box(
                 modifier =
                     Modifier

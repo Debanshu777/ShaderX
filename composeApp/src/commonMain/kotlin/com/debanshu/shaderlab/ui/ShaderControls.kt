@@ -38,14 +38,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.debanshu.shaderlab.shaderlib.ShaderParameter
-import com.debanshu.shaderlab.shaderlib.ShaderRegistry
-import com.debanshu.shaderlab.shaderlib.ShaderSpec
+import com.debanshu.shaderlab.shaderlib.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderlib.parameter.ParameterFormatter
+import com.debanshu.shaderlab.shaderlib.parameter.ParameterSpec
+import com.debanshu.shaderlab.shaderlib.parameter.ToggleParameter
 
 @Composable
 fun ShaderControls(
-    activeEffect: ShaderSpec?,
-    onEffectSelected: (ShaderSpec) -> Unit,
+    availableEffects: List<ShaderEffect>,
+    activeEffect: ShaderEffect?,
+    onEffectSelected: (ShaderEffect) -> Unit,
     onParameterChanged: (String, Float) -> Unit,
     onClearEffect: () -> Unit,
     modifier: Modifier = Modifier,
@@ -91,6 +93,7 @@ fun ShaderControls(
         Spacer(modifier = Modifier.height(12.dp))
 
         EffectChipRow(
+            effects = availableEffects,
             activeEffect = activeEffect,
             onEffectSelected = onEffectSelected,
         )
@@ -135,12 +138,12 @@ fun ShaderControls(
 
 @Composable
 private fun EffectParameterControl(
-    parameter: ShaderParameter,
+    parameter: ParameterSpec,
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (parameter) {
-        is ShaderParameter.ToggleParam -> {
+        is ToggleParameter -> {
             ToggleControl(
                 label = parameter.label,
                 isEnabled = parameter.defaultValue > 0.5f,
@@ -155,7 +158,7 @@ private fun EffectParameterControl(
                 value = parameter.defaultValue,
                 valueRange = parameter.range,
                 onValueChange = onValueChange,
-                formatValue = parameter.formatValue,
+                formatValue = { ParameterFormatter.format(parameter, it) },
                 modifier = modifier,
             )
         }
@@ -234,12 +237,11 @@ private fun ToggleControl(
 
 @Composable
 private fun EffectChipRow(
-    activeEffect: ShaderSpec?,
-    onEffectSelected: (ShaderSpec) -> Unit,
+    effects: List<ShaderEffect>,
+    activeEffect: ShaderEffect?,
+    onEffectSelected: (ShaderEffect) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val effects = ShaderRegistry.getAll()
-
     LazyRow(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp),
@@ -257,7 +259,7 @@ private fun EffectChipRow(
 
 @Composable
 private fun EffectChip(
-    effect: ShaderSpec,
+    effect: ShaderEffect,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

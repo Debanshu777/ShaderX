@@ -1,0 +1,67 @@
+package com.debanshu.shaderlab.shaderlib.effects
+
+import com.debanshu.shaderlab.shaderlib.effect.RuntimeShaderEffect
+import com.debanshu.shaderlab.shaderlib.parameter.ParameterSpec
+import com.debanshu.shaderlab.shaderlib.parameter.PixelParameter
+import com.debanshu.shaderlab.shaderlib.uniform.FloatUniform
+import com.debanshu.shaderlab.shaderlib.uniform.Uniform
+
+/**
+ * Applies a chromatic aberration effect simulating lens distortion.
+ *
+ * Separates color channels radially from the center of the image.
+ *
+ * @property offset Distance in pixels to offset red and blue channels
+ */
+public data class ChromaticAberrationEffect(
+    private val offset: Float = 5f,
+) : RuntimeShaderEffect {
+
+    override val id: String = ID
+    override val displayName: String = "Chromatic"
+
+    override val shaderSource: String = """
+        uniform shader content;
+        uniform float2 resolution;
+        uniform float offset;
+        
+        half4 main(float2 fragCoord) {
+            // Calculate direction from center
+            float2 center = resolution * 0.5;
+            float2 dir = normalize(fragCoord - center);
+            
+            // Sample each color channel with offset
+            float r = content.eval(fragCoord + dir * offset).r;
+            float g = content.eval(fragCoord).g;
+            float b = content.eval(fragCoord - dir * offset).b;
+            float a = content.eval(fragCoord).a;
+            
+            return half4(r, g, b, a);
+        }
+    """
+
+    override val parameters: List<ParameterSpec> = listOf(
+        PixelParameter(
+            id = PARAM_OFFSET,
+            label = "Offset",
+            range = 0f..20f,
+            defaultValue = offset,
+        ),
+    )
+
+    override fun buildUniforms(width: Float, height: Float): List<Uniform> = listOf(
+        FloatUniform("resolution", width, height),
+        FloatUniform("offset", offset),
+    )
+
+    override fun withParameter(parameterId: String, value: Float): ChromaticAberrationEffect =
+        when (parameterId) {
+            PARAM_OFFSET -> copy(offset = value)
+            else -> this
+        }
+
+    public companion object {
+        public const val ID: String = "chromatic_aberration"
+        public const val PARAM_OFFSET: String = "offset"
+    }
+}

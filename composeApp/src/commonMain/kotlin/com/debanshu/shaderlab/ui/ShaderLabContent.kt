@@ -23,7 +23,6 @@ import androidx.compose.material.icons.automirrored.filled.CompareArrows
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,8 +53,10 @@ import com.debanshu.shaderlab.imagelib.PickResult
 import com.debanshu.shaderlab.imagelib.createImageExporter
 import com.debanshu.shaderlab.imagelib.rememberImagePickerLauncher
 import com.debanshu.shaderlab.imagelib.rememberPermissionHandler
-import com.debanshu.shaderlab.shaderlib.applyShaderToImage
-import com.debanshu.shaderlab.shaderlib.areShadersSupported
+import com.debanshu.shaderlab.shaderlib.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderlib.factory.ImageProcessor
+import com.debanshu.shaderlab.shaderlib.factory.ShaderFactory
+import com.debanshu.shaderlab.shaderlib.factory.create
 import com.debanshu.shaderlab.viewmodel.ImageSource
 import com.debanshu.shaderlab.viewmodel.ShaderLabViewModel
 import kotlinx.coroutines.Dispatchers
@@ -65,11 +66,16 @@ import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShaderLabContent(viewModel: ShaderLabViewModel) {
+fun ShaderLabContent(
+    viewModel: ShaderLabViewModel,
+    availableEffects: List<ShaderEffect>,
+) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val permissionHandler = rememberPermissionHandler()
+    val shaderFactory = remember { ShaderFactory.create() }
+    val imageProcessor = remember { ImageProcessor.create() }
 
     val imagePicker =
         rememberImagePickerLauncher { result ->
@@ -188,9 +194,9 @@ fun ShaderLabContent(viewModel: ShaderLabViewModel) {
                                             if (exporter.isSupported) {
                                                 // Apply shader effect if active and supported
                                                 val bytesToExport =
-                                                    if (activeEffect != null && areShadersSupported()) {
+                                                    if (activeEffect != null && shaderFactory.isSupported()) {
                                                         withContext(Dispatchers.Default) {
-                                                            applyShaderToImage(originalBytes, activeEffect)
+                                                            imageProcessor.process(originalBytes, activeEffect).getOrNull()
                                                         } ?: originalBytes
                                                     } else {
                                                         originalBytes
@@ -325,6 +331,7 @@ fun ShaderLabContent(viewModel: ShaderLabViewModel) {
             Spacer(modifier = Modifier.height(16.dp))
 
             ShaderControls(
+                availableEffects = availableEffects,
                 activeEffect = uiState.activeEffect,
                 onEffectSelected = { viewModel.setActiveEffect(it) },
                 onParameterChanged = { parameterId, value -> viewModel.updateEffectParameter(parameterId, value) },

@@ -1,20 +1,15 @@
 package com.debanshu.shaderlab.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.debanshu.shaderlab.imagelib.ExportConfig
-import com.debanshu.shaderlab.imagelib.ExportResult
-import com.debanshu.shaderlab.imagelib.ImageExporter
 import com.debanshu.shaderlab.imagelib.PickResult
-import com.debanshu.shaderlab.shaderlib.AnimatableShaderSpec
-import com.debanshu.shaderlab.shaderlib.ShaderSpec
-import com.debanshu.shaderlab.shaderlib.areShadersSupported
+import com.debanshu.shaderlab.shaderlib.effect.AnimatedShaderEffect
+import com.debanshu.shaderlab.shaderlib.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderlib.factory.ShaderFactory
+import com.debanshu.shaderlab.shaderlib.factory.create
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 sealed class ImageSource {
     data class Bundled(
@@ -41,7 +36,7 @@ sealed class ImageSource {
 
 data class ShaderLabUiState(
     val selectedImage: ImageSource = ImageSource.Bundled("sample_landscape"),
-    val activeEffect: ShaderSpec? = null,
+    val activeEffect: ShaderEffect? = null,
     val showBeforeAfter: Boolean = false,
     val isDarkTheme: Boolean = true,
     val sampleImages: List<String> =
@@ -62,7 +57,7 @@ class ShaderLabViewModel : ViewModel() {
     private val _uiState =
         MutableStateFlow(
             ShaderLabUiState(
-                shadersSupported = areShadersSupported(),
+                shadersSupported = ShaderFactory.create().isSupported(),
             ),
         )
     val uiState: StateFlow<ShaderLabUiState> = _uiState.asStateFlow()
@@ -71,7 +66,7 @@ class ShaderLabViewModel : ViewModel() {
         _uiState.update { it.copy(selectedImage = source) }
     }
 
-    fun setActiveEffect(effect: ShaderSpec?) {
+    fun setActiveEffect(effect: ShaderEffect?) {
         _uiState.update { it.copy(activeEffect = effect) }
     }
 
@@ -81,7 +76,7 @@ class ShaderLabViewModel : ViewModel() {
     ) {
         _uiState.update { state ->
             val currentEffect = state.activeEffect ?: return@update state
-            val updatedEffect = currentEffect.withParameterValue(parameterId, value)
+            val updatedEffect = currentEffect.withParameter(parameterId, value)
             state.copy(activeEffect = updatedEffect)
         }
     }
@@ -117,7 +112,7 @@ class ShaderLabViewModel : ViewModel() {
     fun updateAnimationTime(time: Float) {
         _uiState.update { state ->
             val currentEffect = state.activeEffect
-            if (currentEffect is AnimatableShaderSpec && currentEffect.isAnimating) {
+            if (currentEffect is AnimatedShaderEffect && currentEffect.isAnimating) {
                 state.copy(
                     animationTime = time,
                     activeEffect = currentEffect.withTime(time),

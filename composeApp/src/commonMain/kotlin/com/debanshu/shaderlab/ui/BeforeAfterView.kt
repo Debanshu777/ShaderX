@@ -37,10 +37,10 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.debanshu.shaderlab.imagelib.decodeImageBytes
-import com.debanshu.shaderlab.shaderlib.AnimatableShaderSpec
-import com.debanshu.shaderlab.shaderlib.ShaderSpec
-import com.debanshu.shaderlab.shaderlib.areShadersSupported
-import com.debanshu.shaderlab.shaderlib.createShaderEffect
+import com.debanshu.shaderlab.shaderlib.effect.AnimatedShaderEffect
+import com.debanshu.shaderlab.shaderlib.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderlib.factory.ShaderFactory
+import com.debanshu.shaderlab.shaderlib.factory.create
 import com.debanshu.shaderlab.ui.components.SampleImage
 import com.debanshu.shaderlab.viewmodel.ImageSource
 import kotlin.math.roundToInt
@@ -48,15 +48,16 @@ import kotlin.math.roundToInt
 @Composable
 fun BeforeAfterView(
     imageSource: ImageSource,
-    effect: ShaderSpec?,
+    effect: ShaderEffect?,
     onWaveTimeUpdate: (Float) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var containerWidth by remember { mutableFloatStateOf(0f) }
     var containerHeight by remember { mutableFloatStateOf(0f) }
     var dividerPosition by remember { mutableFloatStateOf(0.5f) }
+    val factory = remember { ShaderFactory.create() }
 
-    val animatableEffect = effect as? AnimatableShaderSpec
+    val animatableEffect = effect as? AnimatedShaderEffect
     val shouldAnimate = animatableEffect?.isAnimating == true
 
     val infiniteTransition = rememberInfiniteTransition(label = "wave")
@@ -79,8 +80,8 @@ fun BeforeAfterView(
 
     val renderEffect =
         remember(effect, containerWidth, containerHeight) {
-            if (effect != null && containerWidth > 0 && containerHeight > 0 && areShadersSupported()) {
-                createShaderEffect(effect, containerWidth, containerHeight)
+            if (effect != null && containerWidth > 0 && containerHeight > 0 && factory.isSupported()) {
+                factory.createRenderEffect(effect, containerWidth, containerHeight).getOrNull()
             } else {
                 null
             }
