@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.asComposeRenderEffect
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
-import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.result.ShaderError
 import com.debanshu.shaderlab.shaderx.result.ShaderResult
 import com.debanshu.shaderlab.shaderx.ShaderConstants
@@ -26,42 +25,23 @@ import android.graphics.RenderEffect as AndroidRenderEffect
  * This implementation caches compiled shaders by source code to avoid
  * recompilation on every frame. Shader compilation is expensive, but
  * setting uniforms is cheap.
+ *
+ * @param maxCacheSize Maximum number of shaders to cache (default: 50)
  */
-internal class AndroidShaderFactory : ShaderFactory {
+internal class AndroidShaderFactory(
+    maxCacheSize: Int = DEFAULT_CACHE_SIZE,
+) : BaseShaderFactory(maxCacheSize) {
 
     /**
      * Cache of compiled RuntimeShaders keyed by shader source code.
      * Shader compilation is the expensive operation, so we cache compiled shaders
      * and just update uniforms each frame.
+     *
+     * Uses LinkedHashMap to maintain insertion order for LRU eviction.
      */
-    private val shaderCache = mutableMapOf<String, RuntimeShader>()
+    private val shaderCache = linkedMapOf<String, RuntimeShader>()
 
-    override fun createRenderEffect(
-        effect: ShaderEffect,
-        width: Float,
-        height: Float,
-    ): ShaderResult<RenderEffect> {
-        if (!isSupported()) {
-            return ShaderResult.failure(
-                ShaderError.PlatformNotSupported(
-                    "RuntimeShader requires Android 13 (API 33) or higher. Current: ${Build.VERSION.SDK_INT}"
-                )
-            )
-        }
-
-        return when (effect) {
-            is NativeEffect -> createNativeEffect(effect)
-            is RuntimeShaderEffect -> createRuntimeShaderEffect(effect, width, height)
-            else -> ShaderResult.failure(
-                ShaderError.UnsupportedEffect(
-                    "Unknown effect type: ${effect::class.simpleName}",
-                    effect.id
-                )
-            )
-        }
-    }
-
-    private fun createNativeEffect(effect: NativeEffect): ShaderResult<RenderEffect> {
+    override fun createNativeEffect(effect: NativeEffect): ShaderResult<RenderEffect> {
         return when (effect) {
             is BlurEffect -> createBlurEffect(effect.radius)
             else -> ShaderResult.failure(
@@ -82,7 +62,7 @@ internal class AndroidShaderFactory : ShaderFactory {
         }
     }
 
-    private fun createRuntimeShaderEffect(
+    override fun createRuntimeShaderEffect(
         effect: RuntimeShaderEffect,
         width: Float,
         height: Float,
@@ -112,10 +92,34 @@ internal class AndroidShaderFactory : ShaderFactory {
      * Shader compilation is expensive, so caching provides significant performance benefits.
      */
     private fun getOrCreateShader(source: String): RuntimeShader {
-        return shaderCache.getOrPut(source) { RuntimeShader(source) }
+        return shaderCache.getOrPut(source) {
+            evictIfNeeded(shaderCache)
+            RuntimeShader(source)
+        }
     }
 
     override fun isSupported(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+
+    override fun platformNotSupportedError(): ShaderError =
+        ShaderError.PlatformNotSupported(
+            "RuntimeShader requires Android 13 (API 33) or higher. Current: ${Build.VERSION.SDK_INT}"
+        )
+
+    override fun clearCache() {
+        shaderCache.clear()
+    }
+
+    override val cacheSize: Int
+        get() = shaderCache.size
+
+    override fun chainEffects(first: RenderEffect, second: RenderEffect): RenderEffect {
+        // On Android, we need to access the underlying Android RenderEffect
+        // Since Compose RenderEffect wraps Android RenderEffect, we chain them
+        // using Android's RenderEffect.createChainEffect (API 31+)
+        // For now, return second as a simple fallback
+        // Full chaining would require unwrapping Compose RenderEffect
+        return second
+    }
 
     internal companion object {
         /**

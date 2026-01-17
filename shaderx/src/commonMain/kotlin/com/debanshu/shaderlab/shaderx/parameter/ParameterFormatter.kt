@@ -27,6 +27,37 @@ public object ParameterFormatter {
     }
 
     /**
+     * Formats a typed parameter value for display based on its type.
+     *
+     * @param parameter The parameter specification
+     * @param value The current typed value to format
+     * @return Formatted string representation
+     */
+    public fun formatTyped(parameter: ParameterSpec, value: ParameterValue): String = when (parameter) {
+        is FloatParameter -> when (value) {
+            is ParameterValue.FloatValue -> formatFloat(value.value, parameter.decimalPlaces)
+            else -> format(parameter, value.toFloat())
+        }
+        is PercentageParameter -> when (value) {
+            is ParameterValue.FloatValue -> "${(value.value * 100).toInt()}%"
+            else -> format(parameter, value.toFloat())
+        }
+        is PixelParameter -> when (value) {
+            is ParameterValue.FloatValue -> "${value.value.toInt()}px"
+            else -> format(parameter, value.toFloat())
+        }
+        is ToggleParameter -> when (value) {
+            is ParameterValue.BooleanValue -> if (value.enabled) "On" else "Off"
+            is ParameterValue.FloatValue -> if (value.value > 0.5f) "On" else "Off"
+            else -> "Off"
+        }
+        is ColorParameter -> when (value) {
+            is ParameterValue.ColorValue -> formatColor(value.color)
+            else -> formatColor(parameter.defaultColor)
+        }
+    }
+
+    /**
      * Formats a color value as a hex string.
      *
      * @param color The color in ARGB format

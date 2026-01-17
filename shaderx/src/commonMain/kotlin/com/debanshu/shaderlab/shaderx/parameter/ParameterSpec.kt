@@ -1,6 +1,56 @@
 package com.debanshu.shaderlab.shaderx.parameter
 
 /**
+ * Represents a typed value for shader parameters.
+ *
+ * This sealed class provides type-safe handling of different parameter value types
+ * used in shader effects.
+ */
+public sealed class ParameterValue {
+    /**
+     * A floating-point parameter value.
+     */
+    public data class FloatValue(public val value: Float) : ParameterValue()
+
+    /**
+     * A color parameter value stored as ARGB Long.
+     */
+    public data class ColorValue(public val color: Long) : ParameterValue()
+
+    /**
+     * A boolean parameter value.
+     */
+    public data class BooleanValue(public val enabled: Boolean) : ParameterValue()
+
+    /**
+     * Converts this value to a Float for legacy compatibility.
+     * For colors, returns 0f. For booleans, returns 1f or 0f.
+     */
+    public fun toFloat(): Float = when (this) {
+        is FloatValue -> value
+        is ColorValue -> 0f
+        is BooleanValue -> if (enabled) 1f else 0f
+    }
+
+    public companion object {
+        /**
+         * Creates a ParameterValue from a Float.
+         */
+        public fun fromFloat(value: Float): ParameterValue = FloatValue(value)
+
+        /**
+         * Creates a ParameterValue from a color Long.
+         */
+        public fun fromColor(color: Long): ParameterValue = ColorValue(color)
+
+        /**
+         * Creates a ParameterValue from a Boolean.
+         */
+        public fun fromBoolean(enabled: Boolean): ParameterValue = BooleanValue(enabled)
+    }
+}
+
+/**
  * Defines a configurable parameter for a shader effect.
  *
  * Parameters describe the adjustable values that users can modify
@@ -29,13 +79,26 @@ public sealed interface ParameterSpec {
 
     /**
      * Default value when the effect is first created.
+     * For backwards compatibility with Float-based parameters.
      */
     public val defaultValue: Float
 
     /**
      * Valid range for this parameter's value.
+     * For non-float parameters, this may be a nominal range.
      */
     public val range: ClosedFloatingPointRange<Float>
+
+    /**
+     * Returns the typed default value for this parameter.
+     */
+    public fun getTypedDefaultValue(): ParameterValue
+
+    /**
+     * Validates and converts an input value to the appropriate type.
+     * Returns null if the value cannot be converted.
+     */
+    public fun validateValue(value: ParameterValue): ParameterValue?
 }
 
 /**
@@ -51,7 +114,20 @@ public data class FloatParameter(
     override val defaultValue: Float,
     /** Number of decimal places to display (default: 1) */
     public val decimalPlaces: Int = 1,
-) : ParameterSpec
+) : ParameterSpec {
+    override fun getTypedDefaultValue(): ParameterValue = ParameterValue.FloatValue(defaultValue)
+
+    override fun validateValue(value: ParameterValue): ParameterValue? {
+        return when (value) {
+            is ParameterValue.FloatValue -> {
+                val clamped = value.value.coerceIn(range)
+                ParameterValue.FloatValue(clamped)
+            }
+            is ParameterValue.BooleanValue -> ParameterValue.FloatValue(if (value.enabled) 1f else 0f)
+            is ParameterValue.ColorValue -> null
+        }
+    }
+}
 
 /**
  * A parameter representing a percentage value (0% to 100%).
@@ -65,6 +141,19 @@ public data class PercentageParameter(
     override val defaultValue: Float = 1f,
 ) : ParameterSpec {
     override val range: ClosedFloatingPointRange<Float> = 0f..1f
+
+    override fun getTypedDefaultValue(): ParameterValue = ParameterValue.FloatValue(defaultValue)
+
+    override fun validateValue(value: ParameterValue): ParameterValue? {
+        return when (value) {
+            is ParameterValue.FloatValue -> {
+                val clamped = value.value.coerceIn(range)
+                ParameterValue.FloatValue(clamped)
+            }
+            is ParameterValue.BooleanValue -> ParameterValue.FloatValue(if (value.enabled) 1f else 0f)
+            is ParameterValue.ColorValue -> null
+        }
+    }
 }
 
 /**
@@ -78,7 +167,20 @@ public data class PixelParameter(
     override val label: String,
     override val range: ClosedFloatingPointRange<Float>,
     override val defaultValue: Float,
-) : ParameterSpec
+) : ParameterSpec {
+    override fun getTypedDefaultValue(): ParameterValue = ParameterValue.FloatValue(defaultValue)
+
+    override fun validateValue(value: ParameterValue): ParameterValue? {
+        return when (value) {
+            is ParameterValue.FloatValue -> {
+                val clamped = value.value.coerceIn(range)
+                ParameterValue.FloatValue(clamped)
+            }
+            is ParameterValue.BooleanValue -> null
+            is ParameterValue.ColorValue -> null
+        }
+    }
+}
 
 /**
  * A boolean parameter represented as on/off toggle.
@@ -93,6 +195,16 @@ public data class ToggleParameter(
 ) : ParameterSpec {
     override val range: ClosedFloatingPointRange<Float> = 0f..1f
     override val defaultValue: Float = if (isEnabledByDefault) 1f else 0f
+
+    override fun getTypedDefaultValue(): ParameterValue = ParameterValue.BooleanValue(isEnabledByDefault)
+
+    override fun validateValue(value: ParameterValue): ParameterValue? {
+        return when (value) {
+            is ParameterValue.FloatValue -> ParameterValue.BooleanValue(value.value > 0.5f)
+            is ParameterValue.BooleanValue -> value
+            is ParameterValue.ColorValue -> null
+        }
+    }
 }
 
 /**
@@ -101,10 +213,6 @@ public data class ToggleParameter(
  * Color values are stored in ARGB format as a Long.
  * Use this for effects that accept color inputs like tint colors,
  * gradient colors, or overlay colors.
- *
- * Note: This parameter type uses [defaultColor] instead of [defaultValue]
- * since colors don't fit the Float parameter model. The [defaultValue] and
- * [range] are provided for interface compliance but shouldn't be used directly.
  *
  * ## Example
  * ```kotlin
@@ -123,8 +231,18 @@ public data class ColorParameter(
 ) : ParameterSpec {
     // Range is not applicable for colors, but required by interface
     override val range: ClosedFloatingPointRange<Float> = 0f..1f
-    // defaultValue is not used for colors; use defaultColor instead
+    // defaultValue is provided for backwards compatibility
     override val defaultValue: Float = 0f
+
+    override fun getTypedDefaultValue(): ParameterValue = ParameterValue.ColorValue(defaultColor)
+
+    override fun validateValue(value: ParameterValue): ParameterValue? {
+        return when (value) {
+            is ParameterValue.ColorValue -> value
+            is ParameterValue.FloatValue -> null
+            is ParameterValue.BooleanValue -> null
+        }
+    }
 
     /**
      * Extracts the red component (0.0 to 1.0) from the default color.

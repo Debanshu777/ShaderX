@@ -1,7 +1,8 @@
-package com.debanshu.shaderlab.shaderx.effects
+package com.debanshu.shaderlab.shaderx.effect.impl
 
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.parameter.ParameterSpec
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.parameter.PercentageParameter
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
@@ -77,9 +78,33 @@ public data class VignetteEffect(
             else -> this
         }
 
+    override fun withTypedParameter(
+        parameterId: String,
+        value: ParameterValue,
+    ): VignetteEffect =
+        when (parameterId) {
+            PARAM_RADIUS -> when (value) {
+                is ParameterValue.FloatValue -> copy(radius = value.value)
+                else -> this
+            }
+            PARAM_INTENSITY -> when (value) {
+                is ParameterValue.FloatValue -> copy(intensity = value.value)
+                else -> this
+            }
+            else -> this
+        }
+
+    override fun getTypedParameterValue(parameterId: String): ParameterValue? =
+        when (parameterId) {
+            PARAM_RADIUS -> ParameterValue.FloatValue(radius)
+            PARAM_INTENSITY -> ParameterValue.FloatValue(intensity)
+            else -> null
+        }
+
     public companion object {
         public const val ID: String = "vignette"
         public const val PARAM_RADIUS: String = "radius"
         public const val PARAM_INTENSITY: String = "intensity"
     }
 }
+

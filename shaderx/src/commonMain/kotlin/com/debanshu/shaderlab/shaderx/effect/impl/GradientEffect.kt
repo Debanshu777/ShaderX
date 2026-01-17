@@ -1,9 +1,10 @@
-package com.debanshu.shaderlab.shaderx.effects
+package com.debanshu.shaderlab.shaderx.effect.impl
 
 import androidx.compose.ui.graphics.Color
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.parameter.ColorParameter
 import com.debanshu.shaderlab.shaderx.parameter.ParameterSpec
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.parameter.PercentageParameter
 import com.debanshu.shaderlab.shaderx.uniform.ColorUniform
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
@@ -94,6 +95,34 @@ public data class GradientEffect(
         when (parameterId) {
             PARAM_INTENSITY -> copy(intensity = value)
             else -> this
+        }
+
+    override fun withTypedParameter(
+        parameterId: String,
+        value: ParameterValue,
+    ): GradientEffect =
+        when (parameterId) {
+            PARAM_COLOR_1 -> when (value) {
+                is ParameterValue.ColorValue -> copy(color1 = value.color)
+                else -> this
+            }
+            PARAM_COLOR_2 -> when (value) {
+                is ParameterValue.ColorValue -> copy(color2 = value.color)
+                else -> this
+            }
+            PARAM_INTENSITY -> when (value) {
+                is ParameterValue.FloatValue -> copy(intensity = value.value)
+                else -> this
+            }
+            else -> this
+        }
+
+    override fun getTypedParameterValue(parameterId: String): ParameterValue? =
+        when (parameterId) {
+            PARAM_COLOR_1 -> ParameterValue.ColorValue(color1)
+            PARAM_COLOR_2 -> ParameterValue.ColorValue(color2)
+            PARAM_INTENSITY -> ParameterValue.FloatValue(intensity)
+            else -> null
         }
 
     /**

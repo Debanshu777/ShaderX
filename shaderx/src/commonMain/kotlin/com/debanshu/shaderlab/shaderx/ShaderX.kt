@@ -2,16 +2,16 @@
 
 package com.debanshu.shaderlab.shaderx
 
-import com.debanshu.shaderlab.shaderx.effects.ChromaticAberrationEffect
-import com.debanshu.shaderlab.shaderx.effects.GradientEffect
-import com.debanshu.shaderlab.shaderx.effects.GrayscaleEffect
-import com.debanshu.shaderlab.shaderx.effects.InvertEffect
-import com.debanshu.shaderlab.shaderx.effects.NativeBlurEffect
-import com.debanshu.shaderlab.shaderx.effects.PixelateEffect
-import com.debanshu.shaderlab.shaderx.effects.SepiaEffect
-import com.debanshu.shaderlab.shaderx.effects.VignetteEffect
-import com.debanshu.shaderlab.shaderx.effects.WaveEffect
-import com.debanshu.shaderlab.shaderx.effect.ShaderEffect as IShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.ChromaticAberrationEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.GradientEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.GrayscaleEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.InvertEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.NativeBlurEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.PixelateEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.SepiaEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.VignetteEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect
 
 /**
  * ShaderX - A Kotlin Multiplatform library for GPU shader effects.
@@ -49,9 +49,41 @@ public object ShaderX {
     public const val VERSION: String = "1.0.0"
 
     /**
-     * Returns all built-in effects.
+     * Cached list of built-in effects.
+     *
+     * Effects are instantiated once and reused to avoid repeated allocations.
+     * For effects that need fresh instances (e.g., animated effects with different
+     * initial states), create them directly instead of using this list.
      */
-    public fun builtInEffects(): List<IShaderEffect> =
+    private val cachedBuiltInEffects: List<ShaderEffect> by lazy {
+        listOf(
+            GrayscaleEffect(),
+            SepiaEffect(),
+            GradientEffect(),
+            VignetteEffect(),
+            PixelateEffect(),
+            ChromaticAberrationEffect(),
+            InvertEffect,
+            WaveEffect(),
+            NativeBlurEffect(),
+        )
+    }
+
+    /**
+     * Returns all built-in effects.
+     *
+     * This returns a cached list of effect instances. For effects that need
+     * fresh instances with specific parameters, create them directly.
+     */
+    public fun builtInEffects(): List<ShaderEffect> = cachedBuiltInEffects
+
+    /**
+     * Returns fresh instances of all built-in effects.
+     *
+     * Unlike [builtInEffects], this creates new instances each time,
+     * useful when you need effects with default parameters that will be modified.
+     */
+    public fun createBuiltInEffects(): List<ShaderEffect> =
         listOf(
             GrayscaleEffect(),
             SepiaEffect(),

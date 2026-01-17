@@ -15,6 +15,7 @@ import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.create
+import com.debanshu.shaderlab.shaderx.result.ShaderError
 import com.debanshu.shaderlab.shaderx.result.ShaderResult
 import kotlinx.coroutines.isActive
 
@@ -25,6 +26,7 @@ import kotlinx.coroutines.isActive
  * - Tracking size changes
  * - Creating the render effect from the shader definition
  * - Applying the effect via graphicsLayer
+ * - Error handling via optional callback
  *
  * ## Usage
  * ```kotlin
@@ -34,14 +36,29 @@ import kotlinx.coroutines.isActive
  * )
  * ```
  *
+ * ## Error Handling
+ * ```kotlin
+ * Image(
+ *     painter = painterResource("image.png"),
+ *     modifier = Modifier.shaderEffect(
+ *         effect = MyCustomEffect(),
+ *         onError = { error ->
+ *             Log.e("Shader", "Failed: ${error.message}")
+ *         }
+ *     )
+ * )
+ * ```
+ *
  * @param effect The shader effect to apply, or null to disable
  * @param factory The factory to use for creating render effects (defaults to platform factory)
+ * @param onError Optional callback invoked when shader creation fails
  * @return Modifier with the shader effect applied
  */
 @Composable
 public fun Modifier.shaderEffect(
     effect: ShaderEffect?,
     factory: ShaderFactory = remember { ShaderFactory.create() },
+    onError: ((ShaderError) -> Unit)? = null,
 ): Modifier {
     if (effect == null) return this
 
@@ -52,6 +69,69 @@ public fun Modifier.shaderEffect(
     LaunchedEffect(effect, size) {
         if (size.first > 0 && size.second > 0) {
             val result = factory.createRenderEffect(effect, size.first, size.second)
+            result
+                .onSuccess { renderEffect = it }
+                .onFailure { error ->
+                    renderEffect = null
+                    onError?.invoke(error)
+                }
+        }
+    }
+
+    return this
+        .onSizeChanged { newSize ->
+            size = Pair(newSize.width.toFloat(), newSize.height.toFloat())
+        }
+        .graphicsLayer {
+            this.renderEffect = renderEffect
+        }
+}
+
+/**
+ * Applies a shader effect with full result access via callback.
+ *
+ * This variant provides access to the full [ShaderResult] for more control
+ * over success and failure handling.
+ *
+ * ## Usage
+ * ```kotlin
+ * var shaderState by remember { mutableStateOf<ShaderResult<RenderEffect>?>(null) }
+ *
+ * Image(
+ *     painter = painterResource("image.png"),
+ *     modifier = Modifier.shaderEffectWithResult(
+ *         effect = effect,
+ *         onResult = { shaderState = it }
+ *     )
+ * )
+ *
+ * // Show error UI if needed
+ * shaderState?.onFailure { error ->
+ *     Text("Error: ${error.message}")
+ * }
+ * ```
+ *
+ * @param effect The shader effect to apply, or null to disable
+ * @param factory The factory to use for creating render effects (defaults to platform factory)
+ * @param onResult Callback invoked with the shader result (success or failure)
+ * @return Modifier with the shader effect applied
+ */
+@Composable
+public fun Modifier.shaderEffectWithResult(
+    effect: ShaderEffect?,
+    factory: ShaderFactory = remember { ShaderFactory.create() },
+    onResult: ((ShaderResult<RenderEffect>) -> Unit)? = null,
+): Modifier {
+    if (effect == null) return this
+
+    var size by remember { mutableStateOf(Pair(0f, 0f)) }
+    var renderEffect by remember { mutableStateOf<RenderEffect?>(null) }
+
+    // Update render effect when size or effect changes
+    LaunchedEffect(effect, size) {
+        if (size.first > 0 && size.second > 0) {
+            val result = factory.createRenderEffect(effect, size.first, size.second)
+            onResult?.invoke(result)
             renderEffect = result.getOrNull()
         }
     }
@@ -99,8 +179,11 @@ public fun <T : ShaderEffect> rememberShaderEffect(effect: T): T {
             while (isActive) {
                 withFrameMillis { frameTime ->
                     val timeSeconds = frameTime / 1000f
-                    @Suppress("UNCHECKED_CAST")
-                    currentEffect = (currentEffect as AnimatedShaderEffect).withTime(timeSeconds) as T
+                    val animated = currentEffect as? AnimatedShaderEffect
+                    if (animated != null) {
+                        @Suppress("UNCHECKED_CAST")
+                        currentEffect = animated.withTime(timeSeconds) as T
+                    }
                 }
             }
         }

@@ -1,7 +1,8 @@
-package com.debanshu.shaderlab.shaderx.effects
+package com.debanshu.shaderlab.shaderx.effect.impl
 
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
 import com.debanshu.shaderlab.shaderx.parameter.ParameterSpec
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.parameter.PixelParameter
 
 /**
@@ -34,8 +35,27 @@ public data class NativeBlurEffect(
             else -> this
         }
 
+    override fun withTypedParameter(
+        parameterId: String,
+        value: ParameterValue,
+    ): NativeBlurEffect =
+        when (parameterId) {
+            PARAM_RADIUS -> when (value) {
+                is ParameterValue.FloatValue -> copy(radius = value.value)
+                else -> this
+            }
+            else -> this
+        }
+
+    override fun getTypedParameterValue(parameterId: String): ParameterValue? =
+        when (parameterId) {
+            PARAM_RADIUS -> ParameterValue.FloatValue(radius)
+            else -> null
+        }
+
     public companion object {
         public const val ID: String = "blur"
         public const val PARAM_RADIUS: String = "radius"
     }
 }
+

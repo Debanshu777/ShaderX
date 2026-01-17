@@ -1,5 +1,7 @@
 package com.debanshu.shaderlab.shaderx.effect
 
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
+
 /**
  * Interface for shader effects that support animation over time.
  *
@@ -42,4 +44,8 @@ public interface AnimatedShaderEffect : RuntimeShaderEffect {
     public fun withTime(newTime: Float): AnimatedShaderEffect
 
     override fun withParameter(parameterId: String, value: Float): AnimatedShaderEffect
+
+    override fun withTypedParameter(parameterId: String, value: ParameterValue): AnimatedShaderEffect {
+        return withParameter(parameterId, value.toFloat())
+    }
 }

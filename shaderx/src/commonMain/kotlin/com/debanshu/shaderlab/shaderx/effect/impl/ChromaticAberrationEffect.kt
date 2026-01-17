@@ -1,7 +1,8 @@
-package com.debanshu.shaderlab.shaderx.effects
+package com.debanshu.shaderlab.shaderx.effect.impl
 
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.parameter.ParameterSpec
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.parameter.PixelParameter
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
@@ -68,8 +69,27 @@ public data class ChromaticAberrationEffect(
             else -> this
         }
 
+    override fun withTypedParameter(
+        parameterId: String,
+        value: ParameterValue,
+    ): ChromaticAberrationEffect =
+        when (parameterId) {
+            PARAM_OFFSET -> when (value) {
+                is ParameterValue.FloatValue -> copy(offset = value.value)
+                else -> this
+            }
+            else -> this
+        }
+
+    override fun getTypedParameterValue(parameterId: String): ParameterValue? =
+        when (parameterId) {
+            PARAM_OFFSET -> ParameterValue.FloatValue(offset)
+            else -> null
+        }
+
     public companion object {
         public const val ID: String = "chromatic_aberration"
         public const val PARAM_OFFSET: String = "offset"
     }
 }
+

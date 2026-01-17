@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.asComposeRenderEffect
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
-import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.result.ShaderError
 import com.debanshu.shaderlab.shaderx.result.ShaderResult
 import com.debanshu.shaderlab.shaderx.ShaderConstants
@@ -26,33 +25,22 @@ import org.jetbrains.skia.RuntimeShaderBuilder
  * This implementation caches compiled RuntimeEffects by source code to avoid
  * recompilation on every frame. Shader compilation is expensive, but
  * setting uniforms via RuntimeShaderBuilder is cheap.
+ *
+ * @param maxCacheSize Maximum number of shaders to cache (default: 50)
  */
-internal class SkiaShaderFactoryImpl : ShaderFactory {
+internal class SkiaShaderFactoryImpl(
+    maxCacheSize: Int = DEFAULT_CACHE_SIZE,
+) : BaseShaderFactory(maxCacheSize) {
 
     /**
      * Cache of compiled RuntimeEffects keyed by shader source code.
      * RuntimeEffect compilation is expensive, so caching provides significant performance benefits.
+     *
+     * Uses LinkedHashMap to maintain insertion order for LRU eviction.
      */
-    private val effectCache = mutableMapOf<String, RuntimeEffect>()
+    private val effectCache = linkedMapOf<String, RuntimeEffect>()
 
-    override fun createRenderEffect(
-        effect: ShaderEffect,
-        width: Float,
-        height: Float,
-    ): ShaderResult<RenderEffect> {
-        return when (effect) {
-            is NativeEffect -> createNativeEffect(effect)
-            is RuntimeShaderEffect -> createRuntimeShaderEffect(effect, width, height)
-            else -> ShaderResult.failure(
-                ShaderError.UnsupportedEffect(
-                    "Unknown effect type: ${effect::class.simpleName}",
-                    effect.id
-                )
-            )
-        }
-    }
-
-    private fun createNativeEffect(effect: NativeEffect): ShaderResult<RenderEffect> {
+    override fun createNativeEffect(effect: NativeEffect): ShaderResult<RenderEffect> {
         return when (effect) {
             is BlurEffect -> createBlurEffect(effect.radius)
             else -> ShaderResult.failure(
@@ -73,7 +61,7 @@ internal class SkiaShaderFactoryImpl : ShaderFactory {
         }
     }
 
-    private fun createRuntimeShaderEffect(
+    override fun createRuntimeShaderEffect(
         effect: RuntimeShaderEffect,
         width: Float,
         height: Float,
@@ -104,10 +92,33 @@ internal class SkiaShaderFactoryImpl : ShaderFactory {
      * RuntimeEffect compilation is expensive, so caching provides significant performance benefits.
      */
     private fun getOrCreateEffect(source: String): RuntimeEffect {
-        return effectCache.getOrPut(source) { RuntimeEffect.makeForShader(source) }
+        return effectCache.getOrPut(source) {
+            evictIfNeeded(effectCache)
+            RuntimeEffect.makeForShader(source)
+        }
     }
 
     override fun isSupported(): Boolean = true
+
+    override fun clearCache() {
+        effectCache.clear()
+    }
+
+    override val cacheSize: Int
+        get() = effectCache.size
+
+    override fun chainEffects(first: RenderEffect, second: RenderEffect): RenderEffect {
+        // Note: Compose RenderEffect doesn't expose its underlying Skia ImageFilter,
+        // so we cannot use ImageFilter.makeCompose directly.
+        // 
+        // For now, return the second effect as a fallback.
+        // Full chaining would require accessing internal Compose APIs or
+        // restructuring to work with ImageFilters directly.
+        //
+        // Consider using CompositeEffect with individual effects applied in
+        // sequence via the modifier for proper visual composition.
+        return second
+    }
 
     internal companion object {
         /**

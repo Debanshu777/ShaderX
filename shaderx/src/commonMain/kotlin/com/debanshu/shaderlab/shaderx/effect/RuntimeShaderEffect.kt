@@ -1,5 +1,6 @@
 package com.debanshu.shaderlab.shaderx.effect
 
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
 
 /**
@@ -48,4 +49,8 @@ public interface RuntimeShaderEffect : ShaderEffect {
     public fun buildUniforms(width: Float, height: Float): List<Uniform>
 
     override fun withParameter(parameterId: String, value: Float): RuntimeShaderEffect
+
+    override fun withTypedParameter(parameterId: String, value: ParameterValue): RuntimeShaderEffect {
+        return withParameter(parameterId, value.toFloat())
+    }
 }

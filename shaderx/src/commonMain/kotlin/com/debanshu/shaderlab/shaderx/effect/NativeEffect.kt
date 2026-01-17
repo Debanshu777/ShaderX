@@ -1,5 +1,7 @@
 package com.debanshu.shaderlab.shaderx.effect
 
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
+
 /**
  * Marker interface for effects that use platform-native implementations.
  *
@@ -14,6 +16,10 @@ package com.debanshu.shaderlab.shaderx.effect
  */
 public interface NativeEffect : ShaderEffect {
     override fun withParameter(parameterId: String, value: Float): NativeEffect
+
+    override fun withTypedParameter(parameterId: String, value: ParameterValue): NativeEffect {
+        return withParameter(parameterId, value.toFloat())
+    }
 }
 
 /**
@@ -34,4 +40,8 @@ public interface BlurEffect : NativeEffect {
     public val radius: Float
 
     override fun withParameter(parameterId: String, value: Float): BlurEffect
+
+    override fun withTypedParameter(parameterId: String, value: ParameterValue): BlurEffect {
+        return withParameter(parameterId, value.toFloat())
+    }
 }

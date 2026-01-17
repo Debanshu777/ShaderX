@@ -3,11 +3,14 @@ package com.debanshu.shaderlab.shaderx
 import com.debanshu.shaderlab.shaderx.parameter.ColorParameter
 import com.debanshu.shaderlab.shaderx.parameter.FloatParameter
 import com.debanshu.shaderlab.shaderx.parameter.ParameterFormatter
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.parameter.PercentageParameter
 import com.debanshu.shaderlab.shaderx.parameter.PixelParameter
 import com.debanshu.shaderlab.shaderx.parameter.ToggleParameter
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class ParameterTest {
 
@@ -165,5 +168,173 @@ class ParameterTest {
         val param = ColorParameter("test", "Test", 0xFFFFFFFF)
         assertEquals(0f, param.defaultValue)
     }
-}
 
+    // ParameterValue tests
+
+    @Test
+    fun parameterValue_floatValue_toFloat_returnsValue() {
+        val value = ParameterValue.FloatValue(0.5f)
+        assertEquals(0.5f, value.toFloat())
+    }
+
+    @Test
+    fun parameterValue_colorValue_toFloat_returnsZero() {
+        val value = ParameterValue.ColorValue(0xFFFF0000)
+        assertEquals(0f, value.toFloat())
+    }
+
+    @Test
+    fun parameterValue_booleanValue_toFloat_returnsOneOrZero() {
+        val trueValue = ParameterValue.BooleanValue(true)
+        val falseValue = ParameterValue.BooleanValue(false)
+
+        assertEquals(1f, trueValue.toFloat())
+        assertEquals(0f, falseValue.toFloat())
+    }
+
+    @Test
+    fun parameterValue_fromFloat_createsFloatValue() {
+        val value = ParameterValue.fromFloat(0.75f)
+        assertTrue(value is ParameterValue.FloatValue)
+        assertEquals(0.75f, (value as ParameterValue.FloatValue).value)
+    }
+
+    @Test
+    fun parameterValue_fromColor_createsColorValue() {
+        val value = ParameterValue.fromColor(0xFF00FF00)
+        assertTrue(value is ParameterValue.ColorValue)
+        assertEquals(0xFF00FF00, (value as ParameterValue.ColorValue).color)
+    }
+
+    @Test
+    fun parameterValue_fromBoolean_createsBooleanValue() {
+        val trueValue = ParameterValue.fromBoolean(true)
+        val falseValue = ParameterValue.fromBoolean(false)
+
+        assertTrue(trueValue is ParameterValue.BooleanValue)
+        assertTrue(falseValue is ParameterValue.BooleanValue)
+        assertEquals(true, (trueValue as ParameterValue.BooleanValue).enabled)
+        assertEquals(false, (falseValue as ParameterValue.BooleanValue).enabled)
+    }
+
+    // getTypedDefaultValue tests
+
+    @Test
+    fun floatParameter_getTypedDefaultValue_returnsFloatValue() {
+        val param = FloatParameter("test", "Test", 0f..10f, 5f)
+        val value = param.getTypedDefaultValue()
+
+        assertTrue(value is ParameterValue.FloatValue)
+        assertEquals(5f, (value as ParameterValue.FloatValue).value)
+    }
+
+    @Test
+    fun percentageParameter_getTypedDefaultValue_returnsFloatValue() {
+        val param = PercentageParameter("test", "Test", 0.75f)
+        val value = param.getTypedDefaultValue()
+
+        assertTrue(value is ParameterValue.FloatValue)
+        assertEquals(0.75f, (value as ParameterValue.FloatValue).value)
+    }
+
+    @Test
+    fun toggleParameter_getTypedDefaultValue_returnsBooleanValue() {
+        val enabledParam = ToggleParameter("test", "Test", isEnabledByDefault = true)
+        val disabledParam = ToggleParameter("test", "Test", isEnabledByDefault = false)
+
+        val enabledValue = enabledParam.getTypedDefaultValue()
+        val disabledValue = disabledParam.getTypedDefaultValue()
+
+        assertTrue(enabledValue is ParameterValue.BooleanValue)
+        assertTrue(disabledValue is ParameterValue.BooleanValue)
+        assertEquals(true, (enabledValue as ParameterValue.BooleanValue).enabled)
+        assertEquals(false, (disabledValue as ParameterValue.BooleanValue).enabled)
+    }
+
+    @Test
+    fun colorParameter_getTypedDefaultValue_returnsColorValue() {
+        val param = ColorParameter("test", "Test", 0xFFFF0000)
+        val value = param.getTypedDefaultValue()
+
+        assertTrue(value is ParameterValue.ColorValue)
+        assertEquals(0xFFFF0000, (value as ParameterValue.ColorValue).color)
+    }
+
+    // validateValue tests
+
+    @Test
+    fun floatParameter_validateValue_clampsToRange() {
+        val param = FloatParameter("test", "Test", 0f..10f, 5f)
+
+        val validValue = param.validateValue(ParameterValue.FloatValue(5f))
+        val tooLow = param.validateValue(ParameterValue.FloatValue(-5f))
+        val tooHigh = param.validateValue(ParameterValue.FloatValue(15f))
+        val colorValue = param.validateValue(ParameterValue.ColorValue(0xFF000000))
+
+        assertTrue(validValue is ParameterValue.FloatValue)
+        assertEquals(5f, (validValue as ParameterValue.FloatValue).value)
+        assertEquals(0f, (tooLow as ParameterValue.FloatValue).value)
+        assertEquals(10f, (tooHigh as ParameterValue.FloatValue).value)
+        assertNull(colorValue)
+    }
+
+    @Test
+    fun toggleParameter_validateValue_convertsBooleanCorrectly() {
+        val param = ToggleParameter("test", "Test")
+
+        val boolTrue = param.validateValue(ParameterValue.BooleanValue(true))
+        val boolFalse = param.validateValue(ParameterValue.BooleanValue(false))
+        val floatHigh = param.validateValue(ParameterValue.FloatValue(0.8f))
+        val floatLow = param.validateValue(ParameterValue.FloatValue(0.2f))
+        val colorValue = param.validateValue(ParameterValue.ColorValue(0xFF000000))
+
+        assertTrue(boolTrue is ParameterValue.BooleanValue)
+        assertEquals(true, (boolTrue as ParameterValue.BooleanValue).enabled)
+        assertEquals(false, (boolFalse as ParameterValue.BooleanValue).enabled)
+        assertEquals(true, (floatHigh as ParameterValue.BooleanValue).enabled)
+        assertEquals(false, (floatLow as ParameterValue.BooleanValue).enabled)
+        assertNull(colorValue)
+    }
+
+    @Test
+    fun colorParameter_validateValue_onlyAcceptsColors() {
+        val param = ColorParameter("test", "Test", 0xFFFF0000)
+
+        val colorValue = param.validateValue(ParameterValue.ColorValue(0xFF00FF00))
+        val floatValue = param.validateValue(ParameterValue.FloatValue(0.5f))
+        val boolValue = param.validateValue(ParameterValue.BooleanValue(true))
+
+        assertTrue(colorValue is ParameterValue.ColorValue)
+        assertEquals(0xFF00FF00, (colorValue as ParameterValue.ColorValue).color)
+        assertNull(floatValue)
+        assertNull(boolValue)
+    }
+
+    // Typed formatter tests
+
+    @Test
+    fun formatter_formatTyped_handlesFloatValue() {
+        val param = PercentageParameter("test", "Test")
+        val value = ParameterValue.FloatValue(0.75f)
+
+        assertEquals("75%", ParameterFormatter.formatTyped(param, value))
+    }
+
+    @Test
+    fun formatter_formatTyped_handlesBooleanValue() {
+        val param = ToggleParameter("test", "Test")
+        val trueValue = ParameterValue.BooleanValue(true)
+        val falseValue = ParameterValue.BooleanValue(false)
+
+        assertEquals("On", ParameterFormatter.formatTyped(param, trueValue))
+        assertEquals("Off", ParameterFormatter.formatTyped(param, falseValue))
+    }
+
+    @Test
+    fun formatter_formatTyped_handlesColorValue() {
+        val param = ColorParameter("test", "Test", 0xFFFF0000)
+        val value = ParameterValue.ColorValue(0xFF00FF00)  // Green
+
+        assertEquals("#00FF00", ParameterFormatter.formatTyped(param, value))
+    }
+}

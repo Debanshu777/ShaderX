@@ -1,8 +1,9 @@
-package com.debanshu.shaderlab.shaderx.effects
+package com.debanshu.shaderlab.shaderx.effect.impl
 
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.parameter.FloatParameter
 import com.debanshu.shaderlab.shaderx.parameter.ParameterSpec
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.parameter.PixelParameter
 import com.debanshu.shaderlab.shaderx.parameter.ToggleParameter
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
@@ -95,6 +96,35 @@ public data class WaveEffect(
             else -> this
         }
 
+    override fun withTypedParameter(
+        parameterId: String,
+        value: ParameterValue,
+    ): WaveEffect =
+        when (parameterId) {
+            PARAM_AMPLITUDE -> when (value) {
+                is ParameterValue.FloatValue -> copy(amplitude = value.value)
+                else -> this
+            }
+            PARAM_FREQUENCY -> when (value) {
+                is ParameterValue.FloatValue -> copy(frequency = value.value)
+                else -> this
+            }
+            PARAM_ANIMATE -> when (value) {
+                is ParameterValue.BooleanValue -> copy(animate = value.enabled)
+                is ParameterValue.FloatValue -> copy(animate = value.value > 0.5f)
+                else -> this
+            }
+            else -> this
+        }
+
+    override fun getTypedParameterValue(parameterId: String): ParameterValue? =
+        when (parameterId) {
+            PARAM_AMPLITUDE -> ParameterValue.FloatValue(amplitude)
+            PARAM_FREQUENCY -> ParameterValue.FloatValue(frequency)
+            PARAM_ANIMATE -> ParameterValue.BooleanValue(animate)
+            else -> null
+        }
+
     override fun withTime(newTime: Float): WaveEffect = copy(time = newTime)
 
     public companion object {
@@ -104,3 +134,4 @@ public data class WaveEffect(
         public const val PARAM_ANIMATE: String = "animate"
     }
 }
+

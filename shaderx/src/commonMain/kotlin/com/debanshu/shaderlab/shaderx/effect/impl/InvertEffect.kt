@@ -1,7 +1,8 @@
-package com.debanshu.shaderlab.shaderx.effects
+package com.debanshu.shaderlab.shaderx.effect.impl
 
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.parameter.ParameterSpec
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
 
 /**
@@ -36,5 +37,13 @@ public data object InvertEffect : RuntimeShaderEffect {
         value: Float,
     ): InvertEffect = this
 
+    override fun withTypedParameter(
+        parameterId: String,
+        value: ParameterValue,
+    ): InvertEffect = this
+
+    override fun getTypedParameterValue(parameterId: String): ParameterValue? = null
+
     public const val ID: String = "color_inversion"
 }
+

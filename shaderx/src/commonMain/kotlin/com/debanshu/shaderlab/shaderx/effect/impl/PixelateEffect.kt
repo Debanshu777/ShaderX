@@ -1,7 +1,8 @@
-package com.debanshu.shaderlab.shaderx.effects
+package com.debanshu.shaderlab.shaderx.effect.impl
 
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.parameter.ParameterSpec
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.parameter.PixelParameter
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
@@ -64,8 +65,27 @@ public data class PixelateEffect(
             else -> this
         }
 
+    override fun withTypedParameter(
+        parameterId: String,
+        value: ParameterValue,
+    ): PixelateEffect =
+        when (parameterId) {
+            PARAM_PIXEL_SIZE -> when (value) {
+                is ParameterValue.FloatValue -> copy(pixelSize = value.value.coerceAtLeast(1f))
+                else -> this
+            }
+            else -> this
+        }
+
+    override fun getTypedParameterValue(parameterId: String): ParameterValue? =
+        when (parameterId) {
+            PARAM_PIXEL_SIZE -> ParameterValue.FloatValue(pixelSize)
+            else -> null
+        }
+
     public companion object {
         public const val ID: String = "pixelation"
         public const val PARAM_PIXEL_SIZE: String = "pixelSize"
     }
 }
+
