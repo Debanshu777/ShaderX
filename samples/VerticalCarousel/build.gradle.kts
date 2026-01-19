@@ -9,21 +9,31 @@ plugins {
 }
 
 // Load TMDB token from local.properties
-val localProperties = Properties().apply {
-    val localPropertiesFile = rootProject.file("local.properties")
-    if (localPropertiesFile.exists()) {
-        load(localPropertiesFile.inputStream())
+val localProperties =
+    Properties().apply {
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            load(localPropertiesFile.inputStream())
+        }
     }
-}
 
 android {
     namespace = "com.debanshu.verticalcarousel"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "com.debanshu.verticalcarousel"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.android.targetSdk
+                .get()
+                .toInt()
         versionCode = 1
         versionName = "1.0"
 
@@ -91,6 +101,9 @@ dependencies {
     implementation(libs.landscapist.coil3)
     implementation(libs.landscapist.animation)
     implementation(libs.landscapist.placeholder)
+
+    // Palette for color extraction
+    implementation(libs.androidx.palette)
 
     // ShaderX library
     implementation(projects.shaderx)

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -17,10 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,9 +26,9 @@ import com.debanshu.shaderlab.shaderx.compose.shaderEffect
 import com.debanshu.verticalcarousel.data.Movie
 import com.debanshu.verticalcarousel.effect.CarouselEffect
 import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.animation.crossfade.CrossfadePlugin
 import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.components.rememberImageComponent
+import com.skydoves.landscapist.crossfade.CrossfadePlugin
 import com.skydoves.landscapist.placeholder.shimmer.Shimmer
 import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
 import kotlin.math.round
@@ -46,7 +43,7 @@ fun MoviePosterCard(
 ) {
     val shouldApplyShader = distanceFromCenter > 0.05f
     val carouselEffect =
-        remember(distanceFromCenter, scrollVelocity, scrollDirection) {
+        remember(shouldApplyShader, distanceFromCenter, scrollVelocity, scrollDirection) {
             if (shouldApplyShader) {
                 CarouselEffect(
                     distanceFromCenter = distanceFromCenter,
@@ -74,7 +71,6 @@ fun MoviePosterCard(
     ) {
         val posterUrl = movie.posterUrl
         if (posterUrl != null) {
-            println("Poster URL: $posterUrl")
             CoilImage(
                 imageModel = { posterUrl },
                 modifier = Modifier.fillMaxSize(),
@@ -95,7 +91,6 @@ fun MoviePosterCard(
                         )
                     },
                 failure = {
-                    println(it.toString())
                     GradientBackground(movie.gradientColors)
                 },
             )

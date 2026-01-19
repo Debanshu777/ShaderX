@@ -102,19 +102,30 @@ public data class GradientEffect(
         value: ParameterValue,
     ): GradientEffect =
         when (parameterId) {
-            PARAM_COLOR_1 -> when (value) {
-                is ParameterValue.ColorValue -> copy(color1 = value.color)
-                else -> this
+            PARAM_COLOR_1 -> {
+                when (value) {
+                    is ParameterValue.ColorValue -> copy(color1 = value.color)
+                    else -> this
+                }
             }
-            PARAM_COLOR_2 -> when (value) {
-                is ParameterValue.ColorValue -> copy(color2 = value.color)
-                else -> this
+
+            PARAM_COLOR_2 -> {
+                when (value) {
+                    is ParameterValue.ColorValue -> copy(color2 = value.color)
+                    else -> this
+                }
             }
-            PARAM_INTENSITY -> when (value) {
-                is ParameterValue.FloatValue -> copy(intensity = value.value)
-                else -> this
+
+            PARAM_INTENSITY -> {
+                when (value) {
+                    is ParameterValue.FloatValue -> copy(intensity = value.value)
+                    else -> this
+                }
             }
-            else -> this
+
+            else -> {
+                this
+            }
         }
 
     override fun getTypedParameterValue(parameterId: String): ParameterValue? =
@@ -179,8 +190,3 @@ private fun Color.toArgbLong(): Long {
     val b = (blue * 255).toInt() and 0xFF
     return (a.toLong() shl 24) or (r.toLong() shl 16) or (g.toLong() shl 8) or b.toLong()
 }
-
-
-
-
-

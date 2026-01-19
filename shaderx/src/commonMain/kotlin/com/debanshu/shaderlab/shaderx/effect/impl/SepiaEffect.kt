@@ -70,11 +70,16 @@ public data class SepiaEffect(
         value: ParameterValue,
     ): SepiaEffect =
         when (parameterId) {
-            PARAM_INTENSITY -> when (value) {
-                is ParameterValue.FloatValue -> copy(intensity = value.value)
-                else -> this
+            PARAM_INTENSITY -> {
+                when (value) {
+                    is ParameterValue.FloatValue -> copy(intensity = value.value)
+                    else -> this
+                }
             }
-            else -> this
+
+            else -> {
+                this
+            }
         }
 
     override fun getTypedParameterValue(parameterId: String): ParameterValue? =
@@ -88,8 +93,3 @@ public data class SepiaEffect(
         public const val PARAM_INTENSITY: String = "intensity"
     }
 }
-
-
-
-
-

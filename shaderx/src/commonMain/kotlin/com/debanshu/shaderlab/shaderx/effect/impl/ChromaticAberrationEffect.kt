@@ -74,11 +74,16 @@ public data class ChromaticAberrationEffect(
         value: ParameterValue,
     ): ChromaticAberrationEffect =
         when (parameterId) {
-            PARAM_OFFSET -> when (value) {
-                is ParameterValue.FloatValue -> copy(offset = value.value)
-                else -> this
+            PARAM_OFFSET -> {
+                when (value) {
+                    is ParameterValue.FloatValue -> copy(offset = value.value)
+                    else -> this
+                }
             }
-            else -> this
+
+            else -> {
+                this
+            }
         }
 
     override fun getTypedParameterValue(parameterId: String): ParameterValue? =
@@ -92,8 +97,3 @@ public data class ChromaticAberrationEffect(
         public const val PARAM_OFFSET: String = "offset"
     }
 }
-
-
-
-
-

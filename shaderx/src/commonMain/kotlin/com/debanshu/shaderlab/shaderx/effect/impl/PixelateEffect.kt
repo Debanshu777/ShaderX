@@ -70,11 +70,16 @@ public data class PixelateEffect(
         value: ParameterValue,
     ): PixelateEffect =
         when (parameterId) {
-            PARAM_PIXEL_SIZE -> when (value) {
-                is ParameterValue.FloatValue -> copy(pixelSize = value.value.coerceAtLeast(1f))
-                else -> this
+            PARAM_PIXEL_SIZE -> {
+                when (value) {
+                    is ParameterValue.FloatValue -> copy(pixelSize = value.value.coerceAtLeast(1f))
+                    else -> this
+                }
             }
-            else -> this
+
+            else -> {
+                this
+            }
         }
 
     override fun getTypedParameterValue(parameterId: String): ParameterValue? =
@@ -88,8 +93,3 @@ public data class PixelateEffect(
         public const val PARAM_PIXEL_SIZE: String = "pixelSize"
     }
 }
-
-
-
-
-

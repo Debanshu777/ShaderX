@@ -46,8 +46,3 @@ public data object InvertEffect : RuntimeShaderEffect {
 
     public const val ID: String = "color_inversion"
 }
-
-
-
-
-

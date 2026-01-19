@@ -13,7 +13,6 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class CompositeEffectTest {
-
     @Test
     fun compositeEffect_plusOperator_combinesTwoEffects() {
         val effect = GrayscaleEffect() + VignetteEffect()
@@ -36,11 +35,12 @@ class CompositeEffectTest {
 
     @Test
     fun compositeEffect_of_createsFromVarargs() {
-        val effect = CompositeEffect.of(
-            GrayscaleEffect(),
-            VignetteEffect(),
-            NativeBlurEffect()
-        )
+        val effect =
+            CompositeEffect.of(
+                GrayscaleEffect(),
+                VignetteEffect(),
+                NativeBlurEffect(),
+            )
 
         assertEquals(3, effect.size)
     }
@@ -96,10 +96,11 @@ class CompositeEffectTest {
     fun compositeEffect_withTypedParameter_updatesCorrectEffect() {
         val effect = GrayscaleEffect(intensity = 0.5f) + VignetteEffect(radius = 0.5f)
 
-        val updated = effect.withTypedParameter(
-            "0_intensity",
-            ParameterValue.FloatValue(0.9f)
-        )
+        val updated =
+            effect.withTypedParameter(
+                "0_intensity",
+                ParameterValue.FloatValue(0.9f),
+            )
 
         assertNotEquals(effect, updated)
 
@@ -173,8 +174,3 @@ class CompositeEffectTest {
         assertEquals(vignette, containedVignette)
     }
 }
-
-
-
-
-

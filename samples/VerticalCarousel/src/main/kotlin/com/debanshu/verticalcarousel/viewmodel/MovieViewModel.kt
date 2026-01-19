@@ -16,8 +16,15 @@ import kotlinx.coroutines.launch
  */
 sealed interface MovieUiState {
     data object Loading : MovieUiState
-    data class Success(val movies: List<Movie>) : MovieUiState
-    data class Error(val message: String, val fallbackMovies: List<Movie>) : MovieUiState
+
+    data class Success(
+        val movies: List<Movie>,
+    ) : MovieUiState
+
+    data class Error(
+        val message: String,
+        val fallbackMovies: List<Movie>,
+    ) : MovieUiState
 }
 
 /**
@@ -25,20 +32,20 @@ sealed interface MovieUiState {
  * Fetches movies from TMDB API and falls back to sample data on error.
  */
 class MovieViewModel(
-    private val repository: MovieRepository = MovieRepository()
+    private val repository: MovieRepository = MovieRepository(),
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow<MovieUiState>(MovieUiState.Loading)
     val uiState: StateFlow<MovieUiState> = _uiState.asStateFlow()
 
     // Exception handler to prevent crashes from unhandled exceptions
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        println("MovieViewModel: Caught exception: ${throwable.message}")
-        _uiState.value = MovieUiState.Error(
-            message = throwable.message ?: "Unknown error",
-            fallbackMovies = sampleMovies
-        )
-    }
+    private val exceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            _uiState.value =
+                MovieUiState.Error(
+                    message = throwable.message ?: "Unknown error",
+                    fallbackMovies = sampleMovies,
+                )
+        }
 
     init {
         loadMovies()
@@ -52,28 +59,28 @@ class MovieViewModel(
             _uiState.value = MovieUiState.Loading
 
             try {
-                repository.getPopularMovies()
+                repository
+                    .getPopularMovies()
                     .onSuccess { movies ->
-                        _uiState.value = if (movies.isNotEmpty()) {
-                            MovieUiState.Success(movies)
-                        } else {
-                            MovieUiState.Success(sampleMovies)
-                        }
-                    }
-                    .onFailure { error ->
-                        println("MovieViewModel: API failed: ${error.message}")
-                        // Fall back to sample movies on error
-                        _uiState.value = MovieUiState.Error(
-                            message = error.message ?: "Failed to load movies",
-                            fallbackMovies = sampleMovies
-                        )
+                        _uiState.value =
+                            if (movies.isNotEmpty()) {
+                                MovieUiState.Success(movies)
+                            } else {
+                                MovieUiState.Success(sampleMovies)
+                            }
+                    }.onFailure { error ->
+                        _uiState.value =
+                            MovieUiState.Error(
+                                message = error.message ?: "Failed to load movies",
+                                fallbackMovies = sampleMovies,
+                            )
                     }
             } catch (e: Exception) {
-                println("MovieViewModel: Exception caught: ${e.message}")
-                _uiState.value = MovieUiState.Error(
-                    message = e.message ?: "Failed to load movies",
-                    fallbackMovies = sampleMovies
-                )
+                _uiState.value =
+                    MovieUiState.Error(
+                        message = e.message ?: "Failed to load movies",
+                        fallbackMovies = sampleMovies,
+                    )
             }
         }
     }
@@ -85,4 +92,3 @@ class MovieViewModel(
         loadMovies()
     }
 }
-

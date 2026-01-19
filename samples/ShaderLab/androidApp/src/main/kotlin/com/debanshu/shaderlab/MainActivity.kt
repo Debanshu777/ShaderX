@@ -25,8 +25,3 @@ class MainActivity : ComponentActivity() {
 fun AppAndroidPreview() {
     ShaderLabApp()
 }
-
-
-
-
-

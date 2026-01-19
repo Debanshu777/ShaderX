@@ -101,20 +101,31 @@ public data class WaveEffect(
         value: ParameterValue,
     ): WaveEffect =
         when (parameterId) {
-            PARAM_AMPLITUDE -> when (value) {
-                is ParameterValue.FloatValue -> copy(amplitude = value.value)
-                else -> this
+            PARAM_AMPLITUDE -> {
+                when (value) {
+                    is ParameterValue.FloatValue -> copy(amplitude = value.value)
+                    else -> this
+                }
             }
-            PARAM_FREQUENCY -> when (value) {
-                is ParameterValue.FloatValue -> copy(frequency = value.value)
-                else -> this
+
+            PARAM_FREQUENCY -> {
+                when (value) {
+                    is ParameterValue.FloatValue -> copy(frequency = value.value)
+                    else -> this
+                }
             }
-            PARAM_ANIMATE -> when (value) {
-                is ParameterValue.BooleanValue -> copy(animate = value.enabled)
-                is ParameterValue.FloatValue -> copy(animate = value.value > 0.5f)
-                else -> this
+
+            PARAM_ANIMATE -> {
+                when (value) {
+                    is ParameterValue.BooleanValue -> copy(animate = value.enabled)
+                    is ParameterValue.FloatValue -> copy(animate = value.value > 0.5f)
+                    else -> this
+                }
             }
-            else -> this
+
+            else -> {
+                this
+            }
         }
 
     override fun getTypedParameterValue(parameterId: String): ParameterValue? =
@@ -134,8 +145,3 @@ public data class WaveEffect(
         public const val PARAM_ANIMATE: String = "animate"
     }
 }
-
-
-
-
-

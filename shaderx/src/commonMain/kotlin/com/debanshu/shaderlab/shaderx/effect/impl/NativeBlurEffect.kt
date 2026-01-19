@@ -16,20 +16,23 @@ import com.debanshu.shaderlab.shaderx.parameter.PixelParameter
 public data class NativeBlurEffect(
     override val radius: Float = 10f,
 ) : BlurEffect {
-
     override val id: String = ID
     override val displayName: String = "Blur"
 
-    override val parameters: List<ParameterSpec> = listOf(
-        PixelParameter(
-            id = PARAM_RADIUS,
-            label = "Radius",
-            range = 0f..50f,
-            defaultValue = radius,
-        ),
-    )
+    override val parameters: List<ParameterSpec> =
+        listOf(
+            PixelParameter(
+                id = PARAM_RADIUS,
+                label = "Radius",
+                range = 0f..50f,
+                defaultValue = radius,
+            ),
+        )
 
-    override fun withParameter(parameterId: String, value: Float): NativeBlurEffect =
+    override fun withParameter(
+        parameterId: String,
+        value: Float,
+    ): NativeBlurEffect =
         when (parameterId) {
             PARAM_RADIUS -> copy(radius = value)
             else -> this
@@ -40,11 +43,16 @@ public data class NativeBlurEffect(
         value: ParameterValue,
     ): NativeBlurEffect =
         when (parameterId) {
-            PARAM_RADIUS -> when (value) {
-                is ParameterValue.FloatValue -> copy(radius = value.value)
-                else -> this
+            PARAM_RADIUS -> {
+                when (value) {
+                    is ParameterValue.FloatValue -> copy(radius = value.value)
+                    else -> this
+                }
             }
-            else -> this
+
+            else -> {
+                this
+            }
         }
 
     override fun getTypedParameterValue(parameterId: String): ParameterValue? =
@@ -58,8 +66,3 @@ public data class NativeBlurEffect(
         public const val PARAM_RADIUS: String = "radius"
     }
 }
-
-
-
-
-
