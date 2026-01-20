@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Carousel icon: stacked cards representing the vertical scroll -->
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M34,38h40v6c0,2 -1,3 -3,3h-34c-2,0 -3,-1 -3,-3v-6z" />
+    <path
+        android:fillColor="#FFE082"
+        android:pathData="M30,48h48v24c0,2 -1,4 -4,4h-40c-2,0 -4,-2 -4,-4v-24z" />
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M34,78h40v6c0,2 -1,3 -3,3h-34c-2,0 -3,-1 -3,-3v-6z" />
+    <!-- Play button in center card -->
+    <path
+        android:fillColor="#0A0A0A"
+        android:pathData="M50,55l12,8l-12,8z" />
+</vector>
+
+

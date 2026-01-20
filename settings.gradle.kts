@@ -25,6 +25,7 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
@@ -32,6 +33,8 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-include(":composeApp")
-include(":shaderlib")
-include(":imagelib")
+include(":shaderx")
+include(":samples:ShaderLab:androidApp")
+include(":samples:ShaderLab:composeApp")
+include(":samples:ShaderLab:imagelib")
+include(":samples:VerticalCarousel")
