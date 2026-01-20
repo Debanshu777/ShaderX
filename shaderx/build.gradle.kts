@@ -9,8 +9,8 @@ plugins {
     signing
 }
 
-group = "com.github.debanshu777.shaderX"
-version = "0.1.0"
+group = "com.github.Debanshu777.ShaderX"
+version = "0.1.1"
 
 kotlin {
     applyDefaultHierarchyTemplate()
