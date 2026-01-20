@@ -51,8 +51,17 @@ ShaderX is a cross-platform shader effects library that brings GPU-powered visua
 Add the dependency to your `build.gradle.kts`:
 
 ```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+
+// build.gradle.kts
 dependencies {
-    implementation("io.github.debanshu:shaderx:1.0.0")
+    implementation("com.github.debanshu777.shaderX:shaderx:0.1.0")
 }
 ```
 

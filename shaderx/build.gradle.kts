@@ -9,8 +9,8 @@ plugins {
     signing
 }
 
-group = "io.github.debanshu"
-version = "1.0.0"
+group = "com.github.debanshu777.shaderX"
+version = "0.1.0"
 
 kotlin {
     applyDefaultHierarchyTemplate()
@@ -80,7 +80,7 @@ publishing {
             pom {
                 name.set("ShaderX")
                 description.set("Kotlin Multiplatform library for GPU shader effects in Compose")
-                url.set("https://github.com/debanshu/shaderx")
+                url.set("https://github.com/Debanshu777/ShaderX")
 
                 licenses {
                     license {
@@ -97,9 +97,9 @@ publishing {
                 }
 
                 scm {
-                    url.set("https://github.com/debanshu/shaderx")
-                    connection.set("scm:git:git://github.com/debanshu/shaderx.git")
-                    developerConnection.set("scm:git:ssh://git@github.com/debanshu/shaderx.git")
+                    url.set("https://github.com/Debanshu777/ShaderX")
+                    connection.set("scm:git:git://github.com/Debanshu777/ShaderX.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/Debanshu777/ShaderX.git")
                 }
             }
         }

@@ -106,5 +106,5 @@ dependencies {
     implementation(libs.androidx.palette)
 
     // ShaderX library
-    implementation(projects.shaderx)
+    implementation("com.github.debanshu777.shaderX:shaderx:0.1.0")
 }

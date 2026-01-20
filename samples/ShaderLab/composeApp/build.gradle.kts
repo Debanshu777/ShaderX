@@ -48,7 +48,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.kotlinx.coroutinesCore)
-            implementation(projects.shaderx)
+            implementation("com.github.debanshu777.shaderX:shaderx:0.1.0")
             implementation(projects.samples.shaderLab.imagelib)
         }
         commonTest.dependencies {
