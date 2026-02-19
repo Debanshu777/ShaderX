@@ -30,7 +30,15 @@ kotlin {
 
     jvm()
 
+    wasmJs {
+        browser()
+    }
+
     sourceSets {
+        wasmJsMain.dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-browser:0.3")
+            implementation("org.jetbrains.skiko:skiko-wasm-js:0.9.18")
+        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)

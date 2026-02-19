@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -145,7 +146,7 @@ fun BeforeAfterView(
                 Modifier
                     .offset {
                         IntOffset(
-                            (containerWidth * dividerPosition).roundToInt() - 16,
+                            (containerWidth * dividerPosition).roundToInt() - 36,
                             (containerHeight / 2).roundToInt() - 24,
                         )
                     }.width(32.dp)
@@ -208,7 +209,7 @@ fun BeforeAfterView(
 @Composable
 private fun ImageContent(
     imageSource: ImageSource,
-    renderEffect: androidx.compose.ui.graphics.RenderEffect?,
+    renderEffect: RenderEffect?,
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {

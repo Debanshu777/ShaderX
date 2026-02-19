@@ -40,6 +40,14 @@ kotlin {
 
     jvm()
 
+    wasmJs {
+        browser {
+            commonWebpackConfig {
+                outputFileName = "shaderx.js"
+            }
+        }
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -64,6 +72,10 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
             }
+        }
+
+        wasmJsMain {
+            dependsOn(skiaMain)
         }
 
         jvmTest.dependencies {

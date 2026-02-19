@@ -1,6 +1,7 @@
 package com.debanshu.shaderlab.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -58,8 +59,9 @@ fun ShaderControls(
                 .fillMaxWidth()
                 .background(
                     color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                ).padding(vertical = 16.dp),
+                    shape = RoundedCornerShape(24.dp),
+                ).padding(vertical = 16.dp)
+                .animateContentSize(),
     ) {
         Row(
             modifier =
@@ -71,7 +73,7 @@ fun ShaderControls(
         ) {
             Text(
                 text = "Shader Effects",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -79,7 +81,7 @@ fun ShaderControls(
             if (activeEffect != null) {
                 IconButton(
                     onClick = onClearEffect,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(20.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -97,41 +99,32 @@ fun ShaderControls(
             activeEffect = activeEffect,
             onEffectSelected = onEffectSelected,
         )
-
-        AnimatedVisibility(
-            visible = activeEffect != null && activeEffect.parameters.isNotEmpty(),
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically(),
-        ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            ) {
-                activeEffect?.parameters?.forEachIndexed { index, parameter ->
-                    EffectParameterControl(
-                        parameter = parameter,
-                        onValueChange = { value -> onParameterChanged(parameter.id, value) },
-                    )
-                    if (index < activeEffect.parameters.lastIndex) {
-                        Spacer(modifier = Modifier.height(8.dp))
+        if (activeEffect != null) {
+            if (activeEffect.parameters.isNotEmpty()) {
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                ) {
+                    activeEffect.parameters.forEachIndexed { index, parameter ->
+                        EffectParameterControl(
+                            parameter = parameter,
+                            onValueChange = { value -> onParameterChanged(parameter.id, value) },
+                        )
+                        if (index < activeEffect.parameters.lastIndex) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                     }
                 }
+            } else {
+                Text(
+                    text = "No adjustable parameters",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                )
             }
-        }
-
-        AnimatedVisibility(
-            visible = activeEffect != null && activeEffect.parameters.isEmpty(),
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically(),
-        ) {
-            Text(
-                text = "No adjustable parameters",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            )
         }
     }
 }
