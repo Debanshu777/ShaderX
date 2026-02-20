@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,10 +27,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.debanshu.shaderlab.imagelib.decodeImageBytes
 import com.debanshu.shaderlab.ui.components.SampleImage
 import com.debanshu.shaderlab.viewmodel.ImageSource
+
+enum class GalleryOrientation {
+    Horizontal,
+    Vertical,
+}
 
 @Composable
 fun ImageGallery(
@@ -37,40 +45,35 @@ fun ImageGallery(
     selectedImage: ImageSource,
     onSelectImage: (ImageSource) -> Unit,
     onAddImage: () -> Unit,
-    modifier: Modifier = Modifier
+    orientation: GalleryOrientation = GalleryOrientation.Horizontal,
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Text(
             text = "Select Image",
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         )
-        
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            item {
-                AddImageButton(
-                    onClick = onAddImage
+
+        when (orientation) {
+            GalleryOrientation.Horizontal -> {
+                HorizontalGallery(
+                    sampleImages = sampleImages,
+                    pickedImages = pickedImages,
+                    selectedImage = selectedImage,
+                    onSelectImage = onSelectImage,
+                    onAddImage = onAddImage,
                 )
             }
 
-            items(pickedImages) { picked ->
-                PickedImageThumbnail(
-                    image = picked,
-                    isSelected = selectedImage == picked,
-                    onClick = { onSelectImage(picked) }
-                )
-            }
-
-            items(sampleImages) { resourceName ->
-                val bundled = ImageSource.Bundled(resourceName)
-                SampleImageThumbnail(
-                    resourceName = resourceName,
-                    isSelected = selectedImage == bundled,
-                    onClick = { onSelectImage(bundled) }
+            GalleryOrientation.Vertical -> {
+                VerticalGallery(
+                    sampleImages = sampleImages,
+                    pickedImages = pickedImages,
+                    selectedImage = selectedImage,
+                    onSelectImage = onSelectImage,
+                    onAddImage = onAddImage,
                 )
             }
         }
@@ -78,37 +81,140 @@ fun ImageGallery(
 }
 
 @Composable
+private fun HorizontalGallery(
+    sampleImages: List<String>,
+    pickedImages: List<ImageSource.Picked>,
+    selectedImage: ImageSource,
+    onSelectImage: (ImageSource) -> Unit,
+    onAddImage: () -> Unit,
+) {
+    val thumbnailSize = 72.dp
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            AddImageButton(onClick = onAddImage, size = thumbnailSize)
+        }
+        items(pickedImages) { picked ->
+            PickedImageThumbnail(
+                image = picked,
+                isSelected = selectedImage == picked,
+                onClick = { onSelectImage(picked) },
+                size = thumbnailSize,
+            )
+        }
+        items(sampleImages) { resourceName ->
+            val bundled = ImageSource.Bundled(resourceName)
+            SampleImageThumbnail(
+                resourceName = resourceName,
+                isSelected = selectedImage == bundled,
+                onClick = { onSelectImage(bundled) },
+                size = thumbnailSize,
+            )
+        }
+    }
+}
+
+@Composable
+private fun VerticalGallery(
+    sampleImages: List<String>,
+    pickedImages: List<ImageSource.Picked>,
+    selectedImage: ImageSource,
+    onSelectImage: (ImageSource) -> Unit,
+    onAddImage: () -> Unit,
+) {
+    val thumbnailSize = 100.dp
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            AddImageButton(onClick = onAddImage, size = thumbnailSize)
+        }
+        items(pickedImages) { picked ->
+            VerticalThumbnailItem(
+                content = {
+                    PickedImageThumbnail(
+                        image = picked,
+                        isSelected = selectedImage == picked,
+                        onClick = { onSelectImage(picked) },
+                        size = thumbnailSize,
+                    )
+                },
+                label = "Picked",
+            )
+        }
+        items(sampleImages) { resourceName ->
+            val bundled = ImageSource.Bundled(resourceName)
+            VerticalThumbnailItem(
+                content = {
+                    SampleImageThumbnail(
+                        resourceName = resourceName,
+                        isSelected = selectedImage == bundled,
+                        onClick = { onSelectImage(bundled) },
+                        size = thumbnailSize,
+                    )
+                },
+                label = resourceName.removePrefix("sample_").replaceFirstChar { it.uppercase() },
+            )
+        }
+    }
+}
+
+@Composable
+private fun VerticalThumbnailItem(
+    content: @Composable () -> Unit,
+    label: String,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        content()
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 4.dp),
+        )
+    }
+}
+
+@Composable
 private fun AddImageButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    size: Dp = 72.dp,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .size(72.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.outline,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .size(size)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = RoundedCornerShape(12.dp),
+                ).clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Add image",
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(28.dp),
             )
             Text(
                 text = "Add",
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -119,23 +225,24 @@ private fun SampleImageThumbnail(
     resourceName: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    size: Dp = 72.dp,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .size(72.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .border(
-                width = if (isSelected) 3.dp else 0.dp,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .clickable(onClick = onClick)
+        modifier =
+            modifier
+                .size(size)
+                .clip(RoundedCornerShape(12.dp))
+                .border(
+                    width = if (isSelected) 3.dp else 0.dp,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                    shape = RoundedCornerShape(12.dp),
+                ).clickable(onClick = onClick),
     ) {
         SampleImage(
             resourceName = resourceName,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
     }
 }
@@ -145,20 +252,21 @@ private fun PickedImageThumbnail(
     image: ImageSource.Picked,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    size: Dp = 72.dp,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .size(72.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .border(
-                width = if (isSelected) 3.dp else 0.dp,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .size(size)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .border(
+                    width = if (isSelected) 3.dp else 0.dp,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                    shape = RoundedCornerShape(12.dp),
+                ).clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
     ) {
         image.bytes?.let { bytes ->
             val bitmap = remember(bytes) { decodeImageBytes(bytes) }
@@ -167,7 +275,7 @@ private fun PickedImageThumbnail(
                     bitmap = bitmap,
                     contentDescription = "Picked image",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 )
             } else {
                 ImagePlaceholder(message = "IMG")
@@ -179,18 +287,19 @@ private fun PickedImageThumbnail(
 @Composable
 private fun ImagePlaceholder(
     message: String = "IMG",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = message,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

@@ -7,14 +7,17 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -58,6 +61,7 @@ import com.debanshu.shaderlab.shaderx.factory.ImageProcessor
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.create
 import com.debanshu.shaderlab.viewmodel.ImageSource
+import com.debanshu.shaderlab.viewmodel.ShaderLabUiState
 import com.debanshu.shaderlab.viewmodel.ShaderLabViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -170,14 +174,21 @@ fun ShaderLabContent(
                             scope.launch {
                                 // Check write permission before export
                                 val permissionStatus = permissionHandler.checkPermission(ImagePermission.WRITE_IMAGES)
-                                val hasPermission = when (permissionStatus) {
-                                    PermissionStatus.GRANTED, PermissionStatus.NOT_REQUIRED -> true
-                                    PermissionStatus.NOT_REQUESTED -> {
-                                        val result = permissionHandler.requestPermission(ImagePermission.WRITE_IMAGES)
-                                        result == PermissionStatus.GRANTED || result == PermissionStatus.NOT_REQUIRED
+                                val hasPermission =
+                                    when (permissionStatus) {
+                                        PermissionStatus.GRANTED, PermissionStatus.NOT_REQUIRED -> {
+                                            true
+                                        }
+
+                                        PermissionStatus.NOT_REQUESTED -> {
+                                            val result = permissionHandler.requestPermission(ImagePermission.WRITE_IMAGES)
+                                            result == PermissionStatus.GRANTED || result == PermissionStatus.NOT_REQUIRED
+                                        }
+
+                                        PermissionStatus.DENIED -> {
+                                            false
+                                        }
                                     }
-                                    PermissionStatus.DENIED -> false
-                                }
 
                                 if (!hasPermission) {
                                     snackbarHostState.showSnackbar("Storage access denied. Please grant permission in settings.")
@@ -255,39 +266,163 @@ fun ShaderLabContent(
             )
         },
     ) { paddingValues ->
-        Column(
+        val onAddImage: () -> Unit = {
+            scope.launch {
+                val status = permissionHandler.checkPermission(ImagePermission.READ_IMAGES)
+                when (status) {
+                    PermissionStatus.GRANTED, PermissionStatus.NOT_REQUIRED -> {
+                        imagePicker.launch()
+                    }
+
+                    PermissionStatus.NOT_REQUESTED -> {
+                        val result = permissionHandler.requestPermission(ImagePermission.READ_IMAGES)
+                        if (result == PermissionStatus.GRANTED || result == PermissionStatus.NOT_REQUIRED) {
+                            imagePicker.launch()
+                        } else {
+                            snackbarHostState.showSnackbar("Photo access denied. Please grant permission in settings.")
+                        }
+                    }
+
+                    PermissionStatus.DENIED -> {
+                        snackbarHostState.showSnackbar("Photo access denied. Please grant permission in settings.")
+                    }
+                }
+            }
+        }
+
+        BoxWithConstraints(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState()),
+                    .padding(paddingValues),
+        ) {
+            val widthDp = maxWidth
+            when {
+                widthDp >= 1200.dp -> {
+                    ExpandedLayout(
+                        uiState = uiState,
+                        viewModel = viewModel,
+                        availableEffects = availableEffects,
+                        onAddImage = onAddImage,
+                    )
+                }
+
+                widthDp >= 600.dp -> {
+                    MediumLayout(
+                        uiState = uiState,
+                        viewModel = viewModel,
+                        availableEffects = availableEffects,
+                        onAddImage = onAddImage,
+                    )
+                }
+
+                else -> {
+                    CompactLayout(
+                        uiState = uiState,
+                        viewModel = viewModel,
+                        availableEffects = availableEffects,
+                        onAddImage = onAddImage,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CompactLayout(
+    uiState: ShaderLabUiState,
+    viewModel: ShaderLabViewModel,
+    availableEffects: List<ShaderEffect>,
+    onAddImage: () -> Unit,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+    ) {
+        ImageGallery(
+            sampleImages = uiState.sampleImages,
+            pickedImages = uiState.pickedImages,
+            selectedImage = uiState.selectedImage,
+            onSelectImage = { viewModel.selectImage(it) },
+            onAddImage = onAddImage,
+            orientation = GalleryOrientation.Horizontal,
+            modifier = Modifier.padding(vertical = 8.dp),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        AnimatedContent(
+            targetState = uiState.showBeforeAfter,
+            transitionSpec = {
+                fadeIn() togetherWith fadeOut()
+            },
+            label = "previewMode",
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+        ) { showComparison ->
+            if (showComparison) {
+                BeforeAfterView(
+                    imageSource = uiState.selectedImage,
+                    effect = uiState.activeEffect,
+                    onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(4f / 3f)
+                            .clip(RoundedCornerShape(16.dp)),
+                )
+            } else {
+                ShaderPreview(
+                    imageSource = uiState.selectedImage,
+                    effect = uiState.activeEffect,
+                    onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(4f / 3f),
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ShaderControls(
+            availableEffects = availableEffects,
+            activeEffect = uiState.activeEffect,
+            onEffectSelected = { viewModel.setActiveEffect(it) },
+            onParameterChanged = { parameterId, value -> viewModel.updateEffectParameter(parameterId, value) },
+            onClearEffect = { viewModel.setActiveEffect(null) },
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun MediumLayout(
+    uiState: ShaderLabUiState,
+    viewModel: ShaderLabViewModel,
+    availableEffects: List<ShaderEffect>,
+    onAddImage: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        Column(
+            modifier = Modifier.weight(1.4f).fillMaxHeight(),
         ) {
             ImageGallery(
                 sampleImages = uiState.sampleImages,
                 pickedImages = uiState.pickedImages,
                 selectedImage = uiState.selectedImage,
                 onSelectImage = { viewModel.selectImage(it) },
-                onAddImage = {
-                    scope.launch {
-                        val status = permissionHandler.checkPermission(ImagePermission.READ_IMAGES)
-                        when (status) {
-                            PermissionStatus.GRANTED, PermissionStatus.NOT_REQUIRED -> {
-                                imagePicker.launch()
-                            }
-                            PermissionStatus.NOT_REQUESTED -> {
-                                val result = permissionHandler.requestPermission(ImagePermission.READ_IMAGES)
-                                if (result == PermissionStatus.GRANTED || result == PermissionStatus.NOT_REQUIRED) {
-                                    imagePicker.launch()
-                                } else {
-                                    snackbarHostState.showSnackbar("Photo access denied. Please grant permission in settings.")
-                                }
-                            }
-                            PermissionStatus.DENIED -> {
-                                snackbarHostState.showSnackbar("Photo access denied. Please grant permission in settings.")
-                            }
-                        }
-                    }
-                },
+                onAddImage = onAddImage,
+                orientation = GalleryOrientation.Horizontal,
                 modifier = Modifier.padding(vertical = 8.dp),
             )
 
@@ -302,6 +437,7 @@ fun ShaderLabContent(
                 modifier =
                     Modifier
                         .fillMaxWidth()
+                        .weight(1f)
                         .padding(horizontal = 16.dp),
             ) { showComparison ->
                 if (showComparison) {
@@ -327,18 +463,89 @@ fun ShaderLabContent(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ShaderControls(
-                availableEffects = availableEffects,
-                activeEffect = uiState.activeEffect,
-                onEffectSelected = { viewModel.setActiveEffect(it) },
-                onParameterChanged = { parameterId, value -> viewModel.updateEffectParameter(parameterId, value) },
-                onClearEffect = { viewModel.setActiveEffect(null) },
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
+
+        ShaderControls(
+            availableEffects = availableEffects,
+            activeEffect = uiState.activeEffect,
+            onEffectSelected = { viewModel.setActiveEffect(it) },
+            onParameterChanged = { parameterId, value -> viewModel.updateEffectParameter(parameterId, value) },
+            onClearEffect = { viewModel.setActiveEffect(null) },
+            sidePanel = true,
+            modifier = Modifier.weight(1f).fillMaxHeight().padding(16.dp),
+        )
+    }
+}
+
+@Composable
+private fun ExpandedLayout(
+    uiState: ShaderLabUiState,
+    viewModel: ShaderLabViewModel,
+    availableEffects: List<ShaderEffect>,
+    onAddImage: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        Column(
+            modifier =
+                Modifier.width(220.dp).fillMaxHeight().padding(
+                    top = 16.dp,
+                    bottom = 16.dp,
+                    end = 8.dp
+            ),
+                ) {
+            ImageGallery(
+                sampleImages = uiState.sampleImages,
+                pickedImages = uiState.pickedImages,
+                selectedImage = uiState.selectedImage,
+                onSelectImage = { viewModel.selectImage(it) },
+                onAddImage = onAddImage,
+                orientation = GalleryOrientation.Vertical,
+                modifier = Modifier.fillMaxHeight(),
+            )
+        }
+
+        AnimatedContent(
+            targetState = uiState.showBeforeAfter,
+            transitionSpec = {
+                fadeIn() togetherWith fadeOut()
+            },
+            label = "previewMode",
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .padding(horizontal = 8.dp),
+        ) { showComparison ->
+            if (showComparison) {
+                BeforeAfterView(
+                    imageSource = uiState.selectedImage,
+                    effect = uiState.activeEffect,
+                    onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(16.dp)),
+                )
+            } else {
+                ShaderPreview(
+                    imageSource = uiState.selectedImage,
+                    effect = uiState.activeEffect,
+                    onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
+
+        ShaderControls(
+            availableEffects = availableEffects,
+            activeEffect = uiState.activeEffect,
+            onEffectSelected = { viewModel.setActiveEffect(it) },
+            onParameterChanged = { parameterId, value -> viewModel.updateEffectParameter(parameterId, value) },
+            onClearEffect = { viewModel.setActiveEffect(null) },
+            sidePanel = true,
+            modifier = Modifier.width(300.dp).fillMaxHeight().padding(top = 16.dp, bottom = 16.dp, start = 8.dp),
+        )
     }
 }

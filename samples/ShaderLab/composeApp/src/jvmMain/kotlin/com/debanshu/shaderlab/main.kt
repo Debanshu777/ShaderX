@@ -9,7 +9,7 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "ShaderLab",
-        state = rememberWindowState(width = 900.dp, height = 700.dp)
+        state = rememberWindowState(width = 1400.dp, height = 900.dp)
     ) {
         ShaderLabApp()
     }

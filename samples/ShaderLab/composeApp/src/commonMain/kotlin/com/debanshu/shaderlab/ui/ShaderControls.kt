@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,16 +53,18 @@ fun ShaderControls(
     onEffectSelected: (ShaderEffect) -> Unit,
     onParameterChanged: (String, Float) -> Unit,
     onClearEffect: () -> Unit,
+    sidePanel: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
             modifier
-                .fillMaxWidth()
+                .then(if (sidePanel) Modifier.fillMaxHeight() else Modifier)
                 .background(
                     color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(24.dp),
-                ).padding(vertical = 16.dp)
+                    shape = RoundedCornerShape(if (sidePanel) 0.dp else 24.dp),
+                )
+                .padding(vertical = 16.dp)
                 .animateContentSize(),
     ) {
         Row(
@@ -94,26 +98,53 @@ fun ShaderControls(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        EffectChipRow(
-            effects = availableEffects,
-            activeEffect = activeEffect,
-            onEffectSelected = onEffectSelected,
-        )
+        if (sidePanel) {
+            EffectChipColumn(
+                effects = availableEffects,
+                activeEffect = activeEffect,
+                onEffectSelected = onEffectSelected,
+            )
+        } else {
+            EffectChipRow(
+                effects = availableEffects,
+                activeEffect = activeEffect,
+                onEffectSelected = onEffectSelected,
+            )
+        }
+
         if (activeEffect != null) {
             if (activeEffect.parameters.isNotEmpty()) {
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                ) {
-                    activeEffect.parameters.forEachIndexed { index, parameter ->
-                        EffectParameterControl(
-                            parameter = parameter,
-                            onValueChange = { value -> onParameterChanged(parameter.id, value) },
-                        )
-                        if (index < activeEffect.parameters.lastIndex) {
-                            Spacer(modifier = Modifier.height(8.dp))
+                if (sidePanel) {
+                    LazyColumn(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                        contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(activeEffect.parameters, key = { it.id }) { parameter ->
+                            EffectParameterControl(
+                                parameter = parameter,
+                                onValueChange = { value -> onParameterChanged(parameter.id, value) },
+                            )
+                        }
+                    }
+                } else {
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                    ) {
+                        activeEffect.parameters.forEachIndexed { index, parameter ->
+                            EffectParameterControl(
+                                parameter = parameter,
+                                onValueChange = { value -> onParameterChanged(parameter.id, value) },
+                            )
+                            if (index < activeEffect.parameters.lastIndex) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
                         }
                     }
                 }
@@ -245,6 +276,28 @@ private fun EffectChipRow(
                 effect = effect,
                 isSelected = activeEffect?.id == effect.id,
                 onClick = { onEffectSelected(effect) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun EffectChipColumn(
+    effects: List<ShaderEffect>,
+    activeEffect: ShaderEffect?,
+    onEffectSelected: (ShaderEffect) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        effects.forEach { effect ->
+            EffectChip(
+                effect = effect,
+                isSelected = activeEffect?.id == effect.id,
+                onClick = { onEffectSelected(effect) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             )
         }
     }
