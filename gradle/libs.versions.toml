@@ -1,19 +1,20 @@
 [versions]
-agp = "9.0.0"
+agp = "9.0.1"
+androidx-camera = "1.5.3"
 android-compileSdk = "36"
 android-minSdk = "33"
 android-targetSdk = "36"
-androidx-activity = "1.12.2"
+androidx-activity = "1.12.4"
 androidx-core = "1.17.0"
 androidx-lifecycle = "2.9.6"
 buildkonfig = "0.17.1"
 composeHotReload = "1.0.0"
-composeMultiplatform = "1.10.0"
-kotlin = "2.3.0"
+composeMultiplatform = "1.10.1"
+kotlin = "2.3.10"
 kotlinx-coroutines = "1.10.2"
-kotlinx-serialization = "1.9.0"
-ktor = "3.3.3"
-landscapist = "2.8.2"
+kotlinx-serialization = "1.10.0"
+ktor = "3.4.0"
+landscapist = "2.9.5"
 mpfilepicker = "3.1.0"
 palette = "1.0.0"
 
@@ -23,6 +24,9 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "androidx-camera" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "androidx-camera" }
+androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "androidx-camera" }
 androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
