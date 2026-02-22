@@ -50,7 +50,9 @@ import kotlinx.coroutines.isActive
  * ```
  *
  * @param effect The shader effect to apply, or null to disable
- * @param factory The factory to use for creating render effects (defaults to platform factory)
+ * @param factory The factory to use for creating render effects (defaults to platform factory).
+ *   Use a shared factory (e.g. `val factory = remember { ShaderFactory.create() }` at a
+ *   higher scope) to share the shader cache across multiple composables.
  * @param onError Optional callback invoked when shader creation fails
  * @return Modifier with the shader effect applied
  */
@@ -198,6 +200,11 @@ public fun <T : ShaderEffect> rememberShaderEffect(effect: T): T {
  * This is useful when you need direct access to the RenderEffect,
  * for example when combining multiple effects or applying them manually.
  *
+ * **For animated effects:** Pass an effect that updates over time (e.g. from
+ * [rememberShaderEffect]). The [remember] keys include [effect], so a new
+ * [RenderEffect] is created when the effect instance changes. Prefer
+ * [Modifier.shaderEffect] for most use cases as it handles animation automatically.
+ *
  * ## Usage
  * ```kotlin
  * val renderEffect = rememberRenderEffect(GrayscaleEffect(), width, height)
@@ -235,6 +242,9 @@ public fun rememberRenderEffect(
  *
  * Unlike [rememberRenderEffect], this returns the full [ShaderResult]
  * allowing you to handle errors appropriately.
+ *
+ * **For animated effects:** Pass an effect from [rememberShaderEffect] so
+ * the result updates when the effect changes. See [rememberRenderEffect].
  *
  * @param effect The shader effect definition
  * @param width Width of the render target

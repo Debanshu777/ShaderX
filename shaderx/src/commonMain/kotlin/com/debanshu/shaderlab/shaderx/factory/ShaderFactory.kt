@@ -68,9 +68,14 @@ public interface ShaderFactory {
 /**
  * Creates the platform-specific [ShaderFactory] instance.
  *
- * This is an expect function that each platform implements.
+ * Use a shared factory instance when applying effects across multiple composables
+ * to benefit from a shared shader cache. Each call creates a new factory with its
+ * own cache.
+ *
+ * @param maxCacheSize Maximum number of compiled shaders to cache (default: 50).
+ *   Reduce for memory-constrained environments.
  */
-public expect fun ShaderFactory.Companion.create(): ShaderFactory
+public expect fun ShaderFactory.Companion.create(maxCacheSize: Int = BaseShaderFactory.DEFAULT_CACHE_SIZE): ShaderFactory
 
 /**
  * Abstract base class for [ShaderFactory] implementations.
@@ -162,9 +167,6 @@ public abstract class BaseShaderFactory(
     /**
      * Chains two render effects together.
      *
-     * The default implementation returns the second effect.
-     * Platform implementations should override to properly chain effects.
-     *
      * @param first The first effect to apply
      * @param second The second effect to apply on top
      * @return The combined effect
@@ -213,17 +215,17 @@ public abstract class BaseShaderFactory(
      *
      * @param cache The cache map to manage
      */
-    protected fun <K, V> evictIfNeeded(cache: MutableMap<K, V>) {
+    internal fun <K, V> evictIfNeeded(cache: MutableMap<K, V>) {
         while (cache.size > maxCacheSize) {
             val oldestKey = cache.keys.firstOrNull() ?: break
             cache.remove(oldestKey)
         }
     }
 
-    public companion object {
+    internal companion object {
         /**
          * Default maximum number of cached shaders.
          */
-        public const val DEFAULT_CACHE_SIZE: Int = 50
+        internal const val DEFAULT_CACHE_SIZE: Int = 50
     }
 }

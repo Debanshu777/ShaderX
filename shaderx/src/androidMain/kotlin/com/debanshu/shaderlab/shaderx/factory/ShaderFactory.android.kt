@@ -4,6 +4,7 @@ import android.graphics.RuntimeShader
 import android.graphics.Shader
 import android.os.Build
 import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.asAndroidRenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
@@ -102,7 +103,7 @@ internal class AndroidShaderFactory(
 
     override fun platformNotSupportedError(): ShaderError =
         ShaderError.PlatformNotSupported(
-            "RuntimeShader requires Android 13 (API 33) or higher. Current: ${Build.VERSION.SDK_INT}"
+            "Shader effects require Android 13 or higher on this device",
         )
 
     override fun clearCache() {
@@ -113,12 +114,13 @@ internal class AndroidShaderFactory(
         get() = shaderCache.size
 
     override fun chainEffects(first: RenderEffect, second: RenderEffect): RenderEffect {
-        // On Android, we need to access the underlying Android RenderEffect
-        // Since Compose RenderEffect wraps Android RenderEffect, we chain them
-        // using Android's RenderEffect.createChainEffect (API 31+)
-        // For now, return second as a simple fallback
-        // Full chaining would require unwrapping Compose RenderEffect
-        return second
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val firstNative = first.asAndroidRenderEffect()
+            val secondNative = second.asAndroidRenderEffect()
+            AndroidRenderEffect.createChainEffect(secondNative, firstNative).asComposeRenderEffect()
+        } else {
+            second
+        }
     }
 
     internal companion object {
@@ -145,4 +147,5 @@ internal class AndroidShaderFactory(
     }
 }
 
-public actual fun ShaderFactory.Companion.create(): ShaderFactory = AndroidShaderFactory()
+public actual fun ShaderFactory.Companion.create(maxCacheSize: Int): ShaderFactory =
+    AndroidShaderFactory(maxCacheSize)

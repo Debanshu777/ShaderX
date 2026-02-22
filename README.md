@@ -22,8 +22,9 @@ ShaderX is a cross-platform shader effects library that brings GPU-powered visua
 
 - **Cross-Platform Support**
   - 🤖 Android (API 33+ with AGSL)
-  - 🍎 iOS (arm64, Simulator)
-  - 🖥️ Desktop (Windows, macOS, Linux with Skia)
+  - 🍎 iOS (arm64, Simulator) via Skia
+  - 🖥️ Desktop (Windows, macOS, Linux) via Skia
+  - 🌐 Web (WASM) via Skia
 
 - **Rich Effects Library**
   - 🌫️ **Blur** - Hardware-accelerated Gaussian blur
@@ -42,7 +43,7 @@ ShaderX is a cross-platform shader effects library that brings GPU-powered visua
   - 🎬 Built-in animation support
   - 🛠️ Custom shader support (AGSL/SkSL)
   - ❌ Comprehensive error handling with `ShaderResult<T>`
-  - 🔗 Effect chaining with `CompositeEffect`
+  - 🔗 Effect composition with `CompositeEffect` (see limitations below)
 
 ## 🚀 Getting Started
 
@@ -71,7 +72,7 @@ dependencies {
 
 ```kotlin
 import com.debanshu.shaderlab.shaderx.compose.shaderEffect
-import com.debanshu.shaderlab.shaderx.effects.GrayscaleEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.GrayscaleEffect
 
 @Composable
 fun GrayscaleImage() {
@@ -87,7 +88,7 @@ fun GrayscaleImage() {
 
 ```kotlin
 import com.debanshu.shaderlab.shaderx.compose.rememberShaderEffect
-import com.debanshu.shaderlab.shaderx.effects.WaveEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect
 
 @Composable
 fun AnimatedWaveImage() {
@@ -157,6 +158,25 @@ data class MyEffect(
 }
 ```
 
+## ⚠️ Known Limitations
+
+### CompositeEffect Chaining
+
+Effect chaining is supported on **Android (API 31+)**. On iOS, Desktop, and Web, only the last effect in a composite is applied due to platform API limitations.
+
+### ShaderFactory Lifecycle
+
+Each `Modifier.shaderEffect()` call creates its own factory by default, so shader caches are not shared. For better cache reuse across many composables, create a shared factory and pass it:
+
+```kotlin
+val factory = remember { ShaderFactory.create() }
+Image(
+    modifier = Modifier.shaderEffect(effect, factory = factory)
+)
+```
+
+Use `ShaderFactory.create(maxCacheSize = 25)` for memory-constrained environments.
+
 ## ❌ Error Handling
 
 The library uses `ShaderResult<T>` for operations that may fail:
@@ -198,7 +218,8 @@ result
 |----------|---------------|-------------|
 | Android | AGSL (RuntimeShader) | API 33 |
 | iOS | Skia | iOS 14+ |
-| Desktop | Skia | JDK 11+ |
+| Desktop (JVM) | Skia | JDK 11+ |
+| Web | Skia (Skiko WASM) | Modern browsers |
 
 ### **Project Structure**
 
@@ -246,7 +267,7 @@ ShaderLab/
 | `RuntimeShaderEffect` | Effects using custom AGSL/SkSL shaders |
 | `AnimatedShaderEffect` | Effects with time-based animations |
 | `NativeEffect` | Platform-native effects (e.g., hardware blur) |
-| `CompositeEffect` | Chain multiple effects together |
+| `CompositeEffect` | Chain multiple effects (Android; other platforms apply last only) |
 
 ## 📦 Build Commands
 

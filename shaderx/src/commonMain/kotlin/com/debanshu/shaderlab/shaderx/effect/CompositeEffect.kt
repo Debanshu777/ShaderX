@@ -7,29 +7,25 @@ import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
  * A composite effect that combines multiple shader effects in sequence.
  *
  * Each effect is applied in order, with the output of one becoming
- * the input of the next.
+ * the input of the next. Chaining is supported on Android (API 31+);
+ * on other platforms only the last effect is applied.
  *
  * ## Usage
  * ```kotlin
- * // Using the + operator
  * val effect = GrayscaleEffect() + VignetteEffect()
  *
- * // Using CompositeEffect directly
+ * // Or using CompositeEffect directly
  * val effect = CompositeEffect.of(
  *     GrayscaleEffect(),
  *     VignetteEffect(),
  *     NativeBlurEffect(radius = 5f)
  * )
  *
- * // Apply to image
  * Image(
  *     painter = painterResource("photo.png"),
  *     modifier = Modifier.shaderEffect(effect)
  * )
  * ```
- *
- * Note: Effect composition requires platform support for chaining render effects.
- * On platforms that don't support effect chaining, only the first effect will be applied.
  *
  * @property effects The list of effects to apply in order
  */
@@ -136,6 +132,9 @@ public data class CompositeEffect(
 
 /**
  * Creates a prefixed version of a parameter spec for composite effects.
+ *
+ * Exhaustive over [ParameterSpec] sealed hierarchy. Add handling for any new
+ * [ParameterSpec] subtypes when extending the parameter system.
  */
 private fun createPrefixedParameter(effectIndex: Int, delegate: ParameterSpec): ParameterSpec {
     return when (delegate) {

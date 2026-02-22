@@ -3,6 +3,12 @@ package com.debanshu.shaderlab.shaderx.parameter
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
+private fun ParameterSpec.convertFloatToValue(value: Float): ParameterValue = when (this) {
+    is ColorParameter -> ParameterValue.ColorValue(defaultColor)
+    is ToggleParameter -> ParameterValue.BooleanValue(value > 0.5f)
+    else -> ParameterValue.FloatValue(value)
+}
+
 /**
  * Utility object for formatting parameter values for display.
  *
@@ -18,13 +24,8 @@ public object ParameterFormatter {
      * @param value The current value to format
      * @return Formatted string representation
      */
-    public fun format(parameter: ParameterSpec, value: Float): String = when (parameter) {
-        is FloatParameter -> formatFloat(value, parameter.decimalPlaces)
-        is PercentageParameter -> "${(value * 100).toInt()}%"
-        is PixelParameter -> "${value.toInt()}px"
-        is ToggleParameter -> if (value > 0.5f) "On" else "Off"
-        is ColorParameter -> formatColor(parameter.defaultColor)
-    }
+    public fun format(parameter: ParameterSpec, value: Float): String =
+        formatTyped(parameter, parameter.convertFloatToValue(value))
 
     /**
      * Formats a typed parameter value for display based on its type.

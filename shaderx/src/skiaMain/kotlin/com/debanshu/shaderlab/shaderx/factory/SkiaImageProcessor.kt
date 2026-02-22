@@ -34,9 +34,11 @@ internal class SkiaImageProcessor : ImageProcessor {
             val effectWidth = if (width > 0) width else imageWidth.toFloat()
             val effectHeight = if (height > 0) height else imageHeight.toFloat()
 
-            val imageFilter =
-                createImageFilter(effect, effectWidth, effectHeight)
-                    ?: return ShaderResult.success(imageBytes) // Return original if filter creation fails
+            val imageFilterResult = createImageFilter(effect, effectWidth, effectHeight)
+            val imageFilter = when (imageFilterResult) {
+                is ShaderResult.Success -> imageFilterResult.value
+                is ShaderResult.Failure -> return ShaderResult.failure(imageFilterResult.error)
+            }
 
             val surface = Surface.makeRasterN32Premul(imageWidth, imageHeight)
             val canvas = surface.canvas
@@ -56,7 +58,7 @@ internal class SkiaImageProcessor : ImageProcessor {
                 )
         } catch (e: Exception) {
             ShaderResult.failure(
-                ShaderError.ProcessingError("Image processing failed: ${e.message}", e),
+                ShaderError.ProcessingError("Image processing failed", e),
             )
         }
     }
@@ -65,32 +67,54 @@ internal class SkiaImageProcessor : ImageProcessor {
         effect: ShaderEffect,
         width: Float,
         height: Float,
-    ): ImageFilter? =
+    ): ShaderResult<ImageFilter> =
         when (effect) {
             is BlurEffect -> {
-                val radiusPx = effect.radius.coerceAtLeast(ShaderConstants.MIN_BLUR_RADIUS)
-                ImageFilter.makeBlur(radiusPx, radiusPx, FilterTileMode.CLAMP)
+                ShaderResult.runCatching {
+                    val radiusPx = effect.radius.coerceAtLeast(ShaderConstants.MIN_BLUR_RADIUS)
+                    ImageFilter.makeBlur(radiusPx, radiusPx, FilterTileMode.CLAMP)
+                }
             }
 
             is NativeEffect -> {
-                null
+                ShaderResult.failure(
+                    ShaderError.UnsupportedEffect(
+                        "Native effect not supported for offline processing: ${effect::class.simpleName}",
+                        effect.id,
+                    ),
+                )
             }
 
-            // Other native effects not yet supported
             is RuntimeShaderEffect -> {
                 try {
                     val runtimeEffect = RuntimeEffect.makeForShader(effect.shaderSource)
                     val builder = RuntimeShaderBuilder(runtimeEffect)
                     val uniforms = effect.buildUniforms(width, height)
                     SkiaShaderFactory.applyUniforms(builder, uniforms)
-                    ImageFilter.makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
+                    val filter =
+                        ImageFilter.makeRuntimeShader(
+                            builder,
+                            ShaderConstants.CONTENT_UNIFORM_NAME,
+                            null,
+                        )
+                    ShaderResult.success(filter)
                 } catch (e: Exception) {
-                    null
+                    ShaderResult.failure(
+                        ShaderError.CompilationError(
+                            "Failed to compile shader for image processing",
+                            effect.shaderSource,
+                        ),
+                    )
                 }
             }
 
             else -> {
-                null
+                ShaderResult.failure(
+                    ShaderError.UnsupportedEffect(
+                        "Effect type not supported for offline processing: ${effect::class.simpleName}",
+                        effect.id,
+                    ),
+                )
             }
         }
 }
