@@ -19,8 +19,7 @@ import org.jetbrains.skia.Surface
 /**
  * Skia-based implementation of [ImageProcessor] for iOS and Desktop platforms.
  */
-internal class SkiaImageProcessorImpl : ImageProcessor {
-
+internal class SkiaImageProcessor : ImageProcessor {
     override fun process(
         imageBytes: ByteArray,
         effect: ShaderEffect,
@@ -35,15 +34,17 @@ internal class SkiaImageProcessorImpl : ImageProcessor {
             val effectWidth = if (width > 0) width else imageWidth.toFloat()
             val effectHeight = if (height > 0) height else imageHeight.toFloat()
 
-            val imageFilter = createImageFilter(effect, effectWidth, effectHeight)
-                ?: return ShaderResult.success(imageBytes) // Return original if filter creation fails
+            val imageFilter =
+                createImageFilter(effect, effectWidth, effectHeight)
+                    ?: return ShaderResult.success(imageBytes) // Return original if filter creation fails
 
             val surface = Surface.makeRasterN32Premul(imageWidth, imageHeight)
             val canvas = surface.canvas
 
-            val paint = Paint().apply {
-                this.imageFilter = imageFilter
-            }
+            val paint =
+                Paint().apply {
+                    this.imageFilter = imageFilter
+                }
             canvas.drawImage(image, 0f, 0f, paint)
 
             val resultImage = surface.makeImageSnapshot()
@@ -51,11 +52,11 @@ internal class SkiaImageProcessorImpl : ImageProcessor {
 
             data?.bytes?.let { ShaderResult.success(it) }
                 ?: ShaderResult.failure(
-                    ShaderError.ProcessingError("Failed to encode result image")
+                    ShaderError.ProcessingError("Failed to encode result image"),
                 )
         } catch (e: Exception) {
             ShaderResult.failure(
-                ShaderError.ProcessingError("Image processing failed: ${e.message}", e)
+                ShaderError.ProcessingError("Image processing failed: ${e.message}", e),
             )
         }
     }
@@ -64,25 +65,32 @@ internal class SkiaImageProcessorImpl : ImageProcessor {
         effect: ShaderEffect,
         width: Float,
         height: Float,
-    ): ImageFilter? {
-        return when (effect) {
+    ): ImageFilter? =
+        when (effect) {
             is BlurEffect -> {
                 val radiusPx = effect.radius.coerceAtLeast(ShaderConstants.MIN_BLUR_RADIUS)
                 ImageFilter.makeBlur(radiusPx, radiusPx, FilterTileMode.CLAMP)
             }
-            is NativeEffect -> null // Other native effects not yet supported
+
+            is NativeEffect -> {
+                null
+            }
+
+            // Other native effects not yet supported
             is RuntimeShaderEffect -> {
                 try {
                     val runtimeEffect = RuntimeEffect.makeForShader(effect.shaderSource)
                     val builder = RuntimeShaderBuilder(runtimeEffect)
                     val uniforms = effect.buildUniforms(width, height)
-                    SkiaShaderFactoryImpl.applyUniforms(builder, uniforms)
+                    SkiaShaderFactory.applyUniforms(builder, uniforms)
                     ImageFilter.makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
                 } catch (e: Exception) {
                     null
                 }
             }
-            else -> null
+
+            else -> {
+                null
+            }
         }
-    }
 }

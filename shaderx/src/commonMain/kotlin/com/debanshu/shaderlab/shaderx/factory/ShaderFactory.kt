@@ -66,16 +66,6 @@ public interface ShaderFactory {
 }
 
 /**
- * Context information passed to shader factories.
- *
- * Contains dimensional information needed for uniform calculations.
- */
-public data class ShaderContext(
-    public val width: Float,
-    public val height: Float,
-)
-
-/**
  * Creates the platform-specific [ShaderFactory] instance.
  *
  * This is an expect function that each platform implements.
@@ -94,7 +84,6 @@ public expect fun ShaderFactory.Companion.create(): ShaderFactory
 public abstract class BaseShaderFactory(
     private val maxCacheSize: Int = DEFAULT_CACHE_SIZE,
 ) : ShaderFactory {
-
     /**
      * Routes the effect to the appropriate creation method based on its type.
      */
@@ -108,15 +97,26 @@ public abstract class BaseShaderFactory(
         }
 
         return when (effect) {
-            is CompositeEffect -> createCompositeEffect(effect, width, height)
-            is NativeEffect -> createNativeEffect(effect)
-            is RuntimeShaderEffect -> createRuntimeShaderEffect(effect, width, height)
-            else -> ShaderResult.failure(
-                ShaderError.UnsupportedEffect(
-                    "Unknown effect type: ${effect::class.simpleName}",
-                    effect.id
+            is CompositeEffect -> {
+                createCompositeEffect(effect, width, height)
+            }
+
+            is NativeEffect -> {
+                createNativeEffect(effect)
+            }
+
+            is RuntimeShaderEffect -> {
+                createRuntimeShaderEffect(effect, width, height)
+            }
+
+            else -> {
+                ShaderResult.failure(
+                    ShaderError.UnsupportedEffect(
+                        "Unknown effect type: ${effect::class.simpleName}",
+                        effect.id,
+                    ),
                 )
-            )
+            }
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class BaseShaderFactory(
     ): ShaderResult<RenderEffect> {
         if (effect.effects.isEmpty()) {
             return ShaderResult.failure(
-                ShaderError.UnsupportedEffect("Empty composite effect", effect.id)
+                ShaderError.UnsupportedEffect("Empty composite effect", effect.id),
             )
         }
 
@@ -147,12 +147,13 @@ public abstract class BaseShaderFactory(
 
         // Chain each subsequent effect
         for (i in 1 until effect.effects.size) {
-            currentResult = currentResult.map { current ->
-                val nextResult = createRenderEffect(effect.effects[i], width, height)
-                nextResult.getOrNull()?.let { next ->
-                    chainEffects(current, next)
-                } ?: current
-            }
+            currentResult =
+                currentResult.map { current ->
+                    val nextResult = createRenderEffect(effect.effects[i], width, height)
+                    nextResult.getOrNull()?.let { next ->
+                        chainEffects(current, next)
+                    } ?: current
+                }
         }
 
         return currentResult
@@ -168,7 +169,10 @@ public abstract class BaseShaderFactory(
      * @param second The second effect to apply on top
      * @return The combined effect
      */
-    protected open fun chainEffects(first: RenderEffect, second: RenderEffect): RenderEffect {
+    protected open fun chainEffects(
+        first: RenderEffect,
+        second: RenderEffect,
+    ): RenderEffect {
         // Default: just return second effect
         // Platform implementations override with proper chaining
         return second

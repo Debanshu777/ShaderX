@@ -1,3 +1,6 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -10,8 +13,14 @@ plugins {
 kotlin {
     androidLibrary {
         namespace = "com.debanshu.shaderlab.imagelib"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
 
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -36,17 +45,17 @@ kotlin {
 
     sourceSets {
         wasmJsMain.dependencies {
-            implementation("org.jetbrains.kotlinx:kotlinx-browser:0.3")
-            implementation("org.jetbrains.skiko:skiko-wasm-js:0.9.18")
+            implementation(libs.kotlinx.browser)
+            implementation(libs.skiko.wasm.js)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.ui)
             implementation(libs.kotlinx.coroutinesCore)
         }
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.core.ktx)
         }

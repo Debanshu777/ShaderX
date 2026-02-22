@@ -17,10 +17,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class EffectsTest {
-
     @Test
     fun grayscaleEffect_hasCorrectId() {
         val effect = GrayscaleEffect()
@@ -137,25 +137,26 @@ class EffectsTest {
 
     @Test
     fun allEffects_haveNonEmptyShaderSource() {
-        val effects = listOf(
-            GrayscaleEffect(),
-            SepiaEffect(),
-            VignetteEffect(),
-            PixelateEffect(),
-            ChromaticAberrationEffect(),
-            InvertEffect,
-            WaveEffect(),
-            GradientEffect()
-        )
+        val effects =
+            listOf(
+                GrayscaleEffect(),
+                SepiaEffect(),
+                VignetteEffect(),
+                PixelateEffect(),
+                ChromaticAberrationEffect(),
+                InvertEffect,
+                WaveEffect(),
+                GradientEffect(),
+            )
 
         effects.forEach { effect ->
             assertTrue(
                 effect.shaderSource.isNotBlank(),
-                "Effect ${effect.id} should have non-empty shader source"
+                "Effect ${effect.id} should have non-empty shader source",
             )
             assertTrue(
                 effect.shaderSource.contains("main("),
-                "Effect ${effect.id} should contain main function"
+                "Effect ${effect.id} should contain main function",
             )
         }
     }
@@ -186,10 +187,11 @@ class EffectsTest {
 
     @Test
     fun gradientEffect_buildsColorUniforms() {
-        val effect = GradientEffect(
-            color1 = 0xFFFF0000,  // Red
-            color2 = 0xFF00FF00   // Green
-        )
+        val effect =
+            GradientEffect(
+                color1 = 0xFFFF0000, // Red
+                color2 = 0xFF00FF00, // Green
+            )
         val uniforms = effect.buildUniforms(100f, 100f)
 
         // Should have: resolution, color1, color2, intensity
@@ -200,7 +202,7 @@ class EffectsTest {
 
         val color1Uniform = colorUniforms.find { it.name == "color1" }
         assertTrue(color1Uniform != null)
-        assertEquals(1f, color1Uniform!!.red, 0.01f)  // Red = FF
+        assertEquals(1f, color1Uniform!!.red, 0.01f) // Red = FF
         assertEquals(0f, color1Uniform.green, 0.01f)
         assertEquals(0f, color1Uniform.blue, 0.01f)
     }
@@ -208,7 +210,7 @@ class EffectsTest {
     @Test
     fun gradientEffect_withColor1_updatesColor() {
         val effect = GradientEffect()
-        val updated = effect.withColor1(0xFF0000FF)  // Blue
+        val updated = effect.withColor1(0xFF0000FF) // Blue
 
         assertNotEquals(effect, updated)
     }
@@ -216,7 +218,7 @@ class EffectsTest {
     @Test
     fun gradientEffect_withColor2_updatesColor() {
         val effect = GradientEffect()
-        val updated = effect.withColor2(0xFFFFFF00)  // Yellow
+        val updated = effect.withColor2(0xFFFFFF00) // Yellow
 
         assertNotEquals(effect, updated)
     }
@@ -234,7 +236,7 @@ class EffectsTest {
         val effect = GradientEffect()
         assertTrue(
             effect.shaderSource.contains("layout(color)"),
-            "Shader should use layout(color) annotation for color uniforms"
+            "Shader should use layout(color) annotation for color uniforms",
         )
     }
 
@@ -258,9 +260,10 @@ class EffectsTest {
 
     @Test
     fun gradientEffect_withComposeColor_producesCorrectUniforms() {
-        val effect = GradientEffect()
-            .withColor1(Color.Red)
-            .withColor2(Color.Green)
+        val effect =
+            GradientEffect()
+                .withColor1(Color.Red)
+                .withColor2(Color.Green)
 
         val uniforms = effect.buildUniforms(100f, 100f)
         val colorUniforms = uniforms.filterIsInstance<ColorUniform>()
@@ -299,10 +302,11 @@ class EffectsTest {
     @Test
     fun gradientEffect_withTypedParameter_updatesColor1() {
         val effect = GradientEffect()
-        val updated = effect.withTypedParameter(
-            "color1",
-            ParameterValue.ColorValue(0xFF0000FF)  // Blue
-        ) as GradientEffect
+        val updated =
+            effect.withTypedParameter(
+                "color1",
+                ParameterValue.ColorValue(0xFF0000FF), // Blue
+            ) as GradientEffect
 
         assertNotEquals(effect, updated)
 
@@ -314,10 +318,11 @@ class EffectsTest {
     @Test
     fun gradientEffect_withTypedParameter_updatesColor2() {
         val effect = GradientEffect()
-        val updated = effect.withTypedParameter(
-            "color2",
-            ParameterValue.ColorValue(0xFFFFFF00)  // Yellow
-        ) as GradientEffect
+        val updated =
+            effect.withTypedParameter(
+                "color2",
+                ParameterValue.ColorValue(0xFFFFFF00), // Yellow
+            ) as GradientEffect
 
         assertNotEquals(effect, updated)
 
@@ -329,10 +334,11 @@ class EffectsTest {
     @Test
     fun gradientEffect_withTypedParameter_updatesIntensity() {
         val effect = GradientEffect(intensity = 0.5f)
-        val updated = effect.withTypedParameter(
-            "intensity",
-            ParameterValue.FloatValue(0.8f)
-        ) as GradientEffect
+        val updated =
+            effect.withTypedParameter(
+                "intensity",
+                ParameterValue.FloatValue(0.8f),
+            ) as GradientEffect
 
         assertNotEquals(effect, updated)
 
@@ -343,11 +349,12 @@ class EffectsTest {
 
     @Test
     fun gradientEffect_getTypedParameterValue_returnsCorrectTypes() {
-        val effect = GradientEffect(
-            color1 = 0xFFFF0000,
-            color2 = 0xFF00FF00,
-            intensity = 0.75f
-        )
+        val effect =
+            GradientEffect(
+                color1 = 0xFFFF0000,
+                color2 = 0xFF00FF00,
+                intensity = 0.75f,
+            )
 
         val color1 = effect.getTypedParameterValue("color1")
         val color2 = effect.getTypedParameterValue("color2")
@@ -363,10 +370,11 @@ class EffectsTest {
     @Test
     fun waveEffect_withTypedParameter_updatesAmplitude() {
         val effect = WaveEffect(amplitude = 10f)
-        val updated = effect.withTypedParameter(
-            "amplitude",
-            ParameterValue.FloatValue(20f)
-        ) as WaveEffect
+        val updated =
+            effect.withTypedParameter(
+                "amplitude",
+                ParameterValue.FloatValue(20f),
+            ) as WaveEffect
 
         assertNotEquals(effect, updated)
 
@@ -378,10 +386,11 @@ class EffectsTest {
     @Test
     fun waveEffect_withTypedParameter_updatesAnimate() {
         val effect = WaveEffect(animate = true)
-        val updated = effect.withTypedParameter(
-            "animate",
-            ParameterValue.BooleanValue(false)
-        ) as WaveEffect
+        val updated =
+            effect.withTypedParameter(
+                "animate",
+                ParameterValue.BooleanValue(false),
+            ) as WaveEffect
 
         assertNotEquals(effect, updated)
         assertFalse(updated.isAnimating)
@@ -394,21 +403,23 @@ class EffectsTest {
     @Test
     fun waveEffect_withTypedParameter_acceptsFloatForBoolean() {
         val effect = WaveEffect(animate = true)
-        val updated = effect.withTypedParameter(
-            "animate",
-            ParameterValue.FloatValue(0.2f)  // Below 0.5 = false
-        ) as WaveEffect
+        val updated =
+            effect.withTypedParameter(
+                "animate",
+                ParameterValue.FloatValue(0.2f), // Below 0.5 = false
+            ) as WaveEffect
 
         assertFalse(updated.isAnimating)
     }
 
     @Test
     fun waveEffect_getTypedParameterValue_returnsCorrectTypes() {
-        val effect = WaveEffect(
-            amplitude = 15f,
-            frequency = 10f,
-            animate = true
-        )
+        val effect =
+            WaveEffect(
+                amplitude = 15f,
+                frequency = 10f,
+                animate = true,
+            )
 
         val amplitude = effect.getTypedParameterValue("amplitude")
         val frequency = effect.getTypedParameterValue("frequency")
@@ -432,13 +443,6 @@ class EffectsTest {
     fun shaderX_builtInEffects_returnsSameInstance() {
         val effects1 = ShaderX.builtInEffects()
         val effects2 = ShaderX.builtInEffects()
-        assertTrue(effects1 === effects2, "builtInEffects should return cached list")
-    }
-
-    @Test
-    fun shaderX_createBuiltInEffects_returnsFreshInstances() {
-        val effects1 = ShaderX.createBuiltInEffects()
-        val effects2 = ShaderX.createBuiltInEffects()
-        assertTrue(effects1 !== effects2, "createBuiltInEffects should return new list")
+        assertSame(effects1, effects2, "builtInEffects should return cached list")
     }
 }

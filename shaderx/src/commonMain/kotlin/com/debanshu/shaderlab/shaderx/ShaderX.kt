@@ -44,11 +44,6 @@ import com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect
  */
 public object ShaderX {
     /**
-     * Library version.
-     */
-    public const val VERSION: String = "1.0.0"
-
-    /**
      * Cached list of built-in effects.
      *
      * Effects are instantiated once and reused to avoid repeated allocations.
@@ -76,23 +71,4 @@ public object ShaderX {
      * fresh instances with specific parameters, create them directly.
      */
     public fun builtInEffects(): List<ShaderEffect> = cachedBuiltInEffects
-
-    /**
-     * Returns fresh instances of all built-in effects.
-     *
-     * Unlike [builtInEffects], this creates new instances each time,
-     * useful when you need effects with default parameters that will be modified.
-     */
-    public fun createBuiltInEffects(): List<ShaderEffect> =
-        listOf(
-            GrayscaleEffect(),
-            SepiaEffect(),
-            GradientEffect(),
-            VignetteEffect(),
-            PixelateEffect(),
-            ChromaticAberrationEffect(),
-            InvertEffect,
-            WaveEffect(),
-            NativeBlurEffect(),
-        )
 }

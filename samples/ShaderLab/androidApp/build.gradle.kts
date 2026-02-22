@@ -8,12 +8,21 @@ plugins {
 
 android {
     namespace = "com.debanshu.shaderlab"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "com.debanshu.shaderlab"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.android.targetSdk
+                .get()
+                .toInt()
         versionCode = 1
         versionName = "1.0"
     }
@@ -46,7 +55,6 @@ dependencies {
     implementation(projects.samples.shaderLab.composeApp)
     implementation(projects.samples.shaderLab.imagelib)
     implementation(libs.androidx.activity.compose)
-    implementation(compose.components.uiToolingPreview)
-    debugImplementation(compose.uiTooling)
+    implementation(libs.ui.tooling.preview)
+    debugImplementation(libs.ui.tooling)
 }
-

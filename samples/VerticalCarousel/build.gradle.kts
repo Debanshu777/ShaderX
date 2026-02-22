@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
-// Load TMDB token from local.properties
 val localProperties =
     Properties().apply {
         val localPropertiesFile = rootProject.file("local.properties")
@@ -37,7 +36,6 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        // Add TMDB access token to BuildConfig
         buildConfigField("String", "TMDB_ACCESS_TOKEN", "\"${localProperties.getProperty("TMDB_ACCESS_TOKEN", "")}\"")
     }
 
@@ -71,14 +69,14 @@ kotlin {
 
 dependencies {
     // Compose
-    implementation(compose.runtime)
-    implementation(compose.foundation)
-    implementation(compose.material3)
-    implementation(compose.materialIconsExtended)
-    implementation(compose.ui)
-    implementation(compose.components.resources)
-    implementation(compose.components.uiToolingPreview)
-    debugImplementation(compose.uiTooling)
+    implementation(libs.runtime)
+    implementation(libs.foundation)
+    implementation(libs.material3)
+    implementation(libs.material.icons.extended)
+    implementation(libs.ui)
+    implementation(libs.components.resources)
+    implementation(libs.ui.tooling.preview)
+    debugImplementation(libs.ui.tooling)
 
     // AndroidX
     implementation(libs.androidx.activity.compose)

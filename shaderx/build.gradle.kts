@@ -1,3 +1,6 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -6,25 +9,28 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     `maven-publish`
-    signing
 }
 
 group = "com.github.Debanshu777.ShaderX"
-version = "0.1.1"
+version = "0.1.2"
 
 kotlin {
     applyDefaultHierarchyTemplate()
-
-    // Explicit API mode for public library
     explicitApi()
 
     androidLibrary {
         namespace = "io.github.debanshu.shaderx"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
 
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
 
@@ -50,9 +56,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.ui)
         }
 
         commonTest.dependencies {
@@ -85,7 +91,6 @@ kotlin {
     }
 }
 
-// Publishing configuration
 publishing {
     publications {
         withType<MavenPublication> {
@@ -103,8 +108,8 @@ publishing {
 
                 developers {
                     developer {
-                        id.set("debanshu")
-                        name.set("Debanshu")
+                        id.set("debanshu777")
+                        name.set("Debanshu Datta")
                     }
                 }
 
@@ -116,38 +121,9 @@ publishing {
             }
         }
     }
-
-    repositories {
-        maven {
-            name = "local"
-            url = uri(layout.buildDirectory.dir("repo"))
-        }
-        // Uncomment for Maven Central publishing
-        // maven {
-        //     name = "sonatype"
-        //     url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-        //     credentials {
-        //         username = project.findProperty("ossrhUsername") as String? ?: ""
-        //         password = project.findProperty("ossrhPassword") as String? ?: ""
-        //     }
-        // }
-    }
 }
 
-// Signing configuration (for Maven Central)
-signing {
-    // Configure signing only if credentials are available
-    val signingKey = project.findProperty("signing.key") as String?
-    val signingPassword = project.findProperty("signing.password") as String?
-    if (signingKey != null && signingPassword != null) {
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign(publishing.publications)
-    }
-}
-
-// Task to generate documentation
 tasks.register("generateDocs") {
     group = "documentation"
     description = "Generates API documentation"
-    // Add Dokka configuration here when ready
 }
