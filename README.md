@@ -56,13 +56,12 @@ Add the dependency to your `build.gradle.kts`:
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
     }
 }
 
 // build.gradle.kts
 dependencies {
-    implementation("com.github.Debanshu777.ShaderX:shaderx:0.1.1")
+    implementation("io.github.debanshu777:shaderx:0.1.2")
 }
 ```
 

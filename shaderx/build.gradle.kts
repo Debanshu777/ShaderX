@@ -1,5 +1,6 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -8,10 +9,10 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    `maven-publish`
+    alias(libs.plugins.vanniktechMavenPublish)
 }
 
-group = "com.github.Debanshu777.ShaderX"
+group = "io.github.debanshu777"
 version = "0.1.2"
 
 kotlin {
@@ -91,34 +92,34 @@ kotlin {
     }
 }
 
-publishing {
-    publications {
-        withType<MavenPublication> {
-            pom {
-                name.set("ShaderX")
-                description.set("Kotlin Multiplatform library for GPU shader effects in Compose")
-                url.set("https://github.com/Debanshu777/ShaderX")
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+    coordinates(group.toString(), "shaderx", version.toString())
 
-                licenses {
-                    license {
-                        name.set("Apache License 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
-                    }
-                }
+    pom {
+        name.set("ShaderX")
+        description.set("Kotlin Multiplatform library for GPU shader effects in Compose")
+        url.set("https://github.com/Debanshu777/ShaderX")
 
-                developers {
-                    developer {
-                        id.set("debanshu777")
-                        name.set("Debanshu Datta")
-                    }
-                }
-
-                scm {
-                    url.set("https://github.com/Debanshu777/ShaderX")
-                    connection.set("scm:git:git://github.com/Debanshu777/ShaderX.git")
-                    developerConnection.set("scm:git:ssh://git@github.com/Debanshu777/ShaderX.git")
-                }
+        licenses {
+            license {
+                name.set("Apache License 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0")
             }
+        }
+
+        developers {
+            developer {
+                id.set("debanshu777")
+                name.set("Debanshu Datta")
+            }
+        }
+
+        scm {
+            url.set("https://github.com/Debanshu777/ShaderX")
+            connection.set("scm:git:git://github.com/Debanshu777/ShaderX.git")
+            developerConnection.set("scm:git:ssh://git@github.com/Debanshu777/ShaderX.git")
         }
     }
 }

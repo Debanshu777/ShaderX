@@ -1,4 +1,4 @@
-rootProject.name = "ShaderLab"
+rootProject.name = "ShaderXProject"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -25,7 +25,6 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
     }
 }
 
