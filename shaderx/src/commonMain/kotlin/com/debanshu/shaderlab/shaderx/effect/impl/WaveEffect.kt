@@ -1,13 +1,11 @@
 package com.debanshu.shaderlab.shaderx.effect.impl
 
 import androidx.compose.runtime.Immutable
-import com.debanshu.shaderlab.shaderx.effect.AbstractRuntimeShaderEffect
-import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ParamHandler
 import com.debanshu.shaderlab.shaderx.effect.floatHandler
 import com.debanshu.shaderlab.shaderx.effect.toggleHandler
 import com.debanshu.shaderlab.shaderx.parameter.FloatParameter
-import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.parameter.PixelParameter
 import com.debanshu.shaderlab.shaderx.parameter.ToggleParameter
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
@@ -20,8 +18,8 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
  *
  * ### Equality contract
  * Two [WaveEffect] instances are equal if their **configuration** parameters are equal,
- * regardless of [time]. This allows `LaunchedEffect(effect)` in animation loops to see
- * the effect as stable across frames — only the uniforms change, not the effect identity.
+ * regardless of [time]. This allows animation loops to see the effect as stable across
+ * frames — only the uniforms change, not the effect identity.
  *
  * @property amplitude Maximum displacement in pixels
  * @property frequency Number of wave cycles across the image
@@ -29,16 +27,15 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
  * @property time Current animation time in seconds (excluded from equality / hashCode)
  */
 @Immutable
-public data class WaveEffect(
+public class WaveEffect(
     public val amplitude: Float = 10f,
     public val frequency: Float = 5f,
     public val animate: Boolean = true,
     override val time: Float = 0f,
-) : AbstractRuntimeShaderEffect(),
-    AnimatedShaderEffect {
+) : AbstractAnimatedShaderEffect() {
     override val id: String = ID
     override val displayName: String = "Wave"
-    override val isAnimating: Boolean = animate
+    override val isAnimating: Boolean get() = animate
 
     override val shaderSource: String =
         """
@@ -76,7 +73,7 @@ public data class WaveEffect(
                             defaultValue = 10f,
                         ),
                     read = { it.amplitude },
-                    write = { e, v -> e.copy(amplitude = v) },
+                    write = { e, v -> WaveEffect(v, e.frequency, e.animate, e.time) },
                 ),
             PARAM_FREQUENCY to
                 floatHandler<WaveEffect>(
@@ -88,7 +85,7 @@ public data class WaveEffect(
                             defaultValue = 5f,
                         ),
                     read = { it.frequency },
-                    write = { e, v -> e.copy(frequency = v) },
+                    write = { e, v -> WaveEffect(e.amplitude, v, e.animate, e.time) },
                 ),
             PARAM_ANIMATE to
                 toggleHandler<WaveEffect>(
@@ -99,7 +96,7 @@ public data class WaveEffect(
                             isEnabledByDefault = true,
                         ),
                     read = { it.animate },
-                    write = { e, v -> e.copy(animate = v) },
+                    write = { e, v -> WaveEffect(e.amplitude, e.frequency, v, e.time) },
                 ),
         )
 
@@ -114,30 +111,15 @@ public data class WaveEffect(
             FloatUniform("time", time),
         )
 
-    override fun withTime(newTime: Float): WaveEffect = copy(time = newTime)
+    override fun copyWithTime(newTime: Float): WaveEffect = WaveEffect(amplitude, frequency, animate, newTime)
 
-    // AnimatedShaderEffect requires withTypedParameter to return AnimatedShaderEffect.
-    // AbstractRuntimeShaderEffect.withTypedParameter returns AbstractRuntimeShaderEffect.
-    // We bridge by delegating to the base and casting — safe because this is the only
-    // concrete AnimatedShaderEffect in the sealed hierarchy.
-    override fun withTypedParameter(
-        parameterId: String,
-        value: ParameterValue,
-    ): WaveEffect = super.withTypedParameter(parameterId, value) as WaveEffect
-
-    /**
-     * Two [WaveEffect] instances are equal if their configuration parameters are equal.
-     * [time] is intentionally excluded — it is a render-frame property that changes every
-     * frame during animation. Excluding it prevents `LaunchedEffect(effect)` from restarting
-     * every frame in the animation loop in [rememberShaderEffect].
-     */
-    override fun equals(other: Any?): Boolean {
+    override fun structuralEquals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is WaveEffect) return false
         return amplitude == other.amplitude && frequency == other.frequency && animate == other.animate
     }
 
-    override fun hashCode(): Int {
+    override fun structuralHashCode(): Int {
         var result = amplitude.hashCode()
         result = 31 * result + frequency.hashCode()
         result = 31 * result + animate.hashCode()

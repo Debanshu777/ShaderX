@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import com.debanshu.shaderlab.shaderx.ShaderConstants
+import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
@@ -90,6 +91,34 @@ internal class AndroidShaderFactory(
             )
         }
 
+    override fun createAnimatedSession(
+        effect: AnimatedShaderEffect,
+        width: Float,
+        height: Float,
+    ): ShaderResult<ShaderSession> {
+        if (!isSupported()) {
+            return ShaderResult.failure(platformNotSupportedError())
+        }
+        return try {
+            // Instance-scoped shader — not shared with the LRU cache entry
+            val instanceShader = RuntimeShader(effect.shaderSource)
+            val uniforms = effect.buildUniforms(width, height)
+            applyUniforms(instanceShader, uniforms)
+            val renderEffect =
+                AndroidRenderEffect
+                    .createRuntimeShaderEffect(instanceShader, ShaderConstants.CONTENT_UNIFORM_NAME)
+                    .asComposeRenderEffect()
+            ShaderResult.success(AndroidShaderSession(instanceShader, renderEffect))
+        } catch (e: Exception) {
+            ShaderResult.failure(
+                ShaderError.CompilationError(
+                    "Failed to create animated session: ${e.message}",
+                    effect.shaderSource,
+                ),
+            )
+        }
+    }
+
     /**
      * Gets a cached RuntimeShader or creates and caches a new one via the LRU cache.
      * The LRU handles eviction automatically.
@@ -136,7 +165,10 @@ internal class AndroidShaderFactory(
             uniforms.forEach { uniform ->
                 when (uniform) {
                     is FloatUniform -> {
-                        shader.setFloatUniform(uniform.name, uniform.values)
+                        when (uniform.values.size) {
+                            1 -> shader.setFloatUniform(uniform.name, uniform.values[0])
+                            else -> shader.setFloatUniform(uniform.name, uniform.values)
+                        }
                     }
 
                     is IntUniform -> {
@@ -161,6 +193,59 @@ internal class AndroidShaderFactory(
                 }
             }
         }
+    }
+}
+
+/**
+ * Android [ShaderSession] holding an instance-scoped [RuntimeShader].
+ *
+ * [refresh] updates only [AnimatedShaderEffect.buildFrameUniforms] in-place (typically `time`),
+ * then returns a new [RenderEffect] wrapper so Compose/Android re-samples the shader.
+ * Structural uniforms including [com.debanshu.shaderlab.shaderx.uniform.ColorUniform] are set
+ * once at session creation — re-applying them during refresh corrupts JNI uniform names.
+ */
+private class AndroidShaderSession(
+    private val shader: RuntimeShader,
+    initialRenderEffect: RenderEffect,
+) : ShaderSession {
+    override val currentRenderEffect: RenderEffect = initialRenderEffect
+    private val lock = Any()
+
+    @Suppress("NewApi")
+    override fun refresh(
+        effect: RuntimeShaderEffect,
+        width: Float,
+        height: Float,
+    ): ShaderResult<RenderEffect> {
+        val animated =
+            effect as? AnimatedShaderEffect
+                ?: return ShaderResult.failure(
+                    ShaderError.UnsupportedEffect(
+                        "Animated session refresh requires an animated effect",
+                        effect.id,
+                    ),
+                )
+        return try {
+            val updatedRenderEffect =
+                synchronized(lock) {
+                    AndroidShaderFactory.applyUniforms(shader, animated.buildFrameUniforms())
+                    AndroidRenderEffect
+                        .createRuntimeShaderEffect(shader, ShaderConstants.CONTENT_UNIFORM_NAME)
+                        .asComposeRenderEffect()
+                }
+            ShaderResult.success(updatedRenderEffect)
+        } catch (e: Exception) {
+            ShaderResult.failure(
+                ShaderError.CompilationError(
+                    "Failed to refresh animated session: ${e.message}",
+                    effect.shaderSource,
+                ),
+            )
+        }
+    }
+
+    override fun close() {
+        // RuntimeShader has no explicit release API on Android
     }
 }
 

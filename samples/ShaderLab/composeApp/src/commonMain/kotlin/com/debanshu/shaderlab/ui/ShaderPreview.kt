@@ -1,12 +1,5 @@
 package com.debanshu.shaderlab.ui
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,81 +10,79 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
-import com.debanshu.shaderlab.imagelib.decodeImageBytes
+import com.debanshu.shaderlab.shaderx.compose.shaderEffect
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
-import com.debanshu.shaderlab.shaderx.factory.create
-import com.debanshu.shaderlab.ui.components.SampleImage
+import com.debanshu.shaderlab.ui.components.ShaderLabImage
 import com.debanshu.shaderlab.viewmodel.ImageSource
+import kotlinx.coroutines.isActive
 
 @Composable
 fun ShaderPreview(
     imageSource: ImageSource,
     effect: ShaderEffect?,
-    onWaveTimeUpdate: (Float) -> Unit = {},
+    factory: ShaderFactory,
+    showFps: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    var contentWidth by remember { mutableFloatStateOf(0f) }
-    var contentHeight by remember { mutableFloatStateOf(0f) }
-    val factory = remember { ShaderFactory.create() }
+    var fps by remember { mutableIntStateOf(0) }
+    var shaderError by remember { mutableStateOf<String?>(null) }
 
-    val animatableEffect = effect as? AnimatedShaderEffect
-    val shouldAnimate = animatableEffect?.isAnimating == true
-
-    val infiniteTransition = rememberInfiniteTransition(label = "wave")
-    val animatedTime by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 10f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(10000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart,
-            ),
-        label = "waveTime",
-    )
-
-    LaunchedEffect(shouldAnimate, animatedTime) {
-        if (shouldAnimate) {
-            onWaveTimeUpdate(animatedTime)
-        }
+    LaunchedEffect(effect?.id, effect?.hashCode()) {
+        shaderError = null
     }
 
-    val renderEffect =
-        remember(effect, contentWidth, contentHeight) {
-            if (effect != null && contentWidth > 0 && contentHeight > 0 && factory.isSupported()) {
-                factory.createRenderEffect(effect, contentWidth, contentHeight).getOrNull()
-            } else {
-                null
+    val showFpsOverlay = showFps && effect is AnimatedShaderEffect && effect.isAnimating
+
+    if (showFpsOverlay) {
+        LaunchedEffect(effect.id, effect.hashCode()) {
+            var frameCount = 0
+            var lastTimestamp = 0L
+            while (isActive) {
+                withFrameMillis { timestamp ->
+                    frameCount++
+                    if (lastTimestamp == 0L) {
+                        lastTimestamp = timestamp
+                    } else if (timestamp - lastTimestamp >= 1000L) {
+                        fps = frameCount
+                        frameCount = 0
+                        lastTimestamp = timestamp
+                    }
+                }
             }
         }
+    } else {
+        SideEffect {
+            if (fps != 0) fps = 0
+        }
+    }
 
     Box(
         modifier =
             modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .onSizeChanged { size ->
-                    contentWidth = size.width.toFloat()
-                    contentHeight = size.height.toFloat()
-                },
+                .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center,
     ) {
         ImageWithEffect(
             imageSource = imageSource,
-            renderEffect = renderEffect,
+            effect = effect,
+            factory = factory,
+            onShaderError = { shaderError = it },
             modifier = Modifier.fillMaxSize(),
         )
 
@@ -114,76 +105,91 @@ fun ShaderPreview(
             }
         }
 
-        if (!factory.isSupported() && effect != null) {
+        if (showFpsOverlay && fps > 0) {
             Box(
                 modifier =
                     Modifier
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.TopEnd)
                         .padding(12.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.9f),
+                            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f),
                             shape = RoundedCornerShape(8.dp),
-                        ).padding(horizontal = 12.dp, vertical = 6.dp),
+                        ).padding(horizontal = 10.dp, vertical = 6.dp),
             ) {
                 Text(
-                    text = "Shaders not supported on this device",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    text = "$fps FPS",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
             }
         }
+
+        if (!factory.isSupported() && effect != null) {
+            ShaderBanner(
+                text = "Shaders not supported on this device",
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
+
+        shaderError?.let { message ->
+            ShaderBanner(
+                text = message,
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ShaderBanner(
+    text: String,
+    containerColor: androidx.compose.ui.graphics.Color,
+    contentColor: androidx.compose.ui.graphics.Color,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier =
+            modifier
+                .padding(12.dp)
+                .background(
+                    color = containerColor.copy(alpha = 0.9f),
+                    shape = RoundedCornerShape(8.dp),
+                ).padding(horizontal = 12.dp, vertical = 6.dp),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor,
+        )
     }
 }
 
 @Composable
 private fun ImageWithEffect(
     imageSource: ImageSource,
-    renderEffect: androidx.compose.ui.graphics.RenderEffect?,
+    effect: ShaderEffect?,
+    factory: ShaderFactory,
+    onShaderError: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (imageSource) {
-        is ImageSource.Bundled -> {
-            Box(
-                modifier =
-                    modifier.graphicsLayer {
-                        this.renderEffect = renderEffect
-                    },
-            ) {
-                SampleImage(
-                    resourceName = imageSource.resourceName,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit,
-                )
-            }
+    val shaderModifier =
+        if (effect != null && factory.isSupported()) {
+            Modifier.shaderEffect(
+                effect = effect,
+                factory = factory,
+                onError = { error -> onShaderError(error.message) },
+            )
+        } else {
+            Modifier
         }
 
-        is ImageSource.Picked -> {
-            val imageBitmap =
-                remember(imageSource.bytes) {
-                    imageSource.bytes?.let { decodeImageBytes(it) }
-                }
-            if (imageBitmap != null) {
-                Image(
-                    bitmap = imageBitmap,
-                    contentDescription = "Preview image",
-                    modifier =
-                        modifier.graphicsLayer {
-                            this.renderEffect = renderEffect
-                        },
-                    contentScale = ContentScale.Fit,
-                )
-            } else {
-                Box(
-                    modifier = modifier.background(MaterialTheme.colorScheme.errorContainer),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "Unable to load image",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                    )
-                }
-            }
-        }
-    }
+    ShaderLabImage(
+        imageSource = imageSource,
+        modifier = modifier.then(shaderModifier),
+        contentScale = ContentScale.Fit,
+    )
 }

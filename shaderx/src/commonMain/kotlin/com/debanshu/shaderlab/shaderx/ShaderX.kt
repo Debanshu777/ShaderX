@@ -3,14 +3,18 @@
 package com.debanshu.shaderlab.shaderx
 
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.AnimatedGradientEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.ChromaticAberrationEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.GradientEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.GrayscaleEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.InvertEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.NativeBlurEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.PixelateEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.PlasmaEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.RippleEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.SepiaEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.VignetteEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.VortexEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect
 
 /**
@@ -28,12 +32,14 @@ import com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect
  *
  * ### Use animated effects
  * ```kotlin
- * val waveEffect = rememberShaderEffect(WaveEffect(amplitude = 10f))
  * Image(
  *     painter = painterResource("photo.png"),
- *     modifier = Modifier.shaderEffect(waveEffect)
+ *     modifier = Modifier.shaderEffect(WaveEffect(amplitude = 10f, animate = true))
  * )
  * ```
+ *
+ * [Modifier.shaderEffect] runs the animation loop internally. Use [rememberShaderEffect]
+ * only when applying [RenderEffect] manually via [graphicsLayer].
  *
  * ## Supported Platforms
  * - Android (API 33+) using AGSL
@@ -60,6 +66,10 @@ public object ShaderX {
             ChromaticAberrationEffect(),
             InvertEffect(),
             WaveEffect(),
+            AnimatedGradientEffect(),
+            PlasmaEffect(),
+            RippleEffect(),
+            VortexEffect(),
             NativeBlurEffect(),
         )
     }
@@ -74,10 +84,10 @@ public object ShaderX {
      * new instance and never mutates the cached one. It is safe to use these instances as starting
      * points for parameter customisation.
      *
-     * **Animated effects:** [com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect] in the list
-     * starts with `time = 0f` and `animate = true`. Pass it through
-     * [com.debanshu.shaderlab.shaderx.compose.rememberShaderEffect] in a composable to drive
-     * the animation loop.
+     * **Animated effects:** [WaveEffect], [AnimatedGradientEffect], [PlasmaEffect], [RippleEffect],
+     * and [VortexEffect] in the list start with `time = 0f` and `animate = true`. Pass them through
+     * [com.debanshu.shaderlab.shaderx.compose.rememberShaderEffect] or [com.debanshu.shaderlab.shaderx.compose.shaderEffect]
+     * in a composable to drive the animation loop.
      *
      * For effects that need different initial parameters, create them directly instead of
      * modifying items from this list:

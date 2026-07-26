@@ -3,6 +3,7 @@ package com.debanshu.shaderlab.shaderx.factory
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import com.debanshu.shaderlab.shaderx.ShaderConstants
+import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
@@ -93,6 +94,34 @@ internal class SkiaShaderFactory(
             )
         }
 
+    override fun createAnimatedSession(
+        effect: AnimatedShaderEffect,
+        width: Float,
+        height: Float,
+    ): ShaderResult<ShaderSession> {
+        if (!isSupported()) {
+            return ShaderResult.failure(platformNotSupportedError())
+        }
+        return try {
+            val runtimeEffect = getOrCreateEffect(effect.shaderSource)
+            val builder = RuntimeShaderBuilder(runtimeEffect)
+            val uniforms = effect.buildUniforms(width, height)
+            applyUniforms(builder, uniforms)
+            val renderEffect =
+                ImageFilter
+                    .makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
+                    .asComposeRenderEffect()
+            ShaderResult.success(SkiaShaderSession(builder, renderEffect))
+        } catch (e: Exception) {
+            ShaderResult.failure(
+                ShaderError.CompilationError(
+                    "Failed to create animated session: ${e.message}",
+                    effect.shaderSource,
+                ),
+            )
+        }
+    }
+
     /**
      * Gets a cached RuntimeEffect or creates and caches a new one via the LRU cache.
      * Accessible from [SkiaImageProcessor] in the same source set to share the cache.
@@ -122,7 +151,36 @@ internal class SkiaShaderFactory(
             uniforms.forEach { uniform ->
                 when (uniform) {
                     is FloatUniform -> {
-                        builder.uniform(uniform.name, uniform.values)
+                        when (uniform.values.size) {
+                            1 -> {
+                                builder.uniform(uniform.name, uniform.values[0])
+                            }
+
+                            2 -> {
+                                builder.uniform(uniform.name, uniform.values[0], uniform.values[1])
+                            }
+
+                            3 -> {
+                                builder.uniform(
+                                    uniform.name,
+                                    uniform.values[0],
+                                    uniform.values[1],
+                                    uniform.values[2],
+                                )
+                            }
+
+                            4 -> {
+                                builder.uniform(
+                                    uniform.name,
+                                    uniform.values[0],
+                                    uniform.values[1],
+                                    uniform.values[2],
+                                    uniform.values[3],
+                                )
+                            }
+
+                            else -> builder.uniform(uniform.name, uniform.values)
+                        }
                     }
 
                     is MatrixUniform -> {
@@ -163,12 +221,57 @@ internal class SkiaShaderFactory(
                             uniform.name,
                             uniform.values[0]
                         ) // AGSL/SkSL vectors cap at vec4
-                    }
+                        }
                     }
 
-                    is ColorUniform -> builder.uniform(uniform.name, uniform.toFloatArray())
+                    is ColorUniform -> {
+                        builder.uniform(uniform.name, uniform.toFloatArray())
+                    }
                 }
             }
         }
+    }
+}
+
+/**
+ * Skia [ShaderSession] holding a [RuntimeShaderBuilder] bound to a cached [RuntimeEffect].
+ *
+ * [refresh] updates builder uniforms and recreates the [ImageFilter] (cheap — compilation
+ * is cached; only uniform binding + filter creation runs each frame).
+ */
+private class SkiaShaderSession(
+    private val builder: RuntimeShaderBuilder,
+    override val currentRenderEffect: RenderEffect,
+) : ShaderSession {
+    override fun refresh(
+        effect: RuntimeShaderEffect,
+        width: Float,
+        height: Float,
+    ): ShaderResult<RenderEffect> =
+        try {
+            val animated = effect as? AnimatedShaderEffect
+            val frameUniforms =
+                if (animated != null) {
+                    animated.buildFrameUniforms()
+                } else {
+                    effect.buildUniforms(width, height)
+                }
+            SkiaShaderFactory.applyUniforms(builder, frameUniforms)
+            ShaderResult.success(
+                ImageFilter
+                    .makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
+                    .asComposeRenderEffect(),
+            )
+        } catch (e: Exception) {
+            ShaderResult.failure(
+                ShaderError.CompilationError(
+                    "Failed to refresh animated session: ${e.message}",
+                    effect.shaderSource,
+                ),
+            )
+        }
+
+    override fun close() {
+        // RuntimeShaderBuilder does not require explicit release; RuntimeEffect is cache-owned
     }
 }

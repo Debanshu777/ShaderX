@@ -115,6 +115,12 @@ mavenPublishing {
             }
         }
 
+        properties.set(
+            mapOf(
+                "kotlin.keywords" to "compose-multiplatform, jetpack-compose, multiplatform-ui, ios, android, desktop, wasm",
+            ),
+        )
+
         developers {
             developer {
                 id.set("debanshu777")

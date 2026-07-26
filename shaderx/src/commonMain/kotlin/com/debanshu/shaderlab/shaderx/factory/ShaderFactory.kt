@@ -1,6 +1,7 @@
 package com.debanshu.shaderlab.shaderx.factory
 
 import androidx.compose.ui.graphics.RenderEffect
+import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.CompositeEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
@@ -54,6 +55,23 @@ public interface ShaderFactory : AutoCloseable {
         width: Float,
         height: Float,
     ): ShaderResult<RenderEffect>
+
+    /**
+     * Creates a [ShaderSession] for an animated effect that requires per-frame uniform updates.
+     *
+     * The session holds an instance-scoped compiled shader (separate from the shared LRU cache)
+     * so [ShaderSession.refresh] can mutate uniforms every frame without recompilation.
+     *
+     * @param effect The animated effect to create a session for
+     * @param width Render target width in pixels
+     * @param height Render target height in pixels
+     * @return [ShaderResult] containing the session or error information
+     */
+    public fun createAnimatedSession(
+        effect: AnimatedShaderEffect,
+        width: Float,
+        height: Float,
+    ): ShaderResult<ShaderSession>
 
     /**
      * Checks if shaders are supported on the current platform/device.

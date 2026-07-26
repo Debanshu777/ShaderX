@@ -2,6 +2,8 @@ package com.debanshu.shaderlab.shaderx.effect
 
 import androidx.compose.runtime.Stable
 import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
+import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
+import com.debanshu.shaderlab.shaderx.uniform.Uniform
 
 /**
  * Interface for shader effects that support animation over time.
@@ -10,18 +12,13 @@ import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
  * to create dynamic, time-varying effects like waves, pulses, or transitions.
  *
  * ## Usage
- * The animation loop should call [withTime] with incrementing time values:
+ * Prefer [com.debanshu.shaderlab.shaderx.compose.shaderEffect] — it runs the animation loop
+ * internally via [com.debanshu.shaderlab.shaderx.factory.ShaderSession]. For manual
+ * [androidx.compose.ui.graphics.RenderEffect] wiring, call [withTime] from your own loop or
+ * use [com.debanshu.shaderlab.shaderx.compose.rememberShaderEffect].
  *
- * ```kotlin
- * LaunchedEffect(effect) {
- *     if (effect is AnimatedShaderEffect && effect.isAnimating) {
- *         while (isActive) {
- *             val time = withFrameMillis { it / 1000f }
- *             viewModel.updateEffect(effect.withTime(time))
- *         }
- *     }
- * }
- * ```
+ * Implementations should extend [AbstractAnimatedShaderEffect] rather than implementing this
+ * interface directly — the base class enforces the equality contract automatically.
  *
  * ## Equality contract — implementations MUST exclude [time]
  *
@@ -69,8 +66,25 @@ public interface AnimatedShaderEffect : RuntimeShaderEffect {
      */
     public fun withTime(newTime: Float): AnimatedShaderEffect
 
+    /**
+     * Uniforms that change every animation frame.
+     *
+     * Structural uniforms (colors, speed, resolution, etc.) are applied once when the
+     * animated [com.debanshu.shaderlab.shaderx.factory.ShaderSession] is created.
+     * Android's session [com.debanshu.shaderlab.shaderx.factory.ShaderSession.refresh]
+     * applies only these frame uniforms in-place to avoid JNI corruption from
+     * re-setting [com.debanshu.shaderlab.shaderx.uniform.ColorUniform] values while the
+     * render thread is sampling the shader.
+     */
+    public fun buildFrameUniforms(): List<Uniform> = listOf(FloatUniform(TIME_UNIFORM_NAME, time))
+
     override fun withTypedParameter(
         parameterId: String,
         value: ParameterValue,
     ): AnimatedShaderEffect
+
+    public companion object {
+        /** AGSL/SkSL uniform name for [time]; the only uniform updated each frame by default. */
+        public const val TIME_UNIFORM_NAME: String = "time"
+    }
 }

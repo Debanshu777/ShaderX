@@ -251,6 +251,46 @@ WaveEffect(amplitude = 10f, frequency = 5f, animate = true)
 
 ---
 
+### AnimatedGradientEffect *(Animated)*
+
+Rotating two-color gradient overlay. Good starting point for custom animated effects.
+
+```kotlin
+AnimatedGradientEffect(speed = 1.5f, animate = true)
+```
+
+---
+
+### PlasmaEffect *(Animated)*
+
+Layered sine-wave plasma pattern with psychedelic color movement.
+
+```kotlin
+PlasmaEffect(scale = 4f, speed = 1f, colorIntensity = 1f)
+```
+
+---
+
+### RippleEffect *(Animated)*
+
+Expanding concentric rings with distance-based decay.
+
+```kotlin
+RippleEffect(frequency = 10f, speed = 1.5f, amplitude = 0.02f)
+```
+
+---
+
+### VortexEffect *(Animated)*
+
+Spiral/twirl distortion from the image center.
+
+```kotlin
+VortexEffect(strength = 1f, radius = 0.5f, speed = 1f)
+```
+
+---
+
 ### GradientEffect
 
 Two-color gradient overlay blended over the original image. Supports both `Long` ARGB and Compose
@@ -325,22 +365,79 @@ val sepiaIntensity = combined.getParameterValue("1\u001Fintensity")
 
 ### Animation
 
-`rememberShaderEffect` detects `AnimatedShaderEffect` implementations and drives a `withFrameMillis`
-loop automatically. You provide the effect definition; the library handles timing.
+`Modifier.shaderEffect` detects `AnimatedShaderEffect` implementations and uses
+a [ShaderSession](shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderSession.kt)
+to refresh uniforms every frame without recompiling the shader. Shader compilation happens once per
+session; each frame only updates uniforms and returns a lightweight new `RenderEffect` reference.
+
+For manual control, combine `rememberShaderEffect` (keeps effect state in sync) with `shaderEffect`:
 
 ```kotlin
 @Composable
 fun LiveWave(amplitude: Float, frequency: Float) {
-    // Changing amplitude/frequency restarts the effect cleanly.
-    // The time field is excluded from equals, so mid-animation parameter
-    // changes don't reset the clock.
     val wave = rememberShaderEffect(
         WaveEffect(amplitude = amplitude, frequency = frequency)
     )
-
     Box(modifier = Modifier.fillMaxSize().shaderEffect(wave))
 }
 ```
+
+#### Creating custom animated effects
+
+Extend [AbstractAnimatedShaderEffect](shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect.kt)
+instead of implementing `AnimatedShaderEffect` directly. The base class enforces the equality
+contract (time excluded) so animation loops stay stable:
+
+```kotlin
+@Immutable
+public class MyPulseEffect(
+  public val speed: Float = 1f,
+  public val animate: Boolean = true,
+  override val time: Float = 0f,
+) : AbstractAnimatedShaderEffect() {
+  override val id = "my_pulse"
+  override val displayName = "My Pulse"
+  override val isAnimating get() = animate
+
+  override val shaderSource = """
+        uniform shader content;
+        uniform float2 resolution;
+        uniform float time;
+        uniform float speed;
+        half4 main(float2 fragCoord) {
+            half4 c = content.eval(fragCoord);
+            float pulse = sin(time * speed) * 0.5 + 0.5;
+            return half4(c.rgb * pulse, c.a);
+        }
+    """.trimIndent()
+
+  override fun buildUniforms(w: Float, h: Float) = listOf(
+    FloatUniform("resolution", w, h),
+    FloatUniform("time", time),
+    FloatUniform("speed", speed),
+  )
+
+  override fun copyWithTime(t: Float) = MyPulseEffect(speed, animate, t)
+  override fun structuralEquals(other: Any?) =
+    other is MyPulseEffect && speed == other.speed && animate == other.animate
+  override fun structuralHashCode() = 31 * speed.hashCode() + animate.hashCode()
+}
+```
+
+See [PlasmaEffect](shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl/PlasmaEffect.kt)
+for a richer reference implementation.
+
+#### Built-in animated effects
+
+| Effect                   | Description                          |
+|--------------------------|--------------------------------------|
+| `WaveEffect`             | Sinusoidal UV distortion             |
+| `AnimatedGradientEffect` | Rotating two-color gradient overlay  |
+| `PlasmaEffect`           | Classic demoscene plasma colors      |
+| `RippleEffect`           | Expanding concentric ring distortion |
+| `VortexEffect`           | Spiral/twirl from center             |
+
+Try them in the **ShaderLab** sample app under the **Animated** tab.
 
 ### Scoped Shader Factory
 

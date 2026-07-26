@@ -3,7 +3,9 @@ package com.debanshu.shaderlab.viewmodel
 import androidx.lifecycle.ViewModel
 import com.debanshu.shaderlab.imagelib.PickResult
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.CompositeEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.withColorParameter
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.create
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +39,7 @@ sealed class ImageSource {
 data class ShaderLabUiState(
     val selectedImage: ImageSource = ImageSource.Bundled("sample_landscape"),
     val activeEffect: ShaderEffect? = null,
+    val selectedTab: ShaderLabTab = ShaderLabTab.STATIC,
     val showBeforeAfter: Boolean = false,
     val isDarkTheme: Boolean = true,
     val sampleImages: List<String> =
@@ -48,7 +51,6 @@ data class ShaderLabUiState(
         ),
     val pickedImages: List<ImageSource.Picked> = emptyList(),
     val shadersSupported: Boolean = true,
-    val animationTime: Float = 0f,
     val isExporting: Boolean = false,
     val exportMessage: String? = null,
 )
@@ -67,7 +69,69 @@ class ShaderLabViewModel : ViewModel() {
     }
 
     fun setActiveEffect(effect: ShaderEffect?) {
-        _uiState.update { it.copy(activeEffect = effect) }
+        if (effect != null && effect.id == _uiState.value.activeEffect?.id) {
+            return
+        }
+        val resolved =
+            when (effect) {
+                is AnimatedShaderEffect -> effect.withTime(0f) as ShaderEffect
+                else -> effect
+            }
+        _uiState.update { it.copy(activeEffect = resolved) }
+    }
+
+    fun selectTab(
+        tab: ShaderLabTab,
+        availableEffects: List<ShaderEffect>,
+    ) {
+        _uiState.update { state ->
+            val filtered = filterEffectsForTab(availableEffects, tab)
+            val retainedActive =
+                state.activeEffect?.takeIf { active ->
+                    filtered.any { it.id == active.id }
+                }
+            val nextEffect = retainedActive ?: filtered.firstOrNull()
+            val resolvedNext =
+                when (nextEffect) {
+                    is AnimatedShaderEffect -> nextEffect.withTime(0f) as ShaderEffect
+                    else -> nextEffect
+                }
+            state.copy(
+                selectedTab = tab,
+                activeEffect = resolvedNext,
+            )
+        }
+    }
+
+    fun effectsForTab(
+        availableEffects: List<ShaderEffect>,
+        tab: ShaderLabTab = _uiState.value.selectedTab,
+    ): List<ShaderEffect> = filterEffectsForTab(availableEffects, tab)
+
+    private fun filterEffectsForTab(
+        availableEffects: List<ShaderEffect>,
+        tab: ShaderLabTab,
+    ): List<ShaderEffect> =
+        when (tab) {
+            ShaderLabTab.STATIC -> {
+                availableEffects.filter { it !is AnimatedShaderEffect && it !is CompositeEffect }
+            }
+
+            ShaderLabTab.ANIMATED -> {
+                availableEffects.filterIsInstance<AnimatedShaderEffect>()
+            }
+
+            ShaderLabTab.COMPOSITE -> {
+                emptyList()
+            }
+        }
+
+    fun toggleAnimation() {
+        _uiState.update { state ->
+            val current = state.activeEffect as? AnimatedShaderEffect ?: return@update state
+            val updated = current.withParameter("animate", if (current.isAnimating) 0f else 1f)
+            state.copy(activeEffect = updated)
+        }
     }
 
     fun updateEffectParameter(
@@ -78,6 +142,16 @@ class ShaderLabViewModel : ViewModel() {
             val currentEffect = state.activeEffect ?: return@update state
             val updatedEffect = currentEffect.withParameter(parameterId, value)
             state.copy(activeEffect = updatedEffect)
+        }
+    }
+
+    fun updateEffectColorParameter(
+        parameterId: String,
+        colorArgb: Long,
+    ) {
+        _uiState.update { state ->
+            val currentEffect = state.activeEffect ?: return@update state
+            state.copy(activeEffect = currentEffect.withColorParameter(parameterId, colorArgb))
         }
     }
 
@@ -105,20 +179,6 @@ class ShaderLabViewModel : ViewModel() {
             }
 
             is PickResult.Cancelled -> {
-            }
-        }
-    }
-
-    fun updateAnimationTime(time: Float) {
-        _uiState.update { state ->
-            val currentEffect = state.activeEffect
-            if (currentEffect is AnimatedShaderEffect && currentEffect.isAnimating) {
-                state.copy(
-                    animationTime = time,
-                    activeEffect = currentEffect.withTime(time),
-                )
-            } else {
-                state.copy(animationTime = time)
             }
         }
     }

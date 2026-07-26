@@ -45,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.debanshu.shaderlab.imagelib.ExportConfig
@@ -61,6 +60,7 @@ import com.debanshu.shaderlab.shaderx.factory.ImageProcessor
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.create
 import com.debanshu.shaderlab.viewmodel.ImageSource
+import com.debanshu.shaderlab.viewmodel.ShaderLabTab
 import com.debanshu.shaderlab.viewmodel.ShaderLabUiState
 import com.debanshu.shaderlab.viewmodel.ShaderLabViewModel
 import kotlinx.coroutines.Dispatchers
@@ -303,6 +303,7 @@ fun ShaderLabContent(
                         uiState = uiState,
                         viewModel = viewModel,
                         availableEffects = availableEffects,
+                        shaderFactory = shaderFactory,
                         onAddImage = onAddImage,
                     )
                 }
@@ -312,6 +313,7 @@ fun ShaderLabContent(
                         uiState = uiState,
                         viewModel = viewModel,
                         availableEffects = availableEffects,
+                        shaderFactory = shaderFactory,
                         onAddImage = onAddImage,
                     )
                 }
@@ -321,6 +323,7 @@ fun ShaderLabContent(
                         uiState = uiState,
                         viewModel = viewModel,
                         availableEffects = availableEffects,
+                        shaderFactory = shaderFactory,
                         onAddImage = onAddImage,
                     )
                 }
@@ -330,10 +333,77 @@ fun ShaderLabContent(
 }
 
 @Composable
+private fun ShaderLabPreviewPane(
+    uiState: ShaderLabUiState,
+    factory: ShaderFactory,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedContent(
+        targetState = uiState.showBeforeAfter,
+        transitionSpec = {
+            fadeIn() togetherWith fadeOut()
+        },
+        label = "previewMode",
+        modifier = modifier,
+    ) { showComparison ->
+        if (showComparison) {
+            BeforeAfterView(
+                imageSource = uiState.selectedImage,
+                effect = uiState.activeEffect,
+                factory = factory,
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else {
+            ShaderPreview(
+                imageSource = uiState.selectedImage,
+                effect = uiState.activeEffect,
+                factory = factory,
+                showFps = uiState.selectedTab == ShaderLabTab.ANIMATED,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ShaderLabControlsPanel(
+    uiState: ShaderLabUiState,
+    viewModel: ShaderLabViewModel,
+    availableEffects: List<ShaderEffect>,
+    sidePanel: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    ShaderControls(
+        tabEffects = viewModel.effectsForTab(availableEffects),
+        activeEffect = uiState.activeEffect,
+        selectedTab = uiState.selectedTab,
+        onTabSelected = { tab -> viewModel.selectTab(tab, availableEffects) },
+        onEffectSelected = { viewModel.setActiveEffect(it) },
+        onParameterChanged = { parameterId, value ->
+            viewModel.updateEffectParameter(
+                parameterId,
+                value,
+            )
+        },
+        onColorParameterChanged = { parameterId, color ->
+            viewModel.updateEffectColorParameter(
+                parameterId,
+                color,
+            )
+        },
+        onClearEffect = { viewModel.setActiveEffect(null) },
+        onToggleAnimation = { viewModel.toggleAnimation() },
+        sidePanel = sidePanel,
+        modifier = modifier,
+    )
+}
+
+@Composable
 private fun CompactLayout(
     uiState: ShaderLabUiState,
     viewModel: ShaderLabViewModel,
     availableEffects: List<ShaderEffect>,
+    shaderFactory: ShaderFactory,
     onAddImage: () -> Unit,
 ) {
     Column(
@@ -354,49 +424,23 @@ private fun CompactLayout(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        AnimatedContent(
-            targetState = uiState.showBeforeAfter,
-            transitionSpec = {
-                fadeIn() togetherWith fadeOut()
-            },
-            label = "previewMode",
+        ShaderLabPreviewPane(
+            uiState = uiState,
+            factory = shaderFactory,
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .aspectRatio(4f / 3f)
                     .padding(horizontal = 16.dp),
-        ) { showComparison ->
-            if (showComparison) {
-                BeforeAfterView(
-                    imageSource = uiState.selectedImage,
-                    effect = uiState.activeEffect,
-                    onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(4f / 3f)
-                            .clip(RoundedCornerShape(16.dp)),
-                )
-            } else {
-                ShaderPreview(
-                    imageSource = uiState.selectedImage,
-                    effect = uiState.activeEffect,
-                    onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(4f / 3f),
-                )
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ShaderControls(
+        ShaderLabControlsPanel(
+            uiState = uiState,
+            viewModel = viewModel,
             availableEffects = availableEffects,
-            activeEffect = uiState.activeEffect,
-            onEffectSelected = { viewModel.setActiveEffect(it) },
-            onParameterChanged = { parameterId, value -> viewModel.updateEffectParameter(parameterId, value) },
-            onClearEffect = { viewModel.setActiveEffect(null) },
+            sidePanel = false,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -408,6 +452,7 @@ private fun MediumLayout(
     uiState: ShaderLabUiState,
     viewModel: ShaderLabViewModel,
     availableEffects: List<ShaderEffect>,
+    shaderFactory: ShaderFactory,
     onAddImage: () -> Unit,
 ) {
     Row(
@@ -428,49 +473,21 @@ private fun MediumLayout(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            AnimatedContent(
-                targetState = uiState.showBeforeAfter,
-                transitionSpec = {
-                    fadeIn() togetherWith fadeOut()
-                },
-                label = "previewMode",
+            ShaderLabPreviewPane(
+                uiState = uiState,
+                factory = shaderFactory,
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .weight(1f)
                         .padding(horizontal = 16.dp),
-            ) { showComparison ->
-                if (showComparison) {
-                    BeforeAfterView(
-                        imageSource = uiState.selectedImage,
-                        effect = uiState.activeEffect,
-                        onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(4f / 3f)
-                                .clip(RoundedCornerShape(16.dp)),
-                    )
-                } else {
-                    ShaderPreview(
-                        imageSource = uiState.selectedImage,
-                        effect = uiState.activeEffect,
-                        onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(4f / 3f),
-                    )
-                }
-            }
+            )
         }
 
-        ShaderControls(
+        ShaderLabControlsPanel(
+            uiState = uiState,
+            viewModel = viewModel,
             availableEffects = availableEffects,
-            activeEffect = uiState.activeEffect,
-            onEffectSelected = { viewModel.setActiveEffect(it) },
-            onParameterChanged = { parameterId, value -> viewModel.updateEffectParameter(parameterId, value) },
-            onClearEffect = { viewModel.setActiveEffect(null) },
             sidePanel = true,
             modifier = Modifier.weight(1f).fillMaxHeight().padding(16.dp),
         )
@@ -482,6 +499,7 @@ private fun ExpandedLayout(
     uiState: ShaderLabUiState,
     viewModel: ShaderLabViewModel,
     availableEffects: List<ShaderEffect>,
+    shaderFactory: ShaderFactory,
     onAddImage: () -> Unit,
 ) {
     Row(
@@ -492,9 +510,9 @@ private fun ExpandedLayout(
                 Modifier.width(220.dp).fillMaxHeight().padding(
                     top = 16.dp,
                     bottom = 16.dp,
-                    end = 8.dp
-            ),
-                ) {
+                    end = 8.dp,
+                ),
+        ) {
             ImageGallery(
                 sampleImages = uiState.sampleImages,
                 pickedImages = uiState.pickedImages,
@@ -506,44 +524,20 @@ private fun ExpandedLayout(
             )
         }
 
-        AnimatedContent(
-            targetState = uiState.showBeforeAfter,
-            transitionSpec = {
-                fadeIn() togetherWith fadeOut()
-            },
-            label = "previewMode",
+        ShaderLabPreviewPane(
+            uiState = uiState,
+            factory = shaderFactory,
             modifier =
                 Modifier
                     .weight(1f)
                     .fillMaxHeight()
                     .padding(horizontal = 8.dp),
-        ) { showComparison ->
-            if (showComparison) {
-                BeforeAfterView(
-                    imageSource = uiState.selectedImage,
-                    effect = uiState.activeEffect,
-                    onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(16.dp)),
-                )
-            } else {
-                ShaderPreview(
-                    imageSource = uiState.selectedImage,
-                    effect = uiState.activeEffect,
-                    onWaveTimeUpdate = { viewModel.updateAnimationTime(it) },
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-        }
+        )
 
-        ShaderControls(
+        ShaderLabControlsPanel(
+            uiState = uiState,
+            viewModel = viewModel,
             availableEffects = availableEffects,
-            activeEffect = uiState.activeEffect,
-            onEffectSelected = { viewModel.setActiveEffect(it) },
-            onParameterChanged = { parameterId, value -> viewModel.updateEffectParameter(parameterId, value) },
-            onClearEffect = { viewModel.setActiveEffect(null) },
             sidePanel = true,
             modifier = Modifier.width(300.dp).fillMaxHeight().padding(top = 16.dp, bottom = 16.dp, start = 8.dp),
         )

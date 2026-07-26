@@ -1,12 +1,5 @@
 package com.debanshu.shaderlab.ui
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -24,25 +17,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.RenderEffect
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.debanshu.shaderlab.imagelib.decodeImageBytes
-import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
+import com.debanshu.shaderlab.shaderx.compose.shaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
-import com.debanshu.shaderlab.shaderx.factory.create
-import com.debanshu.shaderlab.ui.components.SampleImage
+import com.debanshu.shaderlab.ui.components.ShaderLabImage
 import com.debanshu.shaderlab.viewmodel.ImageSource
 import kotlin.math.roundToInt
 
@@ -50,42 +40,27 @@ import kotlin.math.roundToInt
 fun BeforeAfterView(
     imageSource: ImageSource,
     effect: ShaderEffect?,
-    onWaveTimeUpdate: (Float) -> Unit = {},
+    factory: ShaderFactory,
     modifier: Modifier = Modifier,
 ) {
     var containerWidth by remember { mutableFloatStateOf(0f) }
     var containerHeight by remember { mutableFloatStateOf(0f) }
     var dividerPosition by remember { mutableFloatStateOf(0.5f) }
-    val factory = remember { ShaderFactory.create() }
+    var shaderError by remember { mutableStateOf<String?>(null) }
 
-    val animatableEffect = effect as? AnimatedShaderEffect
-    val shouldAnimate = animatableEffect?.isAnimating == true
-
-    val infiniteTransition = rememberInfiniteTransition(label = "wave")
-    val animatedTime by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 10f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(10000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart,
-            ),
-        label = "waveTime",
-    )
-
-    LaunchedEffect(shouldAnimate, animatedTime) {
-        if (shouldAnimate) {
-            onWaveTimeUpdate(animatedTime)
-        }
+    LaunchedEffect(effect?.id, effect?.hashCode()) {
+        shaderError = null
     }
 
-    val renderEffect =
-        remember(effect, containerWidth, containerHeight) {
-            if (effect != null && containerWidth > 0 && containerHeight > 0 && factory.isSupported()) {
-                factory.createRenderEffect(effect, containerWidth, containerHeight).getOrNull()
-            } else {
-                null
-            }
+    val afterModifier =
+        if (effect != null && factory.isSupported()) {
+            Modifier.shaderEffect(
+                effect = effect,
+                factory = factory,
+                onError = { error -> shaderError = error.message },
+            )
+        } else {
+            Modifier
         }
 
     Box(
@@ -99,29 +74,27 @@ fun BeforeAfterView(
                     containerHeight = size.height.toFloat()
                 },
     ) {
-        ImageContent(
+        ShaderLabImage(
             imageSource = imageSource,
-            renderEffect = renderEffect,
+            modifier = Modifier.fillMaxSize().then(afterModifier),
             contentDescription = "After - with effect",
-            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit,
         )
         Box(
             modifier =
                 Modifier
                     .matchParentSize()
-                    .graphicsLayer {
-                        clip = true
-                        shape =
-                            GenericShape { size, _ ->
-                                addRect(Rect(0f, 0f, size.width * dividerPosition, size.height))
-                            }
-                    },
+                    .clip(
+                        GenericShape { size, _ ->
+                            addRect(Rect(0f, 0f, size.width * dividerPosition, size.height))
+                        },
+                    ),
         ) {
-            ImageContent(
+            ShaderLabImage(
                 imageSource = imageSource,
-                renderEffect = null,
-                contentDescription = "Before - original",
                 modifier = Modifier.fillMaxSize(),
+                contentDescription = "Before - original",
+                contentScale = ContentScale.Fit,
             )
         }
 
@@ -203,58 +176,23 @@ fun BeforeAfterView(
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
-    }
-}
 
-@Composable
-private fun ImageContent(
-    imageSource: ImageSource,
-    renderEffect: RenderEffect?,
-    contentDescription: String,
-    modifier: Modifier = Modifier,
-) {
-    when (imageSource) {
-        is ImageSource.Bundled -> {
+        shaderError?.let { message ->
             Box(
                 modifier =
-                    modifier.graphicsLayer {
-                        this.renderEffect = renderEffect
-                    },
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(12.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.9f),
+                            shape = RoundedCornerShape(8.dp),
+                        ).padding(horizontal = 12.dp, vertical = 6.dp),
             ) {
-                SampleImage(
-                    resourceName = imageSource.resourceName,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit,
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
                 )
-            }
-        }
-
-        is ImageSource.Picked -> {
-            val imageBitmap =
-                remember(imageSource.bytes) {
-                    imageSource.bytes?.let { decodeImageBytes(it) }
-                }
-            if (imageBitmap != null) {
-                Image(
-                    bitmap = imageBitmap,
-                    contentDescription = contentDescription,
-                    modifier =
-                        modifier.graphicsLayer {
-                            this.renderEffect = renderEffect
-                        },
-                    contentScale = ContentScale.Fit,
-                )
-            } else {
-                Box(
-                    modifier = modifier.background(MaterialTheme.colorScheme.errorContainer),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "Unable to load image",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                    )
-                }
             }
         }
     }

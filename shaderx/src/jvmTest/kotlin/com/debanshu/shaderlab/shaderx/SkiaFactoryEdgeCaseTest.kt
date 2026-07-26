@@ -306,6 +306,14 @@ class SkiaFactoryEdgeCaseTest {
                     ShaderError.PlatformNotSupported("fake"),
                 )
 
+                override fun createAnimatedSession(
+                    effect: com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect,
+                    width: Float,
+                    height: Float,
+                ) = ShaderResult.failure<com.debanshu.shaderlab.shaderx.factory.ShaderSession>(
+                    ShaderError.PlatformNotSupported("fake"),
+                )
+
                 override fun isSupported() = false
 
                 override fun clearCache() {}

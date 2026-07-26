@@ -1,11 +1,14 @@
 package com.debanshu.shaderlab.shaderx.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
@@ -28,6 +31,11 @@ import kotlinx.coroutines.isActive
  * - Creating the render effect from the shader definition
  * - Applying the effect via graphicsLayer
  * - Error handling via optional callback
+ *
+ * **Animated effects:** [Modifier.shaderEffect] runs the animation loop internally via
+ * [com.debanshu.shaderlab.shaderx.factory.ShaderSession]. Do not pair with
+ * [rememberShaderEffect] — use [rememberShaderEffect] only when applying [RenderEffect]
+ * manually through [graphicsLayer].
  *
  * ## Usage
  * ```kotlin
@@ -83,39 +91,14 @@ public fun Modifier.shaderEffect(
     onError: ((ShaderError) -> Unit)? = null,
 ): Modifier {
     if (effect == null) return this
-
-    var measuredSize by remember { mutableStateOf(Pair(0f, 0f)) }
-    var renderEffect by remember { mutableStateOf<RenderEffect?>(null) }
-
-    val effectWidth = knownSize?.width?.toFloat() ?: measuredSize.first
-    val effectHeight = knownSize?.height?.toFloat() ?: measuredSize.second
-
-    // LaunchedEffect is called unconditionally (same number of composable calls regardless
-    // of whether knownSize is provided) to satisfy Compose's stable-call-count rule.
-    LaunchedEffect(effect, effectWidth, effectHeight) {
-        if (effectWidth > 0 && effectHeight > 0) {
-            val result = factory.createRenderEffect(effect, effectWidth, effectHeight)
-            result
-                .onSuccess { renderEffect = it }
-                .onFailure { error ->
-                    renderEffect = null
-                    onError?.invoke(error)
-                }
-        }
-    }
-
-    // Conditionally attach onSizeChanged only when size is not pre-known.
-    // This is a plain Kotlin if-expression in the modifier chain, not a conditional
-    // composable call, so it does not violate the rules of Compose.
-    return (
-        if (knownSize == null) {
-            this.onSizeChanged { newSize ->
-                measuredSize = Pair(newSize.width.toFloat(), newSize.height.toFloat())
-            }
-        } else {
-            this
-    }
-    ).graphicsLayer { this.renderEffect = renderEffect }
+    return shaderEffectCore(
+        effect = effect,
+        factory = factory,
+        knownSize = knownSize,
+        reportResult = { result ->
+            result.onFailure { error -> onError?.invoke(error) }
+        },
+    )
 }
 
 /**
@@ -157,18 +140,97 @@ public fun Modifier.shaderEffectWithResult(
     onResult: ((ShaderResult<RenderEffect>) -> Unit)? = null,
 ): Modifier {
     if (effect == null) return this
+    return shaderEffectCore(
+        effect = effect,
+        factory = factory,
+        knownSize = knownSize,
+        reportResult = { result -> onResult?.invoke(result) },
+    )
+}
 
+/**
+ * Shared implementation for [shaderEffect] and [shaderEffectWithResult].
+ *
+ * Session identity is keyed on [effect]'s structural [ShaderEffect.hashCode] (excluding [time] for
+ * animated effects) so structural parameter changes recreate the session immediately.
+ */
+@Composable
+private fun Modifier.shaderEffectCore(
+    effect: ShaderEffect,
+    factory: ShaderFactory,
+    knownSize: IntSize?,
+    reportResult: (ShaderResult<RenderEffect>) -> Unit,
+): Modifier {
     var measuredSize by remember { mutableStateOf(Pair(0f, 0f)) }
     var renderEffect by remember { mutableStateOf<RenderEffect?>(null) }
+    var renderFrame by remember { mutableIntStateOf(0) }
 
     val effectWidth = knownSize?.width?.toFloat() ?: measuredSize.first
     val effectHeight = knownSize?.height?.toFloat() ?: measuredSize.second
 
-    LaunchedEffect(effect, effectWidth, effectHeight) {
-        if (effectWidth > 0 && effectHeight > 0) {
-            val result = factory.createRenderEffect(effect, effectWidth, effectHeight)
-            onResult?.invoke(result)
-            renderEffect = result.getOrNull()
+    val animatedEffect = effect as? AnimatedShaderEffect
+    val useAnimatedSession =
+        animatedEffect?.isAnimating == true && effectWidth > 0 && effectHeight > 0
+
+    if (useAnimatedSession) {
+        val latestEffect by rememberUpdatedState(effect)
+
+        val sessionIdentity =
+            remember(animatedEffect.id, animatedEffect.hashCode()) {
+                animatedEffect.id to animatedEffect.hashCode()
+            }
+        val sessionResult =
+            remember(sessionIdentity, effectWidth, effectHeight) {
+                factory.createAnimatedSession(animatedEffect, effectWidth, effectHeight)
+            }
+
+        DisposableEffect(sessionResult) {
+            onDispose { sessionResult.getOrNull()?.close() }
+        }
+
+        LaunchedEffect(sessionResult, sessionIdentity, effectWidth, effectHeight) {
+            val session = sessionResult.getOrNull()
+            if (session == null) {
+                sessionResult.onFailure { error ->
+                    renderEffect = null
+                    reportResult(ShaderResult.failure(error))
+                }
+                return@LaunchedEffect
+            }
+            renderEffect = session.currentRenderEffect
+            reportResult(ShaderResult.success(session.currentRenderEffect))
+            var animationStartMillis = 0L
+            while (isActive) {
+                withFrameMillis { frameTime ->
+                    val effectAtFrame =
+                        latestEffect as? AnimatedShaderEffect ?: return@withFrameMillis
+                    if (!effectAtFrame.isAnimating) {
+                        animationStartMillis = 0L
+                        return@withFrameMillis
+                    }
+                    if (animationStartMillis == 0L) {
+                        animationStartMillis = frameTime
+                    }
+                    val elapsedSeconds = (frameTime - animationStartMillis) / 1000f
+                    val timed = effectAtFrame.withTime(elapsedSeconds)
+                    val result = session.refresh(timed, effectWidth, effectHeight)
+                    reportResult(result)
+                    result.onSuccess {
+                        renderEffect = it
+                        renderFrame++
+                    }
+                }
+            }
+        }
+    } else {
+        LaunchedEffect(effect, effectWidth, effectHeight) {
+            if (effectWidth > 0 && effectHeight > 0) {
+                val result = factory.createRenderEffect(effect, effectWidth, effectHeight)
+                reportResult(result)
+                result
+                    .onSuccess { renderEffect = it }
+                    .onFailure { renderEffect = null }
+            }
         }
     }
 
@@ -176,8 +238,15 @@ public fun Modifier.shaderEffectWithResult(
         if (knownSize == null) {
             this.onSizeChanged { newSize ->
                 measuredSize = Pair(newSize.width.toFloat(), newSize.height.toFloat())
+            }
+        } else {
+            this
+        }
+    ).graphicsLayer {
+        this.renderEffect = renderEffect
+        // Tie layer invalidation to the animation clock on all platforms.
+        rotationZ = renderFrame * 0.000001f
     }
-    } else this).graphicsLayer { this.renderEffect = renderEffect }
 }
 
 /**
@@ -187,12 +256,17 @@ public fun Modifier.shaderEffectWithResult(
  * this composable will automatically update the time and return
  * the updated effect instance.
  *
+ * **Prefer [Modifier.shaderEffect] for most use cases** — it runs the animation loop
+ * internally. Use this helper only when you apply [RenderEffect] manually via [graphicsLayer]
+ * or [rememberRenderEffect].
+ *
  * ## Usage
  * ```kotlin
  * val effect = rememberShaderEffect(WaveEffect(animate = true))
- * Image(
- *     painter = painterResource("image.png"),
- *     modifier = Modifier.shaderEffect(effect)
+ * Box(
+ *     modifier = Modifier.graphicsLayer {
+ *         this.renderEffect = rememberRenderEffect(effect, width, height)
+ *     }
  * )
  * ```
  *
@@ -232,10 +306,8 @@ public fun <T : ShaderEffect> rememberShaderEffect(effect: T): T {
  * This is useful when you need direct access to the RenderEffect,
  * for example when combining multiple effects or applying them manually.
  *
- * **For animated effects:** Pass an effect that updates over time (e.g. from
- * [rememberShaderEffect]). The [remember] keys include [effect], so a new
- * [RenderEffect] is created when the effect instance changes. Prefer
- * [Modifier.shaderEffect] for most use cases as it handles animation automatically.
+ * **For animated effects:** Prefer [Modifier.shaderEffect], which handles animation
+ * automatically. If using this API, pass an effect from [rememberShaderEffect].
  *
  * ## Usage
  * ```kotlin
@@ -275,8 +347,7 @@ public fun rememberRenderEffect(
  * Unlike [rememberRenderEffect], this returns the full [ShaderResult]
  * allowing you to handle errors appropriately.
  *
- * **For animated effects:** Pass an effect from [rememberShaderEffect] so
- * the result updates when the effect changes. See [rememberRenderEffect].
+ * **For animated effects:** Prefer [Modifier.shaderEffect]. See [rememberRenderEffect].
  *
  * @param effect The shader effect definition
  * @param width Width of the render target
