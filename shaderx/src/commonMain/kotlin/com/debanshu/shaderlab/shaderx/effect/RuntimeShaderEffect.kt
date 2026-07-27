@@ -26,6 +26,25 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
  * }
  * ```
  *
+ * ## Additional image inputs
+ * Beyond the mandatory `content` layer, an effect may declare extra `uniform shader` inputs and
+ * feed them a [androidx.compose.ui.graphics.ImageBitmap] via
+ * [com.debanshu.shaderlab.shaderx.uniform.TextureUniform] — a lookup table, a mask, or per-frame
+ * data such as audio FFT magnitudes. Child shaders sample in **pixel** coordinates:
+ * ```glsl
+ * uniform shader content;
+ * uniform shader fftData;   // bound via TextureUniform("fftData", bitmap)
+ * uniform float fftSize;
+ *
+ * half4 main(float2 fragCoord) {
+ *     half m = fftData.eval(float2(0.5 * fftSize, 0.5)).r;
+ *     return content.eval(fragCoord);
+ * }
+ * ```
+ * For textures that change every frame, emit the [com.debanshu.shaderlab.shaderx.uniform.TextureUniform]
+ * from [AnimatedShaderEffect.buildFrameUniforms] and exclude the image from equality — see
+ * [com.debanshu.shaderlab.shaderx.effect.impl.AudioVisualizerEffect].
+ *
  * @see AnimatedShaderEffect for effects that animate over time
  */
 @Stable

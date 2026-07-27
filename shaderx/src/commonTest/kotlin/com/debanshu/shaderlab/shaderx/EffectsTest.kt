@@ -441,7 +441,7 @@ class EffectsTest {
     @Test
     fun shaderX_builtInEffects_returnsAllEffects() {
         val effects = ShaderX.builtInEffects()
-        assertEquals(13, effects.size)
+        assertEquals(15, effects.size)
     }
 
     @Test

@@ -80,6 +80,10 @@ import kotlinx.coroutines.isActive
  * @param knownSize When non-null, this size is used directly for uniform calculations and the
  *   effect is applied from the first frame. When null (default), the composable measures itself
  *   via `onSizeChanged` and the effect is applied one frame after layout.
+ * @param frameDataKey Optional key for per-frame data excluded from [ShaderEffect.equals] (e.g.
+ *   identity of a live [com.debanshu.shaderlab.shaderx.uniform.TextureUniform] image). Pass a value
+ *   that changes whenever that data changes so Compose does not skip this modifier and leave the
+ *   animation loop bound to a stale effect. Session identity still uses structural equality only.
  * @param onError Optional callback invoked when shader creation fails
  * @return Modifier with the shader effect applied
  */
@@ -88,6 +92,7 @@ public fun Modifier.shaderEffect(
     effect: ShaderEffect?,
     factory: ShaderFactory = LocalShaderFactory.current,
     knownSize: IntSize? = null,
+    frameDataKey: Any? = null,
     onError: ((ShaderError) -> Unit)? = null,
 ): Modifier {
     if (effect == null) return this
@@ -95,6 +100,7 @@ public fun Modifier.shaderEffect(
         effect = effect,
         factory = factory,
         knownSize = knownSize,
+        frameDataKey = frameDataKey,
         reportResult = { result ->
             result.onFailure { error -> onError?.invoke(error) }
         },
@@ -129,6 +135,8 @@ public fun Modifier.shaderEffect(
  * @param factory The factory to use for creating render effects. Defaults to [LocalShaderFactory].
  * @param knownSize When non-null, this size is used directly and the effect is applied from the
  *   first frame. When null (default), size is measured via `onSizeChanged` (one-frame skip).
+ * @param frameDataKey Optional key for per-frame data excluded from [ShaderEffect.equals]; see
+ *   [Modifier.shaderEffect].
  * @param onResult Callback invoked with the shader result (success or failure)
  * @return Modifier with the shader effect applied
  */
@@ -137,6 +145,7 @@ public fun Modifier.shaderEffectWithResult(
     effect: ShaderEffect?,
     factory: ShaderFactory = LocalShaderFactory.current,
     knownSize: IntSize? = null,
+    frameDataKey: Any? = null,
     onResult: ((ShaderResult<RenderEffect>) -> Unit)? = null,
 ): Modifier {
     if (effect == null) return this
@@ -144,6 +153,7 @@ public fun Modifier.shaderEffectWithResult(
         effect = effect,
         factory = factory,
         knownSize = knownSize,
+        frameDataKey = frameDataKey,
         reportResult = { result -> onResult?.invoke(result) },
     )
 }
@@ -153,14 +163,23 @@ public fun Modifier.shaderEffectWithResult(
  *
  * Session identity is keyed on [effect]'s structural [ShaderEffect.hashCode] (excluding [time] for
  * animated effects) so structural parameter changes recreate the session immediately.
+ *
+ * [frameDataKey] is intentionally **not** part of session identity — it only prevents Compose from
+ * skipping this composable when live texture/time-excluded data changes under a structurally equal
+ * effect instance.
  */
 @Composable
 private fun Modifier.shaderEffectCore(
     effect: ShaderEffect,
     factory: ShaderFactory,
     knownSize: IntSize?,
+    frameDataKey: Any?,
     reportResult: (ShaderResult<RenderEffect>) -> Unit,
 ): Modifier {
+    // Read so the compiler treats [frameDataKey] as a real input for skip invalidation.
+    @Suppress("UNUSED_EXPRESSION")
+    frameDataKey
+
     var measuredSize by remember { mutableStateOf(Pair(0f, 0f)) }
     var renderEffect by remember { mutableStateOf<RenderEffect?>(null) }
     var renderFrame by remember { mutableIntStateOf(0) }
@@ -331,15 +350,14 @@ public fun rememberRenderEffect(
     width: Float,
     height: Float,
     factory: ShaderFactory = LocalShaderFactory.current,
-): RenderEffect? {
-    return remember(effect, width, height) {
+): RenderEffect? =
+    remember(effect, width, height) {
         if (width > 0 && height > 0) {
             factory.createRenderEffect(effect, width, height).getOrNull()
         } else {
             null
         }
     }
-}
 
 /**
  * Creates and remembers a render effect result with full error information.
@@ -361,12 +379,11 @@ public fun rememberRenderEffectResult(
     width: Float,
     height: Float,
     factory: ShaderFactory = LocalShaderFactory.current,
-): ShaderResult<RenderEffect>? {
-    return remember(effect, width, height) {
+): ShaderResult<RenderEffect>? =
+    remember(effect, width, height) {
         if (width > 0 && height > 0) {
             factory.createRenderEffect(effect, width, height)
         } else {
             null
         }
     }
-}

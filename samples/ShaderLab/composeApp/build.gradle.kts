@@ -65,6 +65,7 @@ kotlin {
             implementation(libs.kotlinx.coroutinesCore)
             implementation(projects.shaderx)
             implementation(projects.samples.shaderLab.imagelib)
+            implementation(projects.samples.shaderLab.audiolib)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

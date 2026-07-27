@@ -7,4 +7,5 @@ enum class ShaderLabTab {
     STATIC,
     ANIMATED,
     COMPOSITE,
+    AUDIO,
 }

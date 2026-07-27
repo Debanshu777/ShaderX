@@ -6,5 +6,7 @@
 	<true/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>ShaderLab needs access to save edited images to your photo library.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>ShaderLab uses the microphone to visualize live audio with shaders.</string>
 </dict>
 </plist>

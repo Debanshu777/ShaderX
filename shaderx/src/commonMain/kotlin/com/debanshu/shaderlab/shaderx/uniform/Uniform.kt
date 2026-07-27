@@ -1,6 +1,7 @@
 package com.debanshu.shaderlab.shaderx.uniform
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import com.debanshu.shaderlab.shaderx.uniform.MatrixUniform.Companion.rowMajor
 
 /**
@@ -13,6 +14,8 @@ import com.debanshu.shaderlab.shaderx.uniform.MatrixUniform.Companion.rowMajor
  * - [FloatUniform]: Single or multiple float values (vec2, vec3, vec4)
  * - [IntUniform]: Single or multiple integer values
  * - [ColorUniform]: Color values with proper color space handling
+ * - [MatrixUniform]: Column-major float matrices (mat2, mat3, mat4)
+ * - [TextureUniform]: An image bound as an additional `uniform shader` input
  *
  * ## Example
  * ```kotlin
@@ -20,7 +23,8 @@ import com.debanshu.shaderlab.shaderx.uniform.MatrixUniform.Companion.rowMajor
  *     FloatUniform("resolution", width, height),
  *     FloatUniform("intensity", intensity),
  *     ColorUniform("tintColor", 0xFFFF5733),
- *     IntUniform("mode", mode)
+ *     IntUniform("mode", mode),
+ *     TextureUniform("fftData", fftBitmap),
  * )
  * ```
  */
@@ -304,4 +308,70 @@ public data class MatrixUniform(
                 floatArrayOf(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f),
             )
     }
+}
+
+/**
+ * Uniform binding an [ImageBitmap] as an additional shader input, declared in shader code as
+ * `uniform shader <name>;` and sampled with `<name>.eval(coord)`.
+ *
+ * This is distinct from the mandatory `content` input (the composable's own rendered layer). Use it
+ * to feed arbitrary image data into a shader — a lookup table, a mask, or per-frame data such as
+ * audio FFT magnitudes packed into a bitmap.
+ *
+ * ## Platform binding
+ * - **Android (AGSL):** `RuntimeShader.setInputShader(name, BitmapShader(bitmap, tileX, tileY))`
+ * - **Skia (iOS / Desktop / Wasm):** `RuntimeShaderBuilder.child(name, image.makeShader(tileX, tileY))`
+ *
+ * ## Coordinate space
+ * AGSL/SkSL child shaders sample in **pixel** coordinates, not normalised UV. To read a texel at
+ * normalised `(u, v)` multiply by the image dimensions, e.g. `fftData.eval(float2(u * texWidth, 0))`.
+ * Pass the texture size as a separate [FloatUniform] if the shader needs it.
+ *
+ * ## Per-frame use (live data)
+ * For animated effects that update the texture every frame, prefer a **stable** effect instance
+ * that resolves the image inside [com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect.buildFrameUniforms]
+ * (see [com.debanshu.shaderlab.shaderx.effect.impl.AudioVisualizerEffect.withFftDataSource]). Emitting
+ * this uniform from `buildFrameUniforms` and excluding the image from `structuralEquals` /
+ * `structuralHashCode` keeps the animation session alive. Avoid creating a new effect identity
+ * every frame solely to change the texture — Compose may skip `shaderEffect` when structural
+ * [equals] matches, leaving a stale image bound.
+ *
+ * ## Shader Declaration
+ * ```glsl
+ * uniform shader content;
+ * uniform shader fftData;
+ * ```
+ *
+ * @property name The uniform name as declared in the shader source.
+ * @property image The image to bind as this shader input.
+ * @property tileModeX Horizontal tiling when sampling outside the image bounds.
+ * @property tileModeY Vertical tiling when sampling outside the image bounds.
+ */
+public data class TextureUniform(
+    override val name: String,
+    public val image: ImageBitmap,
+    public val tileModeX: ShaderTileMode = ShaderTileMode.CLAMP,
+    public val tileModeY: ShaderTileMode = ShaderTileMode.CLAMP,
+) : Uniform() {
+    // ImageBitmap has no content equality; compare by reference identity. Two TextureUniforms are
+    // equal only when they wrap the same image instance with the same name and tile modes.
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is TextureUniform) return false
+        return name == other.name &&
+            image === other.image &&
+            tileModeX == other.tileModeX &&
+            tileModeY == other.tileModeY
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + image.hashCode()
+        result = 31 * result + tileModeX.hashCode()
+        result = 31 * result + tileModeY.hashCode()
+        return result
+    }
+
+    override fun toString(): String =
+        "TextureUniform(name='$name', image=${image.width}x${image.height}, tileX=$tileModeX, tileY=$tileModeY)"
 }

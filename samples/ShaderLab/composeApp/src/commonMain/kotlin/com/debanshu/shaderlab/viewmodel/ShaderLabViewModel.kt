@@ -5,6 +5,7 @@ import com.debanshu.shaderlab.imagelib.PickResult
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.CompositeEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.AudioVisualizerEffect
 import com.debanshu.shaderlab.shaderx.effect.withColorParameter
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.create
@@ -118,11 +119,18 @@ class ShaderLabViewModel : ViewModel() {
             }
 
             ShaderLabTab.ANIMATED -> {
-                availableEffects.filterIsInstance<AnimatedShaderEffect>()
+                // Spectrum graph stays on the Audio tab; distortion is an animated image effect.
+                availableEffects.filterIsInstance<AnimatedShaderEffect>().filter {
+                    it !is AudioVisualizerEffect
+                }
             }
 
             ShaderLabTab.COMPOSITE -> {
                 emptyList()
+            }
+
+            ShaderLabTab.AUDIO -> {
+                availableEffects.filterIsInstance<AudioVisualizerEffect>()
             }
         }
 

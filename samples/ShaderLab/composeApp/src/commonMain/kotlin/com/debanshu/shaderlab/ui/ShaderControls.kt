@@ -137,6 +137,7 @@ fun ShaderControls(
                                     ShaderLabTab.STATIC -> "Static"
                                     ShaderLabTab.ANIMATED -> "Animated"
                                     ShaderLabTab.COMPOSITE -> "Composite"
+                                    ShaderLabTab.AUDIO -> "Audio"
                                 },
                             style = MaterialTheme.typography.labelLarge,
                         )

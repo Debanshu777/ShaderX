@@ -429,15 +429,55 @@ for a richer reference implementation.
 
 #### Built-in animated effects
 
-| Effect                   | Description                          |
-|--------------------------|--------------------------------------|
-| `WaveEffect`             | Sinusoidal UV distortion             |
-| `AnimatedGradientEffect` | Rotating two-color gradient overlay  |
-| `PlasmaEffect`           | Classic demoscene plasma colors      |
-| `RippleEffect`           | Expanding concentric ring distortion |
-| `VortexEffect`           | Spiral/twirl from center             |
+| Effect                   | Description                            |
+|--------------------------|----------------------------------------|
+| `WaveEffect`             | Sinusoidal UV distortion               |
+| `AnimatedGradientEffect` | Rotating two-color gradient overlay    |
+| `PlasmaEffect`           | Classic demoscene plasma colors        |
+| `RippleEffect`           | Expanding concentric ring distortion   |
+| `VortexEffect`           | Spiral/twirl from center               |
+| `AudioVisualizerEffect`  | Live spectrum bars from an FFT texture |
 
 Try them in the **ShaderLab** sample app under the **Animated** tab.
+
+### Passing textures / live data (audio FFT)
+
+Beyond the mandatory `content` layer, an effect can declare additional `uniform shader` inputs and
+feed them a Compose `ImageBitmap` via
+[`TextureUniform`](shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/uniform/Uniform.kt).
+This is how you push **per-frame data** — a lookup table, a mask, or audio FFT magnitudes — into a
+shader. Under the hood it maps to `RuntimeShader.setInputShader` on Android and
+`RuntimeShaderBuilder.child` on Skia (iOS/Desktop/Wasm).
+
+For data that changes every frame, emit the `TextureUniform` from `buildFrameUniforms()` and
+**exclude the image from `structuralEquals`/`structuralHashCode`** — exactly as `time` is excluded —
+so the animation session is not torn down each frame:
+
+```kotlin
+override fun buildFrameUniforms() = listOf(
+  FloatUniform("time", time),
+  TextureUniform("fftData", fftData),   // fftData: ImageBitmap, updated per frame
+)
+
+// fftData and time are excluded from equality — see AudioVisualizerEffect
+override fun structuralEquals(other: Any?) =
+  other is AudioVisualizerEffect && fftSize == other.fftSize && animate == other.animate
+```
+
+Push a new frame by producing a new effect instance from your audio callback — recomposition carries
+the latest image into the shader:
+
+```kotlin
+// Pack normalised FFT magnitudes into row 0 of a 1-px-tall bitmap, then:
+effect = effect.withFftData(fftBitmap)
+```
+
+> Child shaders sample in **pixel** coordinates (not normalised UV): read a texel at normalised `u`
+> as `fftData.eval(float2(u * fftSize, 0.5))`.
+
+See [
+`AudioVisualizerEffect`](shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl/AudioVisualizerEffect.kt)
+for the full reference implementation.
 
 ### Scoped Shader Factory
 

@@ -1,9 +1,11 @@
 package com.debanshu.shaderlab.shaderx.factory
 
+import android.graphics.BitmapShader
 import android.graphics.RuntimeShader
 import android.graphics.Shader
 import android.os.Build
 import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import com.debanshu.shaderlab.shaderx.ShaderConstants
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
@@ -16,6 +18,8 @@ import com.debanshu.shaderlab.shaderx.uniform.ColorUniform
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
 import com.debanshu.shaderlab.shaderx.uniform.IntUniform
 import com.debanshu.shaderlab.shaderx.uniform.MatrixUniform
+import com.debanshu.shaderlab.shaderx.uniform.ShaderTileMode
+import com.debanshu.shaderlab.shaderx.uniform.TextureUniform
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
 import android.graphics.RenderEffect as AndroidRenderEffect
 
@@ -190,9 +194,30 @@ internal class AndroidShaderFactory(
                         ),
                     )
                     }
+
+                    is TextureUniform -> {
+                        // setInputShader is re-callable per frame — unlike setColorUniform, it does
+                        // not corrupt JNI uniform names, so it is safe to reapply during refresh().
+                        val bitmap = uniform.image.asAndroidBitmap()
+                        shader.setInputShader(
+                            uniform.name,
+                            BitmapShader(
+                                bitmap,
+                                uniform.tileModeX.toAndroidTileMode(),
+                                uniform.tileModeY.toAndroidTileMode(),
+                            ),
+                        )
+                    }
                 }
             }
         }
+
+        private fun ShaderTileMode.toAndroidTileMode(): Shader.TileMode =
+            when (this) {
+                ShaderTileMode.CLAMP -> Shader.TileMode.CLAMP
+                ShaderTileMode.REPEAT -> Shader.TileMode.REPEAT
+                ShaderTileMode.MIRROR -> Shader.TileMode.MIRROR
+            }
     }
 }
 

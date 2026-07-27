@@ -2,6 +2,7 @@ package com.debanshu.shaderlab.shaderx.factory
 
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.asSkiaBitmap
 import com.debanshu.shaderlab.shaderx.ShaderConstants
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
@@ -13,8 +14,11 @@ import com.debanshu.shaderlab.shaderx.uniform.ColorUniform
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
 import com.debanshu.shaderlab.shaderx.uniform.IntUniform
 import com.debanshu.shaderlab.shaderx.uniform.MatrixUniform
+import com.debanshu.shaderlab.shaderx.uniform.ShaderTileMode
+import com.debanshu.shaderlab.shaderx.uniform.TextureUniform
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
 import org.jetbrains.skia.FilterTileMode
+import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
@@ -227,9 +231,29 @@ internal class SkiaShaderFactory(
                     is ColorUniform -> {
                         builder.uniform(uniform.name, uniform.toFloatArray())
                     }
+
+                    is TextureUniform -> {
+                        // A native Image is allocated per call; compilation is the cached cost, so
+                        // this per-frame allocation is acceptable for live-data effects.
+                        val image = Image.makeFromBitmap(uniform.image.asSkiaBitmap())
+                        builder.child(
+                            uniform.name,
+                            image.makeShader(
+                                uniform.tileModeX.toSkiaTileMode(),
+                                uniform.tileModeY.toSkiaTileMode(),
+                            ),
+                        )
+                    }
                 }
             }
         }
+
+        private fun ShaderTileMode.toSkiaTileMode(): FilterTileMode =
+            when (this) {
+                ShaderTileMode.CLAMP -> FilterTileMode.CLAMP
+                ShaderTileMode.REPEAT -> FilterTileMode.REPEAT
+                ShaderTileMode.MIRROR -> FilterTileMode.MIRROR
+            }
     }
 }
 

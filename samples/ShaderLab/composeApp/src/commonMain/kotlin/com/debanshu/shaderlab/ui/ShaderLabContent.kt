@@ -56,6 +56,8 @@ import com.debanshu.shaderlab.imagelib.createImageExporter
 import com.debanshu.shaderlab.imagelib.rememberImagePickerLauncher
 import com.debanshu.shaderlab.imagelib.rememberPermissionHandler
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.AudioDistortionEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.AudioVisualizerEffect
 import com.debanshu.shaderlab.shaderx.factory.ImageProcessor
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.create
@@ -338,6 +340,26 @@ private fun ShaderLabPreviewPane(
     factory: ShaderFactory,
     modifier: Modifier = Modifier,
 ) {
+    val audioEffect = uiState.activeEffect as? AudioVisualizerEffect
+    val distortionEffect = uiState.activeEffect as? AudioDistortionEffect
+    if (uiState.selectedTab == ShaderLabTab.AUDIO && audioEffect != null) {
+        AudioVisualizer(
+            baseEffect = audioEffect,
+            factory = factory,
+            modifier = modifier.fillMaxSize(),
+        )
+        return
+    }
+    if (distortionEffect != null) {
+        AudioDistortionPreview(
+            baseEffect = distortionEffect,
+            imageSource = uiState.selectedImage,
+            factory = factory,
+            modifier = modifier.fillMaxSize(),
+        )
+        return
+    }
+
     AnimatedContent(
         targetState = uiState.showBeforeAfter,
         transitionSpec = {

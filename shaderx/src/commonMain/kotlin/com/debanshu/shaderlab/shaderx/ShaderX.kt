@@ -4,6 +4,8 @@ package com.debanshu.shaderlab.shaderx
 
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.AnimatedGradientEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.AudioDistortionEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.AudioVisualizerEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.ChromaticAberrationEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.GradientEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.GrayscaleEffect
@@ -70,6 +72,8 @@ public object ShaderX {
             PlasmaEffect(),
             RippleEffect(),
             VortexEffect(),
+            AudioDistortionEffect(),
+            AudioVisualizerEffect(),
             NativeBlurEffect(),
         )
     }

@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "io.github.debanshu777"
-version = "0.1.3"
+version = "0.1.4"
 
 kotlin {
     applyDefaultHierarchyTemplate()
@@ -63,9 +63,11 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.runtime)
-            implementation(libs.foundation)
-            implementation(libs.ui)
+            // Exposed as `api` — the public surface returns Compose types (ImageBitmap, Modifier,
+            // RenderEffect), so consumers of the published artifact must receive Compose transitively.
+            api(libs.runtime)
+            api(libs.foundation)
+            api(libs.ui)
         }
 
         commonTest.dependencies {
