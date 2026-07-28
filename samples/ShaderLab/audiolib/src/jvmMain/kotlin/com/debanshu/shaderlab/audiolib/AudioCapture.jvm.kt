@@ -71,15 +71,18 @@ internal class JvmAudioCapture(
 
     override fun stop() {
         running = false
-        worker?.join(200)
+        val dataLine = line
+        // Stop the line first so a blocked TargetDataLine.read() can return and the worker can exit.
+        try {
+            dataLine?.stop()
+            dataLine?.flush()
+        } catch (_: Exception) {
+        }
+        worker?.join(1_000)
         worker = null
-        line?.let {
-            try {
-                it.stop()
-                it.flush()
-            } catch (_: Exception) {
-            }
-            it.close()
+        try {
+            dataLine?.close()
+        } catch (_: Exception) {
         }
         line = null
         if (_state.value == AudioCaptureState.RUNNING) _state.value = AudioCaptureState.IDLE

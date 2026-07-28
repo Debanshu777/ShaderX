@@ -65,7 +65,7 @@ dependencyResolutionManagement {
 
 // build.gradle.kts (shared module)
 dependencies {
-  implementation("io.github.debanshu777:shaderx:0.1.3")
+  implementation("io.github.debanshu777:shaderx:0.1.4")
 }
 ```
 
@@ -90,14 +90,12 @@ Image(
 ```kotlin
 @Composable
 fun AnimatedWave() {
-    // rememberShaderEffect drives the animation loop via withFrameMillis.
-    // The effect identity is stable across frames — no unnecessary recomposition.
-    val wave = rememberShaderEffect(WaveEffect(amplitude = 15f, frequency = 6f))
-
+  // Modifier.shaderEffect owns a ShaderSession and advances time each frame.
+  // Do not also wrap with rememberShaderEffect for normal usage.
     Image(
         painter = painterResource("photo.png"),
         contentDescription = null,
-        modifier = Modifier.shaderEffect(wave)
+      modifier = Modifier.shaderEffect(WaveEffect(amplitude = 15f, frequency = 6f))
     )
 }
 ```
@@ -129,8 +127,8 @@ factory.close()
 
 ## Built-in Effects
 
-Nine production-ready effects ship out of the box, each with validated parameter ranges and a stable
-`@Immutable` data class representation.
+Fifteen production-ready effects ship out of the box, each with validated parameter ranges and a
+stable `@Immutable` representation.
 
 ### GrayscaleEffect
 
@@ -291,6 +289,29 @@ VortexEffect(strength = 1f, radius = 0.5f, speed = 1f)
 
 ---
 
+### AudioVisualizerEffect *(Animated · Audio)*
+
+Live spectrum bar graph. Bind an FFT magnitude texture (or a `withFftDataSource` lambda) and the
+session refreshes it each frame.
+
+```kotlin
+AudioVisualizerEffect(fftSize = 64f, barColorIntensity = 1f)
+  .withFftDataSource { spectrumImage }
+```
+
+---
+
+### AudioDistortionEffect *(Animated · Audio)*
+
+Warps the underlying content using live FFT bins as a displacement field.
+
+```kotlin
+AudioDistortionEffect(fftSize = 64f, intensity = 0.5f)
+  .withFftDataSource { spectrumImage }
+```
+
+---
+
 ### GradientEffect
 
 Two-color gradient overlay blended over the original image. Supports both `Long` ARGB and Compose
@@ -370,11 +391,15 @@ a [ShaderSession](shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/f
 to refresh uniforms every frame without recompiling the shader. Shader compilation happens once per
 session; each frame only updates uniforms and returns a lightweight new `RenderEffect` reference.
 
-For manual control, combine `rememberShaderEffect` (keeps effect state in sync) with `shaderEffect`:
+`isAnimating` / `animate` controls whether `time` advances. When paused, the session still refreshes
+`buildFrameUniforms()` each frame so live inputs (e.g. FFT textures) keep updating.
+
+Prefer passing the effect directly to `shaderEffect`. Use `rememberShaderEffect` only when you apply
+`RenderEffect` yourself via `graphicsLayer` (or need a manually driven clock):
 
 ```kotlin
 @Composable
-fun LiveWave(amplitude: Float, frequency: Float) {
+fun ManualWave(amplitude: Float, frequency: Float) {
     val wave = rememberShaderEffect(
         WaveEffect(amplitude = amplitude, frequency = frequency)
     )
@@ -437,8 +462,9 @@ for a richer reference implementation.
 | `RippleEffect`           | Expanding concentric ring distortion   |
 | `VortexEffect`           | Spiral/twirl from center               |
 | `AudioVisualizerEffect`  | Live spectrum bars from an FFT texture |
+| `AudioDistortionEffect`  | Image warp driven by live FFT bins     |
 
-Try them in the **ShaderLab** sample app under the **Animated** tab.
+Try them in the **ShaderLab** sample app under the **Animated** and **Audio** tabs.
 
 ### Passing textures / live data (audio FFT)
 
@@ -464,20 +490,32 @@ override fun structuralEquals(other: Any?) =
   other is AudioVisualizerEffect && fftSize == other.fftSize && animate == other.animate
 ```
 
-Push a new frame by producing a new effect instance from your audio callback — recomposition carries
-the latest image into the shader:
+For live mic data, prefer a source lambda so the session can pull a fresh bitmap each frame without
+changing effect identity:
 
 ```kotlin
-// Pack normalised FFT magnitudes into row 0 of a 1-px-tall bitmap, then:
-effect = effect.withFftData(fftBitmap)
+val effect = AudioVisualizerEffect().withFftDataSource { fftSlot.image }
+
+// Pack normalised FFT magnitudes into row 0 of a 1-px-tall bitmap each frame, then:
+fftSlot.image = packMagnitudesToImage(magnitudes)
 ```
+
+Or snapshot into the effect with `withFftData(fftBitmap)` when you want an explicit immutable copy.
+Optional `frameDataKey` on `Modifier.shaderEffect` forces Compose invalidation when per-frame data
+would otherwise be skipped under structural equality.
 
 > Child shaders sample in **pixel** coordinates (not normalised UV): read a texel at normalised `u`
 > as `fftData.eval(float2(u * fftSize, 0.5))`.
 
-See [
+See
+[
 `AudioVisualizerEffect`](shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl/AudioVisualizerEffect.kt)
-for the full reference implementation.
+and
+[
+`AudioDistortionEffect`](shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl/AudioDistortionEffect.kt)
+for the full reference implementations. The ShaderLab sample's `audiolib` module covers mic
+capture +
+FFT packing across Android, iOS, Desktop, and Wasm.
 
 ### Scoped Shader Factory
 
@@ -652,20 +690,18 @@ immediately available on iOS, Desktop, and Web.
 
 ```
 ShaderEffect (sealed interface, @Stable)
-├── RuntimeShaderEffect         — AGSL/SkSL shader source + buildUniforms()
+├── RuntimeShaderEffect              — AGSL/SkSL shader source + buildUniforms()
 │   └── AbstractRuntimeShaderEffect  — parameterHandlers, range validation
-│       ├── GrayscaleEffect
-│       ├── SepiaEffect
-│       ├── VignetteEffect
-│       ├── PixelateEffect
-│       ├── ChromaticAberrationEffect
-│       ├── InvertEffect
-│       ├── WaveEffect          (also AnimatedShaderEffect)
-│       └── GradientEffect
-├── NativeEffect                — delegates to platform-native APIs
-│   └── NativeBlurEffect        (BlurEffect)
-├── AnimatedShaderEffect        — adds withTime(); driven by rememberShaderEffect
-└── CompositeEffect             — ordered effect list, + operator, namespaced params
+│       ├── GrayscaleEffect / SepiaEffect / VignetteEffect / …
+│       ├── GradientEffect / PixelateEffect / ChromaticAberrationEffect / InvertEffect
+│       └── AbstractAnimatedShaderEffect  — structural equals excludes time
+│           ├── WaveEffect / AnimatedGradientEffect / PlasmaEffect
+│           ├── RippleEffect / VortexEffect
+│           └── AudioVisualizerEffect / AudioDistortionEffect  (+ TextureUniform FFT)
+├── NativeEffect                     — delegates to platform-native APIs
+│   └── NativeBlurEffect
+├── AnimatedShaderEffect             — withTime(), buildFrameUniforms(); session-driven
+└── CompositeEffect                  — ordered effect list, + operator, namespaced params
 ```
 
 ### Caching Strategy
@@ -702,9 +738,11 @@ non-printable and guaranteed absent from normal effect IDs.
 
 ### ShaderLab — [samples/ShaderLab](samples/ShaderLab)
 
-Full-featured gallery app on **Android, iOS, and Desktop**. Browse all nine built-in effects, tweak
-parameters with live sliders and color pickers, and apply composite stacks. Built entirely with the
-public ShaderX API.
+Full-featured gallery app on **Android, iOS, Desktop, and Wasm**. Browse built-in effects across
+**Static / Animated / Composite / Audio** tabs, tweak parameters with live sliders and color
+pickers,
+and drive audio-reactive previews via the sample `audiolib` module (mic → FFT → texture). Built with
+the public ShaderX API.
 
 ```bash
 # Android

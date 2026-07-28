@@ -93,14 +93,17 @@ internal class AndroidAudioCapture(
 
     override fun stop() {
         running = false
-        worker?.join(200)
+        val rec = record
+        // Stop recording first so a blocked AudioRecord.read() can return and the worker can exit.
+        try {
+            if (rec?.recordingState == AudioRecord.RECORDSTATE_RECORDING) rec.stop()
+        } catch (_: Exception) {
+        }
+        worker?.join(1_000)
         worker = null
-        record?.let {
-            try {
-                if (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) it.stop()
-            } catch (_: Exception) {
-            }
-            it.release()
+        try {
+            rec?.release()
+        } catch (_: Exception) {
         }
         record = null
         if (_state.value == AudioCaptureState.RUNNING) _state.value = AudioCaptureState.IDLE

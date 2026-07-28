@@ -188,10 +188,11 @@ private fun Modifier.shaderEffectCore(
     val effectHeight = knownSize?.height?.toFloat() ?: measuredSize.second
 
     val animatedEffect = effect as? AnimatedShaderEffect
-    val useAnimatedSession =
-        animatedEffect?.isAnimating == true && effectWidth > 0 && effectHeight > 0
+    // Keep a ShaderSession for every AnimatedShaderEffect so buildFrameUniforms() (e.g. live FFT
+    // textures) can refresh each frame even when time animation is paused.
+    val useAnimatedSession = animatedEffect != null && effectWidth > 0 && effectHeight > 0
 
-    if (useAnimatedSession) {
+    if (useAnimatedSession && animatedEffect != null) {
         val latestEffect by rememberUpdatedState(effect)
 
         val sessionIdentity =
@@ -223,16 +224,18 @@ private fun Modifier.shaderEffectCore(
                 withFrameMillis { frameTime ->
                     val effectAtFrame =
                         latestEffect as? AnimatedShaderEffect ?: return@withFrameMillis
-                    if (!effectAtFrame.isAnimating) {
-                        animationStartMillis = 0L
-                        return@withFrameMillis
-                    }
-                    if (animationStartMillis == 0L) {
-                        animationStartMillis = frameTime
-                    }
-                    val elapsedSeconds = (frameTime - animationStartMillis) / 1000f
-                    val timed = effectAtFrame.withTime(elapsedSeconds)
-                    val result = session.refresh(timed, effectWidth, effectHeight)
+                    val frameEffect =
+                        if (effectAtFrame.isAnimating) {
+                            if (animationStartMillis == 0L) {
+                                animationStartMillis = frameTime
+                            }
+                            val elapsedSeconds = (frameTime - animationStartMillis) / 1000f
+                            effectAtFrame.withTime(elapsedSeconds)
+                        } else {
+                            animationStartMillis = 0L
+                            effectAtFrame
+                        }
+                    val result = session.refresh(frameEffect, effectWidth, effectHeight)
                     reportResult(result)
                     result.onSuccess {
                         renderEffect = it

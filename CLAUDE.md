@@ -9,7 +9,8 @@ repository.
 Multiplatform `Modifier` extensions. Targets: **Android (API 33+ via AGSL)**, **iOS**, **JVM/Desktop
 **, and **Wasm/JS** (the last three via Skia's `RuntimeEffect`). Published to Maven Central as
 `io.github.debanshu777:shaderx`. The repo also contains demo apps under `samples/` (`ShaderLab`,
-`ASCIICamera`, `VerticalCarousel`) that consume the library via `projects.shaderx`.
+`ASCIICamera`, `VerticalCarousel`) that consume the library via `projects.shaderx`. ShaderLab also
+includes sample-only modules `imagelib` and `audiolib` (mic capture + FFT → spectrum textures).
 
 ## Common commands
 
@@ -60,9 +61,11 @@ non-Android platform individually — put it in `skiaMain`.
   eliminates ~70 lines of boilerplate. Parameter range validation is automatic.
 - `NativeEffect` — wraps a platform-native effect (e.g. `BlurEffect`). Routed to per-platform native
   APIs instead of compiling shader source.
-- `AnimatedShaderEffect` — adds `withTime(seconds)`; driven from `rememberShaderEffect` via
-  `withFrameMillis`. `WaveEffect` is the canonical impl — its `equals`/`hashCode` **intentionally
-  exclude `time`** so the animation loop doesn't tear down `LaunchedEffect` every frame.
+- `AnimatedShaderEffect` — adds `withTime(seconds)`, `isAnimating`, and `buildFrameUniforms()`.
+  Prefer `AbstractAnimatedShaderEffect` (enforces structural `equals`/`hashCode` that **exclude
+  `time`** so Compose session keys stay stable across frames). `isAnimating` controls whether
+  `time` advances; `Modifier.shaderEffect` still refreshes `buildFrameUniforms()` each frame when
+  paused so live uniforms (e.g. FFT textures) keep updating.
 - `CompositeEffect` — chains effects. Parameter IDs are namespaced as
   `"${index}\u001F${originalId}"` (U+001F delimiter, not underscore, to avoid collision with effect
   IDs containing `_`). The `+` operator on `ShaderEffect` builds composites.
@@ -74,6 +77,10 @@ non-Android platform individually — put it in `skiaMain`.
 - `BaseShaderFactory` (in `commonMain`) routes by effect type. Composite chaining returns
   `ShaderError.UnsupportedEffect` on non-Android platforms — this is a documented error, not a
   silent partial render.
+- `createAnimatedSession(effect, w, h)` → `ShaderSession` — holds instance-scoped GPU state so
+  per-frame uniforms can update without recompiling. `refresh(effect, w, h)` applies
+  `buildFrameUniforms()` (Android in-place; Skia reapplies) and returns a new `RenderEffect`
+  wrapper. Always `close()` the session (Compose does this via `DisposableEffect`).
 - `expect fun ShaderFactory.Companion.create(maxCacheSize: Int = DEFAULT_CACHE_SIZE)` is implemented
   by:
     - `androidMain` → `AndroidShaderFactory` (real access-order LRU `RuntimeShader` cache,
@@ -83,12 +90,27 @@ non-Android platform individually — put it in `skiaMain`.
 - Both factories use a real access-order `LruCache` (see `factory/LruCache.kt` expect/actual).
   Compilation is the expensive step; updating uniforms each frame is cheap. Don't bypass the cache.
 
+### Uniforms (`uniform/`)
+
+- Scalar/color uniforms: `FloatUniform`, `ColorUniform`, etc. in `Uniform.kt`.
+- `TextureUniform` — binds an extra `ImageBitmap` as `uniform shader <name>;` (beyond the implicit
+  `content` input). Maps to `RuntimeShader.setInputShader` on Android and Skia `child` shaders.
+  Pair with `ShaderTileMode` for clamp/repeat/mirror.
+- Live textures (FFT spectra, LUTs updated every frame): resolve the bitmap inside
+  `buildFrameUniforms()` (or via a source lambda), exclude the image from structural equality, and
+  let `Modifier.shaderEffect`'s session loop refresh each frame. Optional `frameDataKey` forces
+  Compose invalidation when identity would otherwise skip.
+
 ### Compose surface (`compose/ShaderModifier.kt`)
 
 Public entry points: `Modifier.shaderEffect(effect)`, `Modifier.shaderEffectWithResult`,
 `rememberShaderEffect`, `rememberRenderEffect`. The default `factory` parameter is
 `LocalShaderFactory.current` — a process-wide singleton. Callers who need a scoped cache use
 `rememberShaderFactory()` + `CompositionLocalProvider(LocalShaderFactory provides factory)`.
+
+For `AnimatedShaderEffect`, `Modifier.shaderEffect` owns the `ShaderSession` + per-frame loop —
+do **not** also wrap with `rememberShaderEffect` for normal usage. Prefer `rememberShaderEffect`
+only when applying `RenderEffect` manually via `graphicsLayer`.
 
 ### Composite chaining
 
@@ -107,6 +129,16 @@ All factory operations return `ShaderResult<T>` (`result/ShaderResult.kt`) with 
 sealed type. Combinators: `map`, `flatMap`, `fold`, `recover`, `onSuccess`, `onFailure`,
 `getOrNull`, `getOrElse`. Reuse these variants for new failure paths instead of throwing.
 
+### Sample audio pipeline (`samples/ShaderLab/audiolib`)
+
+Sample-only KMP module (not published with ShaderX):
+
+- `AudioCapture` — expect/actual mic capture (Android `AudioRecord`, iOS `AVAudioEngine`, JVM
+  `TargetDataLine`, Wasm Web Audio `AnalyserNode`).
+- `Fft` — pure-Kotlin spectrum; `packMagnitudesToImage` packs bins into a 1×N `ImageBitmap`.
+- ShaderLab's Audio tab feeds that texture into `AudioVisualizerEffect` /
+  `AudioDistortionEffect` via `withFftDataSource { ... }`.
+
 ## Conventions specific to this repo
 
 - `:shaderx` enables `kotlin { explicitApi() }` — every new public declaration in the library needs
@@ -122,13 +154,17 @@ sealed type. Combinators: `map`, `flatMap`, `fold`, `recover`, `onSuccess`, `onF
 
 1. Create `shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl/MyEffect.kt`
    extending `AbstractRuntimeShaderEffect` (or `NativeEffect` if delegating to a platform API).
-   Declare `id`, `displayName`, `shaderSource`, `buildUniforms`, and `parameterHandlers`. See
-   `GrayscaleEffect` for a minimal example.
+   For animated / live-uniform effects, extend `AbstractAnimatedShaderEffect` and override
+   `buildFrameUniforms()` for per-frame data (`time`, textures). Declare `id`, `displayName`,
+   `shaderSource`, `buildUniforms`, and `parameterHandlers`. See `GrayscaleEffect` for a minimal
+   static example; `WaveEffect` / `AudioVisualizerEffect` for animated + live-texture patterns.
 2. If it's a `NativeEffect`, add a branch to `AndroidShaderFactory.createNativeEffect` **and**
    `SkiaShaderFactory.createNativeEffect`.
 3. To surface it in `ShaderX.builtInEffects()`, register it in `cachedBuiltInEffects` in
    `shaderx/src/commonMain/.../ShaderX.kt`.
 4. AGSL/SkSL source must declare `uniform shader content;` and a `half4 main(float2 fragCoord)`
-   entry point — see the format documented at the top of `RuntimeShaderEffect.kt`.
+   entry point — see the format documented at the top of `RuntimeShaderEffect.kt`. Extra textures
+   need matching `uniform shader <name>;` declarations and a `TextureUniform` in `buildUniforms` /
+   `buildFrameUniforms`.
 5. Add `@Immutable` to the class and annotate each parameter in `parameterHandlers` with the correct
    handler helper (`floatHandler`, `colorHandler`, `toggleHandler`).

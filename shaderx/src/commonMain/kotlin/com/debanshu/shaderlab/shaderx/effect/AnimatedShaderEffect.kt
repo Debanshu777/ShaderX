@@ -47,8 +47,11 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
 @Stable
 public interface AnimatedShaderEffect : RuntimeShaderEffect {
     /**
-     * Whether this effect is currently animating.
-     * When false, the effect behaves as a static shader.
+     * Whether this effect is currently advancing [time].
+     *
+     * When false, [time] stays frozen, but [com.debanshu.shaderlab.shaderx.compose.shaderEffect]
+     * still refreshes [buildFrameUniforms] each frame so live uniforms (e.g. FFT textures) keep
+     * updating.
      */
     public val isAnimating: Boolean
 

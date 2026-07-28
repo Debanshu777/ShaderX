@@ -6,8 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCObjectVar
+import kotlinx.cinterop.alloc
 import kotlinx.cinterop.get
-import kotlinx.cinterop.pointed
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +20,7 @@ import platform.AVFAudio.AVAudioPCMBuffer
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryRecord
 import platform.AVFAudio.setActive
+import platform.Foundation.NSError
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.resume
 
@@ -62,7 +66,20 @@ internal class IosAudioCapture(
             }
 
             avEngine.prepare()
-            avEngine.startAndReturnError(null)
+            val started =
+                memScoped {
+                    val error = alloc<ObjCObjectVar<NSError?>>()
+                    avEngine.startAndReturnError(error.ptr)
+                }
+            if (!started) {
+                avEngine.inputNode.removeTapOnBus(0u)
+                try {
+                    AVAudioSession.sharedInstance().setActive(false, null)
+                } catch (_: Exception) {
+                }
+                _state.value = AudioCaptureState.ERROR
+                return
+            }
             engine = avEngine
             running = true
             _state.value = AudioCaptureState.RUNNING
