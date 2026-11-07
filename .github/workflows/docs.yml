@@ -68,7 +68,7 @@ jobs:
       - name: Check generated metadata and links
         run: python scripts/check_site.py
       - name: Upload preview
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: documentation-site
           path: site/

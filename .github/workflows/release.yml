@@ -105,7 +105,7 @@ jobs:
           cat "$notes" >> "$GITHUB_STEP_SUMMARY"
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-test-reports
           path: |
