@@ -1,0 +1,27 @@
+name: Feature or effect request
+description: Propose a shader effect, API improvement, or developer-experience change.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would this help you build?
+      description: Explain the use case and current limitation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include an API sketch or a visual reference, with attribution if applicable.
+    validations:
+      required: true
+  - type: input
+    id: platforms
+    attributes:
+      label: Target platforms
+      placeholder: Android, iOS, JVM desktop, WebAssembly
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe existing effects or workarounds you tried.

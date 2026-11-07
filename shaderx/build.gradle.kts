@@ -107,7 +107,10 @@ mavenPublishing {
 
     pom {
         name.set("ShaderX")
-        description.set("Kotlin Multiplatform library for GPU shader effects in Compose")
+        description.set(
+            "GPU shader effects for Jetpack Compose and Compose Multiplatform on Android, iOS, " +
+                "JVM desktop, and WebAssembly, with built-in effects and custom AGSL/SkSL shaders.",
+        )
         url.set("https://github.com/Debanshu777/ShaderX")
 
         licenses {
@@ -119,7 +122,8 @@ mavenPublishing {
 
         properties.set(
             mapOf(
-                "kotlin.keywords" to "compose-multiplatform, jetpack-compose, multiplatform-ui, ios, android, desktop, wasm",
+                "kotlin.keywords" to "kotlin-multiplatform, compose-multiplatform, jetpack-compose, " +
+                    "shader, agsl, sksl, gpu, image-processing, android, ios, desktop, webassembly",
             ),
         )
 
@@ -132,7 +136,7 @@ mavenPublishing {
 
         scm {
             url.set("https://github.com/Debanshu777/ShaderX")
-            connection.set("scm:git:git://github.com/Debanshu777/ShaderX.git")
+            connection.set("scm:git:https://github.com/Debanshu777/ShaderX.git")
             developerConnection.set("scm:git:ssh://git@github.com/Debanshu777/ShaderX.git")
         }
     }

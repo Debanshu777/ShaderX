@@ -1,0 +1,27 @@
+# ShaderX
+
+> Kotlin Multiplatform GPU shader effects for Jetpack Compose and Compose Multiplatform.
+
+Published dependency: io.github.debanshu777:shaderx:0.1.3.
+The main branch develops 0.1.4. Session animation, texture uniforms, and audio effects require that development source; do not assume they exist in 0.1.3.
+Packages use com.debanshu.shaderlab.shaderx. Android requires API 33+. Skia rejects multi-effect composites. Android offline image processing currently returns a processing failure.
+
+## Guides
+
+- [Installation](https://debanshu777.github.io/ShaderX/getting-started/)
+- [Platform support](https://debanshu777.github.io/ShaderX/platforms/)
+- [Effect catalog](https://debanshu777.github.io/ShaderX/effects/)
+- [Compose integration](https://debanshu777.github.io/ShaderX/compose/)
+- [Custom shaders](https://debanshu777.github.io/ShaderX/custom-effects/)
+- [Image processing](https://debanshu777.github.io/ShaderX/image-processing/)
+- [Samples](https://debanshu777.github.io/ShaderX/samples/)
+- [Troubleshooting](https://debanshu777.github.io/ShaderX/troubleshooting/)
+- [Contributing](https://debanshu777.github.io/ShaderX/contributing/)
+
+## Source
+
+- [GitHub and Markdown documentation](https://github.com/Debanshu777/ShaderX)
+- [Published releases](https://github.com/Debanshu777/ShaderX/releases)
+- [Public source](https://github.com/Debanshu777/ShaderX/tree/main/shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx)
+
+The documentation is built from the repository's docs directory. Until GitHub Pages is enabled, use those Markdown guides on GitHub. Custom app effects implement RuntimeShaderEffect; the abstract effect base classes depend on internal handlers.

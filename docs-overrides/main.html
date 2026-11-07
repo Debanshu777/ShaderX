@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  {% if page and page.canonical_url %}
+    {% set description = page.meta.description or config.site_description %}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ShaderX">
+    <meta property="og:title" content="{{ page.title | e }} — ShaderX">
+    <meta property="og:description" content="{{ description | e }}">
+    <meta property="og:url" content="{{ page.canonical_url | e }}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ page.title | e }} — ShaderX">
+    <meta name="twitter:description" content="{{ description | e }}">
+    {% if page.canonical_url == config.site_url %}
+      <script type="application/ld+json">
+        {{ {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "name": "ShaderX",
+          "description": config.site_description,
+          "url": page.canonical_url,
+          "codeRepository": config.repo_url,
+          "programmingLanguage": "Kotlin",
+          "runtimePlatform": ["Android", "iOS", "JVM", "WebAssembly"],
+          "license": "https://www.apache.org/licenses/LICENSE-2.0"
+        } | tojson }}
+      </script>
+    {% endif %}
+  {% endif %}
+{% endblock %}
