@@ -6,8 +6,13 @@ Keep unrelated user edits intact and work on a feature branch.
 
 ## Documentation is part of the change
 
-When you change behavior, update the relevant guides **in the same pull request**.
+Every codebase change must update **both `README.md` and the affected Markdown
+guide(s) in `docs/` in the same pull request**. This includes library and sample
+code, tests, build configuration, dependencies, scripts, tooling, and workflows.
 Do this before considering a code task complete; do not leave it as a follow-up.
+Keep README changes concise and put detailed explanations in the guides. For
+internal changes, document the relevant architecture, contributor workflow, or
+validation coverage without implying a public API change. Do not add filler.
 
 | Change | Documentation to review and update |
 | --- | --- |
@@ -18,6 +23,7 @@ Do this before considering a code task complete; do not leave it as a follow-up.
 | Image processing | `docs/image-processing.md`, `docs/platforms.md` |
 | Toolchain, dependencies or setup | `docs/getting-started.md`, `docs/contributing.md` |
 | Sample behavior or run commands | `docs/samples.md`, README showcase |
+| Internal refactors, tests, scripts or developer tooling | `docs/contributing.md` or the affected architecture/maintenance guide, README contribution section |
 | Release/version | README install snippet, `docs/getting-started.md`, `docs/llms.txt`, effect availability labels, `CHANGELOG.md` |
 | Docs build, publishing or agent instructions | `docs/maintaining.md`, `docs/contributing.md` |
 
@@ -47,11 +53,12 @@ Run the relevant Gradle checks for code changes (usually
 `./gradlew :shaderx:jvmTest`), and inspect visual changes in a sample app.
 For documentation or styles, preview the site on desktop and mobile.
 
-The Documentation workflow checks PRs and publishes successful `main` builds
-to GitHub Pages. Feature branches never deploy through the normal workflow.
+The Documentation workflow validates PRs and publishes to GitHub Pages **only
+after a pull request is merged into `main`** and the merged site passes checks.
+Feature-branch builds, direct pushes, and closing an unmerged PR do not publish.
 Do not merge a branch merely to preview the docs.
 
-If a code change truly has no user-facing documentation impact (for example an
-internal refactor), explain it in the PR body using `Docs-Impact: none` and a
-specific `Docs-Reason: ...` line. Never use this to skip necessary documentation.
-The CI check flags missing documentation updates; it cannot verify prose accuracy.
+The CI check requires both README and guide updates for codebase changes; there
+is no PR-body opt-out. Prose-only and media-only changes do not require artificial
+companion edits. Review the diff for accuracy: CI can detect missing updates,
+but cannot prove the prose describes the implementation correctly.

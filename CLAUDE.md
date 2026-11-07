@@ -3,9 +3,11 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this
 repository.
 
-Follow [AGENTS.md](AGENTS.md) for the shared documentation-update rules. Update
-affected guides in the same PR as code changes, preserve the inline README
-showcase, and run the documented site checks before completing a task.
+Follow [AGENTS.md](AGENTS.md) for the shared documentation-update rules. Every
+codebase change requires updates to both `README.md` and affected Markdown guides
+in `docs/` in the same PR, including tests, internal refactors, tooling, and CI.
+Preserve the inline README showcase and run the documented site checks before
+completing a task. Publishing runs only after a PR merges into `main`.
 
 ## Project overview
 

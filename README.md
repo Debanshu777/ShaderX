@@ -153,6 +153,8 @@ Run the desktop gallery from a checkout with JDK 21 and the [Android SDK configu
 
 Bug reports, documentation fixes, and new effects are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), then [open an issue](https://github.com/Debanshu777/ShaderX/issues/new/choose) with a reproducible example.
 
+Every code change includes updates to this README and the affected documentation guides. [Agent instructions](AGENTS.md) map changes to guides, and CI checks that both are updated. The [documentation site](https://debanshu777.github.io/ShaderX/) publishes automatically only after a pull request merges into `main` and its documentation build passes; see the [maintainer guide](docs/maintaining.md) for the workflow.
+
 ## License
 
 ShaderX is released under the [Apache License 2.0](LICENSE).

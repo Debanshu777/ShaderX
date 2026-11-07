@@ -57,7 +57,7 @@ JVM test results are in `shaderx/build/reports/tests/jvmTest/index.html`. Dokka 
 4. Declare `uniform shader content;` and a `half4 main(float2 fragCoord)` entry point. Match all Kotlin uniforms to the shader declarations.
 5. Register built-in effects in `ShaderX.builtInEffects()`. For a native effect, implement it in both Android and Skia factory branches.
 6. Add appropriate parameter/contract tests and a shader-compilation check. Validate the appearance on relevant sample targets.
-7. Update the [effect catalog](effects.md) and unreleased changelog. State availability accurately.
+7. Update the README effect list, [effect catalog](effects.md), and unreleased changelog. State availability accurately.
 
 The library enables Kotlin explicit API mode. New public declarations need explicit visibility and types; keep implementation details internal. Put dependencies in `gradle/libs.versions.toml`.
 
@@ -89,4 +89,6 @@ On Windows, use `.venv-docs\Scripts\python` and `.venv-docs\Scripts\zensical`. O
 
 The [maintainer guide](maintaining.md) covers documentation publishing, repository discovery settings, and release updates.
 
-Read [AGENTS.md](https://github.com/Debanshu777/ShaderX/blob/main/AGENTS.md) for the change-to-guide map used by coding agents. Update relevant guides in the same PR as behavior or setup changes. The Documentation PR check flags implementation changes without a guide update; internal-only changes can use the explicit no-impact rationale described in the [maintainer guide](maintaining.md#keep-documentation-current-with-coding-agents). After merge to `main`, a successful documentation build publishes automatically.
+Read [AGENTS.md](https://github.com/Debanshu777/ShaderX/blob/main/AGENTS.md) for the change-to-guide map used by coding agents. Every codebase change requires updates to **both `README.md` and the affected Markdown guides in `docs/` in the same PR**, including tests, refactors, configuration, scripts, and workflows. The Documentation PR check fails if either update is missing; there is no PR-body opt-out. Prose-only and media-only changes do not require companion edits. See the [maintainer guide](maintaining.md#keep-documentation-current-with-coding-agents) for the policy and examples of useful internal-change documentation.
+
+The site publishes automatically only after a PR merges into `main` and its documentation build passes. Direct pushes, preview builds, and unmerged PR closures do not deploy. The documentation URL is [debanshu777.github.io/ShaderX](https://debanshu777.github.io/ShaderX/).
