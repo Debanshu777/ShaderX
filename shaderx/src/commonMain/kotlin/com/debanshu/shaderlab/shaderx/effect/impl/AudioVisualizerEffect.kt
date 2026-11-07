@@ -41,102 +41,9 @@ public class AudioVisualizerEffect(
     override val displayName: String = "Audio Visualizer"
     override val isAnimating: Boolean get() = animate
 
-    override val shaderSource: String =
-        """
-        uniform shader content;
-        uniform shader fftData;
-        uniform float2 resolution;
-        uniform float fftSize;
-        uniform float barColorIntensity;
-        uniform float time;
+    override val shaderSource: String get() = SHADER_SOURCE
 
-        half4 main(float2 fragCoord) {
-            half4 originalColor = content.eval(fragCoord);
-            float2 uv = fragCoord / resolution;
-
-            float magnitude = fftData.eval(float2(uv.x * fftSize, 0.5)).r;
-
-            // Bars grow from the bottom of the frame upwards.
-            float barTop = 1.0 - magnitude;
-            float inBar = step(barTop, uv.y);
-            float barAlpha = inBar * 0.85;
-
-            half3 barColor = half3(
-                0.5 + 0.5 * sin(uv.x * 6.2831 + time),
-                0.5 + 0.5 * sin(uv.x * 6.2831 + time + 2.094),
-                0.5 + 0.5 * sin(uv.x * 6.2831 + time + 4.188)
-            ) * barColorIntensity;
-
-            half3 blended = mix(originalColor.rgb, barColor, barAlpha);
-            half outAlpha = max(originalColor.a, half(barAlpha));
-            return half4(blended, outAlpha);
-        }
-        """.trimIndent()
-
-    override val parameterHandlers: Map<String, ParamHandler<*>> =
-        mapOf(
-            PARAM_BAR_COLOR_INTENSITY to
-                floatHandler<AudioVisualizerEffect>(
-                    spec =
-                        PercentageParameter(
-                            id = PARAM_BAR_COLOR_INTENSITY,
-                            label = "Bar Intensity",
-                            defaultValue = 1f,
-                        ),
-                    read = { it.barColorIntensity },
-                    write = { e, v ->
-                        AudioVisualizerEffect(
-                            e.fftData,
-                            e.fftSize,
-                            v,
-                            e.animate,
-                            e.time,
-                            e.fftDataSource,
-                        )
-                    },
-                ),
-            PARAM_FFT_SIZE to
-                floatHandler<AudioVisualizerEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_FFT_SIZE,
-                            label = "Frequency Bins",
-                            range = 8f..512f,
-                            defaultValue = DEFAULT_FFT_SIZE,
-                        ),
-                    read = { it.fftSize },
-                    write = { e, v ->
-                        AudioVisualizerEffect(
-                            e.fftData,
-                            v,
-                            e.barColorIntensity,
-                            e.animate,
-                            e.time,
-                            e.fftDataSource,
-                        )
-                    },
-                ),
-            PARAM_ANIMATE to
-                toggleHandler<AudioVisualizerEffect>(
-                    spec =
-                        ToggleParameter(
-                            id = PARAM_ANIMATE,
-                            label = "Animate",
-                            isEnabledByDefault = true,
-                        ),
-                    read = { it.animate },
-                    write = { e, v ->
-                        AudioVisualizerEffect(
-                            e.fftData,
-                            e.fftSize,
-                            e.barColorIntensity,
-                            v,
-                            e.time,
-                            e.fftDataSource,
-                        )
-                    },
-                ),
-        )
+    override val parameterHandlers: Map<String, ParamHandler<*>> get() = PARAMETER_HANDLERS
 
     private fun resolveFftData(): ImageBitmap = fftDataSource?.invoke() ?: fftData
 
@@ -190,5 +97,102 @@ public class AudioVisualizerEffect(
         public const val DEFAULT_FFT_SIZE: Float = 64f
 
         private val EMPTY_FFT: ImageBitmap = ImageBitmap(1, 1)
+
+        private val SHADER_SOURCE: String =
+            """
+            uniform shader content;
+            uniform shader fftData;
+            uniform float2 resolution;
+            uniform float fftSize;
+            uniform float barColorIntensity;
+            uniform float time;
+
+            half4 main(float2 fragCoord) {
+                half4 originalColor = content.eval(fragCoord);
+                float2 uv = fragCoord / resolution;
+
+                float magnitude = fftData.eval(float2(uv.x * fftSize, 0.5)).r;
+
+                // Bars grow from the bottom of the frame upwards.
+                float barTop = 1.0 - magnitude;
+                float inBar = step(barTop, uv.y);
+                float barAlpha = inBar * 0.85;
+
+                half3 barColor = half3(
+                    0.5 + 0.5 * sin(uv.x * 6.2831 + time),
+                    0.5 + 0.5 * sin(uv.x * 6.2831 + time + 2.094),
+                    0.5 + 0.5 * sin(uv.x * 6.2831 + time + 4.188)
+                ) * barColorIntensity;
+
+                half3 blended = mix(originalColor.rgb, barColor, barAlpha);
+                half outAlpha = max(originalColor.a, half(barAlpha));
+                return half4(blended, outAlpha);
+            }
+            """.trimIndent()
+
+        private val PARAMETER_HANDLERS: Map<String, ParamHandler<*>> =
+            mapOf(
+                PARAM_BAR_COLOR_INTENSITY to
+                    floatHandler<AudioVisualizerEffect>(
+                        spec =
+                            PercentageParameter(
+                                id = PARAM_BAR_COLOR_INTENSITY,
+                                label = "Bar Intensity",
+                                defaultValue = 1f,
+                            ),
+                        read = { it.barColorIntensity },
+                        write = { e, v ->
+                            AudioVisualizerEffect(
+                                e.fftData,
+                                e.fftSize,
+                                v,
+                                e.animate,
+                                e.time,
+                                e.fftDataSource,
+                            )
+                        },
+                    ),
+                PARAM_FFT_SIZE to
+                    floatHandler<AudioVisualizerEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_FFT_SIZE,
+                                label = "Frequency Bins",
+                                range = 8f..512f,
+                                defaultValue = DEFAULT_FFT_SIZE,
+                            ),
+                        read = { it.fftSize },
+                        write = { e, v ->
+                            AudioVisualizerEffect(
+                                e.fftData,
+                                v,
+                                e.barColorIntensity,
+                                e.animate,
+                                e.time,
+                                e.fftDataSource,
+                            )
+                        },
+                    ),
+                PARAM_ANIMATE to
+                    toggleHandler<AudioVisualizerEffect>(
+                        spec =
+                            ToggleParameter(
+                                id = PARAM_ANIMATE,
+                                label = "Animate",
+                                isEnabledByDefault = true,
+                            ),
+                        read = { it.animate },
+                        write = { e, v ->
+                            AudioVisualizerEffect(
+                                e.fftData,
+                                e.fftSize,
+                                e.barColorIntensity,
+                                v,
+                                e.time,
+                                e.fftDataSource,
+                            )
+                        },
+                    ),
+            )
     }
 }

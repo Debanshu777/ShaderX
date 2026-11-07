@@ -39,9 +39,11 @@ On `main`, pass a standalone `AnimatedShaderEffect` directly to `shaderEffect`. 
 
 For audio, supply a live bitmap source using `withFftDataSource`. Verify microphone permission and that the bitmap contains data with the expected number of bins. Browser microphone capture requires HTTPS or localhost. Pausing time does not pause live uniform refresh on `main`.
 
+If you replace an effect's bitmap instead of using a live source, change `frameDataKey` with the bitmap. Live images are deliberately excluded from structural equality; the key lets composition deliver the new instance to the existing session. Manually created sessions must be closed when finished and must not be refreshed afterward.
+
 ## Image export fails on Android
 
-This is a known implementation limitation: Android's offline processor uses a software canvas that cannot render its hardware `RenderNode`. It returns `ProcessingError`. On-screen Compose rendering is a separate path. See [image processing](image-processing.md) for supported uses.
+This is a known implementation limitation: Android's offline processor cannot render its hardware `RenderNode` into a software bitmap. It returns `ProcessingError`; on `main` / 0.1.4 development, this happens before image decoding or shader creation, including for malformed input bytes. On-screen Compose rendering is a separate path. See [image processing](image-processing.md) for supported uses.
 
 ## Report a reproducible problem
 

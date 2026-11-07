@@ -19,7 +19,7 @@ import com.debanshu.shaderlab.shaderx.result.ShaderResult
  * On Android, [refresh] updates [AnimatedShaderEffect.buildFrameUniforms] in-place (typically
  * just `time`) and returns a new [RenderEffect] wrapper each frame so the platform re-samples
  * the shader. Structural uniforms are applied once at session creation. On Skia, [refresh]
- * reapplies all uniforms and returns a new [RenderEffect] wrapper each frame.
+ * applies frame uniforms for animated effects and returns a new [RenderEffect] wrapper each frame.
  *
  * Always call [close] when the composable leaves composition (typically via [DisposableEffect]).
  */
@@ -28,8 +28,8 @@ public interface ShaderSession : AutoCloseable {
     public val currentRenderEffect: RenderEffect
 
     /**
-     * Applies [effect.buildUniforms] to this session's instance shader and returns a new
-     * lightweight [RenderEffect] reference (guarantees Compose repaint).
+     * Applies [AnimatedShaderEffect.buildFrameUniforms] to this session's mutable shader state
+     * and returns a new lightweight [RenderEffect] reference for Compose to repaint.
      *
      * @param effect Current effect state (e.g. with updated [AnimatedShaderEffect.time])
      * @param width Render target width in pixels
@@ -41,6 +41,6 @@ public interface ShaderSession : AutoCloseable {
         height: Float,
     ): ShaderResult<RenderEffect>
 
-    /** Releases instance-scoped GPU resources held by this session. */
+    /** Releases instance-scoped GPU resources. Do not call [refresh] after closing a session. */
     override fun close()
 }

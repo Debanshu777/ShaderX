@@ -26,7 +26,8 @@ import com.debanshu.shaderlab.shaderx.result.ShaderResult
  * - **Skia ([SkiaShaderFactory], used on iOS, Desktop/JVM, and Wasm):** **Not thread-safe.**
  *   Compose's Skia rendering runs single-threaded per window, which is safe in normal usage.
  *   In multi-window Desktop apps or other multi-threaded access patterns, either use separate
- *   factory instances per thread, or synchronize externally.
+ *   factory instances per thread, or serialize all factory, processor, and session operations
+ *   externally, including cache clearing and disposal.
  *
  * ## Usage
  * ```kotlin
@@ -59,8 +60,9 @@ public interface ShaderFactory : AutoCloseable {
     /**
      * Creates a [ShaderSession] for an animated effect that requires per-frame uniform updates.
      *
-     * The session holds an instance-scoped compiled shader (separate from the shared LRU cache)
-     * so [ShaderSession.refresh] can mutate uniforms every frame without recompilation.
+     * The session owns mutable shader state so [ShaderSession.refresh] can update uniforms
+     * without recompilation: a separate runtime shader on Android, or a builder retaining
+     * the cached compiled effect on Skia.
      *
      * @param effect The animated effect to create a session for
      * @param width Render target width in pixels
@@ -110,7 +112,7 @@ public interface ShaderFactory : AutoCloseable {
  * own cache.
  *
  * @param maxCacheSize Maximum number of compiled shaders to cache (default: 50).
- *   Reduce for memory-constrained environments.
+ *   Must be positive. Reduce for memory-constrained environments.
  */
 public expect fun ShaderFactory.Companion.create(maxCacheSize: Int = BaseShaderFactory.DEFAULT_CACHE_SIZE): ShaderFactory
 
@@ -185,7 +187,7 @@ public abstract class BaseShaderFactory(
             return ShaderResult.failure(
                 ShaderError.UnsupportedEffect(
                     "Composite effect chaining of ${effect.effects.size} effects is not supported on this platform. " +
-                        "Use a single effect, or run the app on Android API 31+.",
+                        "Use a single effect, or run the app on Android API 33+.",
                     effect.id,
                 ),
             )
@@ -212,7 +214,7 @@ public abstract class BaseShaderFactory(
      * Chains two render effects together.
      *
      * Only called when [supportsChaining] is true. Override in platforms that
-     * support composing [RenderEffect] instances (e.g. Android API 31+).
+     * support composing [RenderEffect] instances (e.g. this library's Android API 33+ backend).
      *
      * @param inner The effect applied to the content first (input layer)
      * @param outer The effect applied on top of [inner]'s output

@@ -11,6 +11,8 @@ plugins {
 }
 
 kotlin {
+    applyDefaultHierarchyTemplate()
+
     androidLibrary {
         namespace = "com.debanshu.shaderlab.imagelib"
         compileSdk =
@@ -44,6 +46,15 @@ kotlin {
     }
 
     sourceSets {
+        val skiaMain by creating {
+            dependsOn(commonMain.get())
+        }
+        iosMain { dependsOn(skiaMain) }
+        jvmMain { dependsOn(skiaMain) }
+        wasmJsMain { dependsOn(skiaMain) }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
         wasmJsMain.dependencies {
             implementation(libs.kotlinx.browser)
             // skiko-wasm-js is provided transitively by Compose Multiplatform ui:1.10.3

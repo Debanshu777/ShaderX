@@ -3,89 +3,64 @@ package com.debanshu.shaderlab.audiolib
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.Dispatchers
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.DataLine
 import javax.sound.sampled.TargetDataLine
-import kotlin.concurrent.thread
 
 private const val SAMPLE_RATE = 44100f
 private const val FRAME_SAMPLES = 2048
 
 internal class JvmAudioCapture(
     override val binCount: Int,
-) : AudioCapture {
-    @Volatile private var latest = FloatArray(binCount)
+) : AudioCapture by BlockingAudioCapture(
+    binCount = binCount,
+    dispatcher = Dispatchers.IO,
+    frameSamples = FRAME_SAMPLES,
+    createInput = {
+        val format = AudioFormat(SAMPLE_RATE, 16, 1, true, false)
+        val info = DataLine.Info(TargetDataLine::class.java, format)
+        if (AudioSystem.isLineSupported(info)) JvmAudioInput(format, info) else null
+    },
+)
 
-    override fun currentSpectrum(): FloatArray = latest
+private class JvmAudioInput(
+    private val format: AudioFormat,
+    private val info: DataLine.Info,
+) : BlockingAudioInput {
+    @Volatile private var line: TargetDataLine? = null
+    private val raw = ByteArray(FRAME_SAMPLES * 2)
 
-    private val _state = MutableStateFlow(AudioCaptureState.IDLE)
-    override val state: StateFlow<AudioCaptureState> = _state.asStateFlow()
+    override fun start() {
+        val input = AudioSystem.getLine(info) as TargetDataLine
+        line = input
+        input.open(format, raw.size)
+        input.start()
+    }
 
-    @Volatile private var running = false
-    private var worker: Thread? = null
-    private var line: TargetDataLine? = null
-
-    override suspend fun start() {
-        if (running) return
-        try {
-            // 16-bit mono PCM, little-endian.
-            val format = AudioFormat(SAMPLE_RATE, 16, 1, true, false)
-            val info = DataLine.Info(TargetDataLine::class.java, format)
-            if (!AudioSystem.isLineSupported(info)) {
-                _state.value = AudioCaptureState.UNSUPPORTED
-                return
-            }
-            val dataLine = AudioSystem.getLine(info) as TargetDataLine
-            dataLine.open(format, FRAME_SAMPLES * 2)
-            dataLine.start()
-            line = dataLine
-            running = true
-            _state.value = AudioCaptureState.RUNNING
-            worker =
-                thread(name = "audiolib-capture", isDaemon = true) {
-                    val raw = ByteArray(FRAME_SAMPLES * 2)
-                    val samples = FloatArray(FRAME_SAMPLES)
-                    while (running) {
-                        val read = dataLine.read(raw, 0, raw.size)
-                        val n = read / 2
-                        if (n <= 0) continue
-                        for (i in 0 until n) {
-                            // Little-endian 16-bit → float.
-                            val lo = raw[i * 2].toInt() and 0xFF
-                            val hi = raw[i * 2 + 1].toInt()
-                            samples[i] = ((hi shl 8) or lo) / 32768f
-                        }
-                        val frame = if (n == FRAME_SAMPLES) samples else samples.copyOf(n)
-                        latest = Fft.magnitudes(frame, binCount)
-                    }
-                }
-        } catch (e: Exception) {
-            _state.value = AudioCaptureState.ERROR
-            stop()
+    override fun read(samples: FloatArray): Int {
+        val read = checkNotNull(line).read(raw, 0, raw.size)
+        val count = read / 2
+        for (i in 0 until count) {
+            val lo = raw[i * 2].toInt() and 0xFF
+            val hi = raw[i * 2 + 1].toInt()
+            samples[i] = ((hi shl 8) or lo) / 32768f
         }
+        return if (read < 0) read else count
     }
 
     override fun stop() {
-        running = false
-        val dataLine = line
-        // Stop the line first so a blocked TargetDataLine.read() can return and the worker can exit.
-        try {
-            dataLine?.stop()
-            dataLine?.flush()
-        } catch (_: Exception) {
+        line?.let {
+            it.stop()
+            it.flush()
         }
-        worker?.join(1_000)
-        worker = null
-        try {
-            dataLine?.close()
-        } catch (_: Exception) {
-        }
+    }
+
+    override fun close() {
+        val input = line
         line = null
-        if (_state.value == AudioCaptureState.RUNNING) _state.value = AudioCaptureState.IDLE
+        input?.close()
     }
 }
 

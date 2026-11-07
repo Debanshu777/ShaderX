@@ -81,9 +81,11 @@ fun WavePhoto(painter: Painter, modifier: Modifier = Modifier) {
 }
 ```
 
-Shader compilation happens when a session is created; frame refreshes update uniforms. Configuration or size changes can recreate a session. `animate = false` stops time advancement, while per-frame inputs still refresh. A composite containing animated children does not use this automatic session path.
+Shader compilation happens when a session is created; frame refreshes update uniforms. Configuration, factory, or size changes can recreate a session. Session identity uses structural equality, so different configurations with the same hash still get separate sessions. `animate = false` stops time advancement, while per-frame inputs still refresh. A composite containing animated children does not use this automatic session path.
 
-The older `rememberShaderEffect` helper is not needed for this API. It is intended for manually managed render effects; avoid pairing it with the session-owning modifier.
+The modifier starts its clock at zero when it creates a session. Toggling `animate`, changing structural configuration, or resizing therefore restarts that clock. While paused, the shader uses the supplied effect's `time`; it does not retain the last automatically generated phase. Use a manually managed session if your app needs its own pause, resume, or seek timeline.
+
+The older `rememberShaderEffect` helper is not needed for this API. It is intended for manually managed render effects; avoid pairing it with the session-owning modifier. On `main` / 0.1.4 development, the helper tracks time independently from effect equality, and `rememberRenderEffect` / `rememberRenderEffectResult` include time and factory changes when refreshing their result. The modifier still offers the session path for routine animation.
 
 ## Live textures and audio in development
 
@@ -99,7 +101,9 @@ fun spectrumEffect(latestSpectrum: () -> ImageBitmap): AudioVisualizerEffect =
 
 Pass the result to `shaderEffect`. Supply a bitmap with normalized magnitudes in the red channel, laid out across a single row; keep `fftSize` consistent with the number of bins. The source should return the latest prepared bitmap rather than perform microphone capture or expensive FFT work during rendering.
 
-For custom shaders, declare `uniform shader fftData;` and bind `TextureUniform("fftData", bitmap)`. Child shaders sample **pixel coordinates**: the center of bin `i` is `float2(i + 0.5, 0.5)`. Emit changing textures from `buildFrameUniforms`. Keep time and live images out of structural equality. `frameDataKey` on the modifier can force invalidation when replacing data excluded from equality.
+For custom shaders, declare `uniform shader fftData;` and bind `TextureUniform("fftData", bitmap)`. Child shaders sample **pixel coordinates**: the center of bin `i` is `float2(i + 0.5, 0.5)`. Emit changing textures from `buildFrameUniforms`. Keep time and live images out of structural equality. Change `frameDataKey` on the modifier when replacing data excluded from equality; the loop receives the latest instance while retaining the existing session. Result callbacks also follow the latest callback supplied by composition.
+
+A creation failure, zero-sized target, or `null` effect clears the previous filter so the original content can draw. A transient frame-refresh failure reports the error and retains the last successful frame; the loop retries on the next frame so a live data source can recover without rebuilding its session.
 
 See the [sample audio module](https://github.com/Debanshu777/ShaderX/tree/main/samples/ShaderLab/audiolib) for platform microphone capture and FFT packing. That module is not included in the published ShaderX artifact.
 
@@ -122,7 +126,7 @@ fun ShaderScope(content: @Composable () -> Unit) {
 }
 ```
 
-The helper closes the factory automatically. Do not close the process-wide default factory. For manually created factories, close them when done. The default cache size is 50 entries; animated sessions own their shader separately from the shared compilation cache.
+The helper closes the factory automatically. Do not close the process-wide default factory. For manually created factories, close them when done. The default cache size is 50 entries and must be positive. Android animated sessions own a separate shader; Skia sessions own a builder that retains the shared compiled effect. On `main` / 0.1.4 development, closing a Skia session releases that builder, and cache eviction or clearing releases the cache's reference without invalidating an active session. Do not refresh a closed session.
 
 ## Size and first render
 

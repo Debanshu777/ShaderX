@@ -21,6 +21,7 @@ jobs:
   build:
     if: github.event_name == 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,8 +45,26 @@ jobs:
         env:
           DOCS_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: python scripts/check_docs_impact.py --base "$DOCS_BASE_SHA"
+      - name: Set up JDK 21 for the browser playground
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v4
+      - name: Install the configured Android SDK platform
+        run: |
+          sdk_platform=$(python -c 'import tomllib; version = str(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["android-compileSdk"]); print(f"{version}.0" if version.isdigit() and int(version) >= 37 else version)')
+          sdkmanager "platforms;android-$sdk_platform"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          # PR builds never write a cache consumed by the trusted publication job.
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+      - name: Build the production ShaderLab playground
+        run: ./gradlew :samples:ShaderLab:composeApp:wasmJsBrowserDistribution --no-daemon
       - name: Build documentation
         run: zensical build --strict
+      - name: Bundle and verify playground assets
+        run: python scripts/package_playground.py
       - name: Check generated metadata and links
         run: python scripts/check_site.py
       - name: Upload preview
@@ -53,6 +72,7 @@ jobs:
         with:
           name: documentation-site
           path: site/
+          if-no-files-found: error
       - name: Prepare Pages artifact
         if: github.event_name == 'pull_request_target' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
         uses: actions/upload-pages-artifact@v4

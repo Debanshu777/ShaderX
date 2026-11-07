@@ -78,19 +78,52 @@ On macOS with the required target toolchains:
 
 In the consuming project's dependency repositories, temporarily add `mavenLocal()` before `mavenCentral()`, then use the development version declared in `shaderx/build.gradle.kts`. Do not add `mavenLocal()` to production setup instructions. For work in this repository, ShaderLab and ASCIICamera already depend on the local project.
 
+## Performance validation
+
+Measure a specific workload before changing shader arithmetic or caching policy. Record the platform, device/GPU, build mode, viewport size, effect parameters, and whether the shader cache is cold or warm. Compare frame times and allocations at the same settings; a JVM allocation count is not a GPU frame-rate measurement.
+
+The built-in animated effects share immutable shader sources and parameter handlers across frame copies. Run the optional JDK 21 allocation diagnostic to measure the remaining `withTime()` object allocations:
+
+```shell
+SHADERX_ALLOCATION_BENCHMARK=1 ./gradlew :shaderx:jvmTest --tests '*AnimatedEffectAllocationBenchmark' --rerun-tasks
+```
+
+The report in `shaderx/build/test-results/jvmTest/TEST-com.debanshu.shaderlab.shaderx.AnimatedEffectAllocationBenchmark.xml` contains bytes per copy after warmup. The diagnostic keeps results alive through a volatile sink and has no timing threshold; values depend on the JVM and do not include uniform binding, native allocations, or GPU execution. It is skipped unless the environment variable is set. Existing effect contract tests cover parameter updates, time, and equality.
+
+Cache and native-lifetime tests cover access-order eviction, failed compilation preserving cached entries, session cleanup, active sessions surviving cache eviction, and actual pixel output after temporary Skia wrappers are released. Compose lifecycle tests cover live-data replacement, colliding hashes, factory replacement, and manual animation. The sample audio cache tests verify that repeated snapshots reuse their texture while changed data or bin counts produce an update:
+
+```shell
+./gradlew :shaderx:jvmTest :samples:ShaderLab:audiolib:jvmTest :samples:ShaderLab:imagelib:jvmTest
+./gradlew :shaderx:testAndroidHostTest
+```
+
+Android host tests verify that unsupported offline export fails before decoding, compiling, or allocating graphics resources; they deliberately call no Android APIs and are isolated from common bitmap tests that need a device. JVM image tests check bounded dimensions, pixels, transparency, invalid input, and preservation of original bytes.
+
+The optional FFT diagnostic compares one-shot processing and a reused workspace in the same JVM with alternating rounds; it reports allocations and median CPU time, with no timing threshold:
+
+```shell
+SHADERX_AUDIO_BENCHMARK=1 ./gradlew :samples:ShaderLab:audiolib:jvmTest --tests '*SpectrumAllocationBenchmark' --rerun-tasks
+```
+
+Use the [sample applications](samples.md) to inspect animated output and transitions. Profile camera tab disposal, large-photo selection, microphone start/stop, and long-running animation on actual target devices. Sample image decoding bounds retained display bitmaps while keeping original bytes for export. The sample audio pipeline reuses FFT working buffers; Android/desktop device work runs on an IO worker with tests for cancellation and restart ownership. Device-specific decode peaks, audio drivers, and GPU frame times still require profiling on actual hardware. Keep Skia export factories separate from UI factories, as explained in [image processing](image-processing.md).
+
 ## Preview and check documentation
 
-Documentation builds use Python 3.11+ and do not require an Android or Apple toolchain:
+Guide previews use Python 3.11+. The complete checked site also includes the production Wasm playground, so install JDK 21 and the Android SDK from [local setup](#local-setup); Apple tooling is not required for that bundle:
 
 ```shell
 python3 -m venv .venv-docs
 .venv-docs/bin/python -m pip install -r requirements-docs.txt
 .venv-docs/bin/python scripts/check_docs.py
 .venv-docs/bin/python -m unittest discover -s scripts/tests -v
+./gradlew :samples:ShaderLab:composeApp:wasmJsBrowserDistribution --no-daemon
 .venv-docs/bin/zensical build --strict
+.venv-docs/bin/python scripts/package_playground.py
 .venv-docs/bin/python scripts/check_site.py
 .venv-docs/bin/zensical serve
 ```
+
+Build the Wasm distribution again after sample or library changes. Re-run `package_playground.py` after each site build because the site generator clears its output. `zensical serve` previews the guides; to inspect the combined artifact, serve `site/` with `python -m http.server --directory site 8000`.
 
 On Windows, use `.venv-docs\Scripts\python` and `.venv-docs\Scripts\zensical`. Open the URL printed by Zensical. Guides should also remain readable as ordinary Markdown on GitHub. Use descriptive page titles, accurate examples, relative links between guides, and a unique `description` in each page's front matter.
 

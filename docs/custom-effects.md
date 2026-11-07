@@ -79,6 +79,8 @@ Use `Modifier.shaderEffect(WarmTintEffect(intensity = 0.7f))` inside a composabl
 
 See [Android's AGSL documentation](https://developer.android.com/develop/ui/views/graphics/agsl) and [Skia's SkSL documentation](https://skia.org/docs/user/sksl/) for the shader languages.
 
+The companion article, [Building GPU Shader Effects for Compose Multiplatform: From Scratch to ShaderX](https://medium.com/gitconnected/building-gpu-shader-effects-for-compose-multiplatform-from-scratch-to-shaderx-326659c4f47b), provides background on the project. Follow this guide's interface contract and [platform matrix](platforms.md) when adapting an example to the current library.
+
 ## Animated custom effects
 
 On `main`, external effects can implement `AnimatedShaderEffect`, including `time`, `isAnimating`, `withTime`, and `buildFrameUniforms`. Use configuration-only `equals` and `hashCode`; including time or changing textures tears down session identity. The [animated effect interface](https://github.com/Debanshu777/ShaderX/blob/main/shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect.kt) defines the contract.

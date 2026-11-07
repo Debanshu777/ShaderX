@@ -8,12 +8,15 @@
 .shaderx-banner {
   display: block;
   width: 100%;
+  height: auto;
   border-radius: 0.75rem;
   margin-bottom: 1.5rem;
 }
 
 .shaderx-demo {
   display: block;
+  max-width: 100%;
+  height: auto;
   max-height: 32rem;
   margin: 1rem auto;
   border-radius: 0.5rem;

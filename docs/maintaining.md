@@ -12,7 +12,7 @@ The repository includes a static [Zensical](https://zensical.org/docs/) site usi
 The documentation URL is [debanshu777.github.io/ShaderX](https://debanshu777.github.io/ShaderX/).
 
 1. Work on a feature branch and open a pull request against `main`.
-2. The **Documentation** workflow checks source links, documentation impact, the strict site build, generated metadata, anchors, sitemap, and search. It uploads a `documentation-site` preview artifact without publishing the feature branch.
+2. The **Documentation** workflow checks source links and documentation impact, builds the production ShaderLab browser app with JDK 21, then builds the strict documentation site and bundles the app under `/playground/`. It validates generated metadata, anchors, sitemap, search, and all packaged app assets. The `documentation-site` preview artifact includes both guides and playground without publishing the feature branch.
 3. Only when a PR is **merged into `main`**, its `pull_request_target: closed` event rebuilds the merged commit and deploys the validated artifact to **GitHub Pages**. Closing an unmerged PR skips the build and deployment. Direct pushes and manual dispatches do not trigger publication. A failed build cannot deploy.
 4. Open the workflow's `github-pages` environment URL to verify the published site. To retry a failed publication, use **Re-run failed jobs** on that merged PR's workflow run. Deployment jobs are serialized so an in-progress publication is not cancelled by another merge.
 
@@ -23,6 +23,74 @@ PR validation runs with read-only repository permissions and produces only a pre
 If using a custom domain, update `site_url` and the URLs in `docs/llms.txt`, then rebuild. A project site's `/ShaderX/robots.txt` would not control the host's crawlers: robots rules belong at the host root. The site does not add misleading subdirectory robot rules.
 
 The build does not require analytics, remote fonts, or a paid documentation service. Search engines decide whether and when to index published pages; metadata is not a ranking guarantee.
+
+### Build and preview the live playground
+
+The [playground](playground/) is the ShaderLab Wasm production distribution, served under `/ShaderX/playground/`. It follows the local development library, not the published Maven release. The public route becomes available when the PR adding it is merged and the combined documentation deployment succeeds; branch preview artifacts already include the route.
+
+With the [contributor toolchain](contributing.md#local-setup) installed, build the combined artifact:
+
+```shell
+./gradlew :samples:ShaderLab:composeApp:wasmJsBrowserDistribution --no-daemon
+zensical build --strict
+python scripts/package_playground.py
+python scripts/check_site.py
+python -m http.server --directory site 8000
+```
+
+Open `http://localhost:8000/` and `http://localhost:8000/playground/`. A browser must serve the files over HTTP, not `file://`. Repackage after each documentation rebuild because Zensical can replace the `site` directory. When the sample source is unchanged, reuse its existing production distribution; the packaging step does not invoke Gradle.
+
+The packager copies the complete distribution, including both Kotlin and Skia Wasm binaries, JavaScript chunks, license notices, and Compose resources. A manifest records every packaged file's size and SHA-256 digest. Validation fails for absent or modified files, invalid Wasm headers, missing sample resources, and an entry script that would escape the playground directory. Regression tests exercise truncated binaries and deleted deferred chunks, in addition to a successful bundle. CI never uploads or publishes a partially assembled site.
+
+CI installs the Android SDK platform from the version catalog because Gradle configures Android modules even for the browser build. API 37's base package is `platforms;android-37.0`; the workflow maps integer API 37 and newer values to their `.0` package names and uses current SDK command-line tools. Keep the catalog value and package naming in sync when updating Android.
+
+The browser shell provides status text, retry on startup failure, and links to the guides and recordings. The app mounts in its own element and hides the loading screen after its first composition. The app uses no path-based router: tabs are UI state within `/playground/`, so refreshing that URL serves its own `index.html` without a catch-all 404 redirect. Keep relative JavaScript and resource paths so the GitHub Pages project prefix works.
+
+The canvas app has its own canonical URL and social previews, with `noindex,follow` and no sitemap entry. This is intentional: indexable setup instructions and examples live in the HTML guides, while the playground is an interactive companion. Its guide links remain usable when the app cannot run. The documentation home page links to the playground without loading its JavaScript or Wasm payload. Browser access does not change the supported-platform or published-version claims in the guides.
+
+## Search visibility and the companion article
+
+The site already provides crawlable guide links, unique titles and descriptions, canonical URLs, a sitemap, and source-code structured data. Keep the page text useful and accurate as the library evolves. `SoftwareSourceCode` describes the project; it does not promise a Google rich result. Social-preview metadata controls shared-link previews and is not a substitute for useful documentation.
+
+After a documentation PR is merged and the site is deployed:
+
+1. Add the URL-prefix property `https://debanshu777.github.io/ShaderX/` in [Google Search Console](https://search.google.com/search-console/). For HTML-tag verification, add the issued token as `extra.google_site_verification` in `mkdocs.yml`, merge and deploy that change, then verify ownership. The template emits the verification tag only when this setting is present. Keep it in place to retain verification.
+2. Submit `https://debanshu777.github.io/ShaderX/sitemap.xml` in the Sitemaps report. Inspect the home page and key guides with URL Inspection to check fetch status, indexing eligibility, and Google's selected canonical. A submitted sitemap helps discovery; it does not guarantee indexing.
+3. Record a baseline in the Search results report: impressions, clicks, queries, and landing pages. Compare equivalent periods after deployment, allowing time for crawling and indexing. A `site:` search is not a complete indexation report.
+4. Check the home page and samples on mobile and desktop with [PageSpeed Insights](https://pagespeed.web.dev/). Review available field data separately from lab results; a small project may not have enough visits for URL-level field data. [Google's Core Web Vitals guidance](https://developers.google.com/search/docs/appearance/core-web-vitals) targets LCP within 2.5 seconds, INP under 200 milliseconds, and CLS under 0.1. A good lab score alone does not establish real-user performance or a ranking improvement.
+
+The optional verification configuration has this shape; replace the placeholder with the `content` value supplied by Search Console:
+
+```yaml
+extra:
+  google_site_verification: YOUR_SEARCH_CONSOLE_TOKEN
+```
+
+The companion Medium article is [Building GPU Shader Effects for Compose Multiplatform: From Scratch to ShaderX](https://medium.com/gitconnected/building-gpu-shader-effects-for-compose-multiplatform-from-scratch-to-shaderx-326659c4f47b). The README, home page, and custom-effects guide link to it for background. When updating the article, add a short current-documentation note linking to [installation](getting-started.md), the [custom shader contract](custom-effects.md), and [platform support](platforms.md) where each helps the reader. Use those guides' public URLs in Medium and keep version claims aligned with verified releases.
+
+Keep the article's narrative and the documentation's reference material distinct. Cross-links should help readers continue a task; avoid repeating the article across many thin pages or adding keyword-heavy link lists. Keep each distinct page's own canonical URL. Only consider cross-domain canonicalization for a genuinely duplicate republication, not simply because two pages discuss ShaderX. [Google's link guidance](https://developers.google.com/search/docs/crawling-indexing/links-crawlable) explains descriptive links; a backlink is not a guaranteed ranking boost.
+
+### Documentation media performance
+
+The README retains the original flower artwork and all four inline GIF recordings. Hosted guides use MP4 recordings with playback controls and `preload="none"` so visitors choose when to download and play them. Explicit media dimensions reserve space before loading; responsive CSS preserves their aspect ratio. Keep the home-page banner eager because it is visible at the start of the page.
+
+When replacing a recording, compare the file size and playback against its source, check the first frame and motion, and preview desktop and mobile layouts. Keep a descriptive label and a fallback link to the recording. The site validator checks media dimensions, video loading policy, and local asset links alongside page metadata. [Google's web performance guidance](https://web.dev/articles/replace-gifs-with-videos) explains the bandwidth cost of animated GIFs; measure the generated assets rather than claiming an untested speedup.
+
+Regenerate the documentation recordings and posters from the checked-in GIFs with an FFmpeg build that includes H.264 encoding:
+
+```shell
+python scripts/encode_demo_videos.py --ffmpeg /path/to/ffmpeg
+```
+
+The documentation home page uses a lossless WebP copy of the original flower PNG. Regenerate it with:
+
+```shell
+python scripts/encode_banner.py --ffmpeg /path/to/ffmpeg
+```
+
+The encoder verifies that decoded pixels match the original. Keep the original PNG for the README and social previews.
+
+Zensical rewrites raw HTML `src` and `href` paths relative to the Markdown source, but leaves video `poster` paths unchanged. In `samples.md`, use `assets/demos/` for a video source or fallback link, and `../assets/demos/` for its poster because the built page lives under `/samples/`. On `index.md`, all three use `assets/demos/`. The source validator accounts for that difference; keep ordinary Markdown guide links relative to their source files.
 
 ## Keep documentation current with coding agents
 
@@ -103,6 +171,6 @@ The Maven description and keywords in `shaderx/build.gradle.kts` should continue
 
 [XCalendar](https://github.com/Debanshu777/XCalendar) demonstrates visual examples, explicit platform setup, and a browsable project structure. ShaderX keeps all four sample recordings inline in the README, with source links and run commands in the sample guide.
 
-The blue flower banner takes visual inspiration from FileKit's library presentation and uses [Paper's actual halftone CMYK shader](https://shaders.paper.design/halftone-cmyk), with settings tuned in its live editor. It is brand artwork, not a screenshot of a built-in ShaderX halftone effect. The asset is shared by the README, documentation home page, and social-preview metadata. The [banner renderer](https://github.com/Debanshu777/ShaderX/tree/main/tools/banner) includes the source image, pinned shader dependency, exact settings, and PNG export instructions; it adds clean typography after rendering the WebGL effect.
+The blue flower banner takes visual inspiration from FileKit's library presentation and uses [Paper's actual halftone CMYK shader](https://shaders.paper.design/halftone-cmyk), with settings tuned in its live editor. It is brand artwork, not a screenshot of a built-in ShaderX halftone effect. The README and social previews use the original PNG; the documentation home page uses its lossless WebP copy. The [banner renderer](https://github.com/Debanshu777/ShaderX/tree/main/tools/banner) includes the source image, pinned shader dependency, exact settings, and PNG export instructions; it adds clean typography after rendering the WebGL effect.
 
 Follow [Google's SEO guidance](https://developers.google.com/search/docs/fundamentals/seo-starter-guide) with useful page content, descriptive links, and accurate titles. Use [GitHub topics](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics) for repository discovery. Avoid keyword stuffing, invented performance claims, and claims that unreleased functionality is available from Maven Central.

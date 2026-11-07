@@ -40,6 +40,12 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
         }
+
+        // Pure Android implementation contracts can run against the JVM stubs. Common tests
+        // that allocate ImageBitmaps still need a device or the existing Skia JVM target.
+        withHostTestBuilder {
+            sourceSetTreeName = "androidHost"
+        }
     }
 
     listOf(
@@ -97,6 +103,12 @@ kotlin {
         jvmTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlin.testJunit)
+        }
+
+        named("androidHostTest") {
+            dependencies {
+                implementation(libs.kotlin.testJunit)
+            }
         }
     }
 }

@@ -3,12 +3,14 @@ package com.debanshu.shaderlab.shaderx.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.NonSkippableComposable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.referentialEqualityPolicy
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
@@ -59,10 +61,10 @@ import kotlinx.coroutines.isActive
  * ```
  *
  * ## First-frame behavior
- * By default, the effect is not applied on the very first frame because the composable
- * must be measured via `onSizeChanged` (which fires after layout) before shader dimensions
- * are known. For static images this is imperceptible (~16 ms). To avoid the skip entirely,
- * pass a pre-known [knownSize]:
+ * By default, the composable must be measured via `onSizeChanged` before shader dimensions
+ * are known, so the initial render may precede the effect. Pass a pre-known [knownSize] to
+ * avoid waiting for measurement. Effect creation still runs asynchronously after composition;
+ * this does not guarantee a shader on the first displayed frame.
  * ```kotlin
  * Image(
  *     painter = painterResource("photo.png"),
@@ -77,9 +79,9 @@ import kotlinx.coroutines.isActive
  * @param factory The factory to use for creating render effects. Defaults to [LocalShaderFactory],
  *   which provides a process-wide shared cache. Override with [rememberShaderFactory] to scope
  *   the cache to a subtree.
- * @param knownSize When non-null, this size is used directly for uniform calculations and the
- *   effect is applied from the first frame. When null (default), the composable measures itself
- *   via `onSizeChanged` and the effect is applied one frame after layout.
+ * @param knownSize When non-null, this size is used directly for uniform calculations without
+ *   waiting for measurement. When null (default), the composable measures itself via
+ *   `onSizeChanged`. Nonpositive dimensions disable the filter until a positive size is supplied.
  * @param frameDataKey Optional key for per-frame data excluded from [ShaderEffect.equals] (e.g.
  *   identity of a live [com.debanshu.shaderlab.shaderx.uniform.TextureUniform] image). Pass a value
  *   that changes whenever that data changes so Compose does not skip this modifier and leave the
@@ -133,8 +135,9 @@ public fun Modifier.shaderEffect(
  *
  * @param effect The shader effect to apply, or null to disable
  * @param factory The factory to use for creating render effects. Defaults to [LocalShaderFactory].
- * @param knownSize When non-null, this size is used directly and the effect is applied from the
- *   first frame. When null (default), size is measured via `onSizeChanged` (one-frame skip).
+ * @param knownSize When non-null, this size is used directly without waiting for measurement.
+ *   When null (default), size is measured via `onSizeChanged`, so initial content may be unfiltered.
+ *   Nonpositive dimensions disable the filter until a positive size is supplied.
  * @param frameDataKey Optional key for per-frame data excluded from [ShaderEffect.equals]; see
  *   [Modifier.shaderEffect].
  * @param onResult Callback invoked with the shader result (success or failure)
@@ -161,7 +164,7 @@ public fun Modifier.shaderEffectWithResult(
 /**
  * Shared implementation for [shaderEffect] and [shaderEffectWithResult].
  *
- * Session identity is keyed on [effect]'s structural [ShaderEffect.hashCode] (excluding [time] for
+ * Session identity is keyed on [effect]'s structural equality (excluding time for
  * animated effects) so structural parameter changes recreate the session immediately.
  *
  * [frameDataKey] is intentionally **not** part of session identity — it only prevents Compose from
@@ -192,15 +195,16 @@ private fun Modifier.shaderEffectCore(
     // textures) can refresh each frame even when time animation is paused.
     val useAnimatedSession = animatedEffect != null && effectWidth > 0 && effectHeight > 0
 
-    if (useAnimatedSession && animatedEffect != null) {
-        val latestEffect by rememberUpdatedState(effect)
+    val latestReportResult by rememberUpdatedState(reportResult)
 
-        val sessionIdentity =
-            remember(animatedEffect.id, animatedEffect.hashCode()) {
-                animatedEffect.id to animatedEffect.hashCode()
-            }
+    if (useAnimatedSession && animatedEffect != null) {
+        // Frame data is intentionally excluded from structural equality. Keep the actual latest
+        // instance when frameDataKey requests recomposition, without recreating the session.
+        val latestEffect by remember {
+            mutableStateOf(effect, referentialEqualityPolicy())
+        }.apply { value = effect }
         val sessionResult =
-            remember(sessionIdentity, effectWidth, effectHeight) {
+            remember(factory, animatedEffect, effectWidth, effectHeight) {
                 factory.createAnimatedSession(animatedEffect, effectWidth, effectHeight)
             }
 
@@ -208,17 +212,17 @@ private fun Modifier.shaderEffectCore(
             onDispose { sessionResult.getOrNull()?.close() }
         }
 
-        LaunchedEffect(sessionResult, sessionIdentity, effectWidth, effectHeight) {
+        LaunchedEffect(sessionResult, factory, animatedEffect, effectWidth, effectHeight) {
             val session = sessionResult.getOrNull()
             if (session == null) {
                 sessionResult.onFailure { error ->
                     renderEffect = null
-                    reportResult(ShaderResult.failure(error))
+                    latestReportResult(ShaderResult.failure(error))
                 }
                 return@LaunchedEffect
             }
             renderEffect = session.currentRenderEffect
-            reportResult(ShaderResult.success(session.currentRenderEffect))
+            latestReportResult(ShaderResult.success(session.currentRenderEffect))
             var animationStartMillis = 0L
             while (isActive) {
                 withFrameMillis { frameTime ->
@@ -236,22 +240,24 @@ private fun Modifier.shaderEffectCore(
                             effectAtFrame
                         }
                     val result = session.refresh(frameEffect, effectWidth, effectHeight)
-                    reportResult(result)
+                    latestReportResult(result)
                     result.onSuccess {
                         renderEffect = it
-                        renderFrame++
+                        renderFrame = 1 - renderFrame
                     }
                 }
             }
         }
     } else {
-        LaunchedEffect(effect, effectWidth, effectHeight) {
+        LaunchedEffect(factory, effect, effectWidth, effectHeight) {
             if (effectWidth > 0 && effectHeight > 0) {
                 val result = factory.createRenderEffect(effect, effectWidth, effectHeight)
-                reportResult(result)
+                latestReportResult(result)
                 result
                     .onSuccess { renderEffect = it }
                     .onFailure { renderEffect = null }
+            } else {
+                renderEffect = null
             }
         }
     }
@@ -266,7 +272,7 @@ private fun Modifier.shaderEffectCore(
         }
     ).graphicsLayer {
         this.renderEffect = renderEffect
-        // Tie layer invalidation to the animation clock on all platforms.
+        // Bound the invalidation toggle so long-running animations never accumulate rotation.
         rotationZ = renderFrame * 0.000001f
     }
 }
@@ -285,9 +291,10 @@ private fun Modifier.shaderEffectCore(
  * ## Usage
  * ```kotlin
  * val effect = rememberShaderEffect(WaveEffect(animate = true))
+ * val renderEffect = rememberRenderEffect(effect, width, height)
  * Box(
  *     modifier = Modifier.graphicsLayer {
- *         this.renderEffect = rememberRenderEffect(effect, width, height)
+ *         this.renderEffect = renderEffect
  *     }
  * )
  * ```
@@ -296,30 +303,24 @@ private fun Modifier.shaderEffectCore(
  * @return The effect, with time updated if animating
  */
 @Composable
+@NonSkippableComposable
 public fun <T : ShaderEffect> rememberShaderEffect(effect: T): T {
-    var currentEffect by remember { mutableStateOf(effect) }
+    if (effect !is AnimatedShaderEffect || !effect.isAnimating) return effect
 
-    // Synchronously update currentEffect when caller changes parameters (M4 fix: SideEffect
-    // instead of LaunchedEffect — the assignment is synchronous and doesn't need a coroutine)
-    SideEffect { currentEffect = effect }
-
-    // Handle animation — keyed by effect.id and isAnimating, not by the full effect instance,
-    // so the loop is not torn down every frame when time changes (Phase 4 fix)
-    if (effect is AnimatedShaderEffect && effect.isAnimating) {
-        LaunchedEffect(effect.id, effect.isAnimating) {
-            while (isActive) {
-                withFrameMillis { frameTime ->
-                    val animated = currentEffect as? AnimatedShaderEffect
-                    if (animated != null) {
-                        @Suppress("UNCHECKED_CAST")
-                        currentEffect = animated.withTime(frameTime / 1000f) as T
-                    }
-                }
+    // Time has its own state because animated effects deliberately compare equal across frames.
+    var frameTimeSeconds by remember(effect.id) { mutableFloatStateOf(effect.time) }
+    LaunchedEffect(effect.id, effect.isAnimating) {
+        var startTimeMillis: Long? = null
+        val initialTime = effect.time
+        while (isActive) {
+            withFrameMillis { frameTime ->
+                val start = startTimeMillis ?: frameTime.also { startTimeMillis = it }
+                frameTimeSeconds = initialTime + (frameTime - start) / 1000f
             }
         }
     }
-
-    return currentEffect
+    @Suppress("UNCHECKED_CAST")
+    return remember(effect, frameTimeSeconds) { effect.withTime(frameTimeSeconds) as T }
 }
 
 /**
@@ -348,13 +349,14 @@ public fun <T : ShaderEffect> rememberShaderEffect(effect: T): T {
  * @return The created RenderEffect, or null if creation failed
  */
 @Composable
+@NonSkippableComposable
 public fun rememberRenderEffect(
     effect: ShaderEffect,
     width: Float,
     height: Float,
     factory: ShaderFactory = LocalShaderFactory.current,
 ): RenderEffect? =
-    remember(effect, width, height) {
+    remember(factory, effect, (effect as? AnimatedShaderEffect)?.time, width, height) {
         if (width > 0 && height > 0) {
             factory.createRenderEffect(effect, width, height).getOrNull()
         } else {
@@ -377,13 +379,14 @@ public fun rememberRenderEffect(
  * @return The ShaderResult containing either the effect or error information
  */
 @Composable
+@NonSkippableComposable
 public fun rememberRenderEffectResult(
     effect: ShaderEffect,
     width: Float,
     height: Float,
     factory: ShaderFactory = LocalShaderFactory.current,
 ): ShaderResult<RenderEffect>? =
-    remember(effect, width, height) {
+    remember(factory, effect, (effect as? AnimatedShaderEffect)?.time, width, height) {
         if (width > 0 && height > 0) {
             factory.createRenderEffect(effect, width, height)
         } else {

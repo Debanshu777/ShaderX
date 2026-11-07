@@ -22,14 +22,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.debanshu.shaderlab.imagelib.decodeImageBytes
+import com.debanshu.shaderlab.imagelib.rememberDecodedImage
 import com.debanshu.shaderlab.ui.components.SampleImage
 import com.debanshu.shaderlab.viewmodel.ImageSource
 
@@ -269,7 +269,8 @@ private fun PickedImageThumbnail(
         contentAlignment = Alignment.Center,
     ) {
         image.bytes?.let { bytes ->
-            val bitmap = remember(bytes) { decodeImageBytes(bytes) }
+            val maxDimension = with(LocalDensity.current) { (size * 2).roundToPx().coerceAtLeast(1) }
+            val bitmap = rememberDecodedImage(bytes, maxDimension).bitmap
             if (bitmap != null) {
                 Image(
                     bitmap = bitmap,

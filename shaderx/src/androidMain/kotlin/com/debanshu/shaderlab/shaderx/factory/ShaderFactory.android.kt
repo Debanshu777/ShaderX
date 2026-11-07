@@ -79,13 +79,16 @@ internal class AndroidShaderFactory(
         try {
             val shader = getOrCreateShader(effect.shaderSource)
             val uniforms = effect.buildUniforms(width, height)
-            applyUniforms(shader, uniforms)
-
-            ShaderResult.success(
-                AndroidRenderEffect
-                    .createRuntimeShaderEffect(shader, ShaderConstants.CONTENT_UNIFORM_NAME)
-                    .asComposeRenderEffect(),
-            )
+            // Cache lookup alone does not protect this mutable shader. Keep binding and
+            // snapshot creation together when callers share a source across threads.
+            synchronized(shader) {
+                applyUniforms(shader, uniforms)
+                ShaderResult.success(
+                    AndroidRenderEffect
+                        .createRuntimeShaderEffect(shader, ShaderConstants.CONTENT_UNIFORM_NAME)
+                        .asComposeRenderEffect(),
+                )
+            }
         } catch (e: Exception) {
             ShaderResult.failure(
                 ShaderError.CompilationError(

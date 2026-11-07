@@ -10,127 +10,90 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.concurrent.thread
-import kotlin.coroutines.resume
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private const val SAMPLE_RATE = 44100
 private const val FRAME_SAMPLES = 2048
 
 internal class AndroidAudioCapture(
     override val binCount: Int,
-    private val requestPermission: suspend () -> Boolean,
-) : AudioCapture {
-    @Volatile private var latest = FloatArray(binCount)
+    requestPermission: suspend () -> Boolean,
+) : AudioCapture by BlockingAudioCapture(
+    binCount = binCount,
+    dispatcher = Dispatchers.IO,
+    frameSamples = FRAME_SAMPLES,
+    createInput = { AndroidAudioInput() },
+    requestPermission = requestPermission,
+)
 
-    override fun currentSpectrum(): FloatArray = latest
-
-    private val _state = MutableStateFlow(AudioCaptureState.IDLE)
-    override val state: StateFlow<AudioCaptureState> = _state.asStateFlow()
-
-    @Volatile private var running = false
-    private var worker: Thread? = null
-    private var record: AudioRecord? = null
+private class AndroidAudioInput : BlockingAudioInput {
+    @Volatile private var record: AudioRecord? = null
+    private val pcm = ShortArray(FRAME_SAMPLES)
 
     @SuppressLint("MissingPermission")
-    override suspend fun start() {
-        if (running) return
-        if (!requestPermission()) {
-            _state.value = AudioCaptureState.PERMISSION_DENIED
-            return
-        }
-        try {
-            val minBuf =
-                AudioRecord.getMinBufferSize(
-                    SAMPLE_RATE,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                )
-            val bufSize = maxOf(minBuf, FRAME_SAMPLES * 2)
-            val rec =
-                AudioRecord(
-                    MediaRecorder.AudioSource.MIC,
-                    SAMPLE_RATE,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                    bufSize,
-                )
-            if (rec.state != AudioRecord.STATE_INITIALIZED) {
-                rec.release()
-                _state.value = AudioCaptureState.ERROR
-                return
-            }
-            record = rec
-            running = true
-            _state.value = AudioCaptureState.RUNNING
-            rec.startRecording()
-            worker =
-                thread(name = "audiolib-capture", isDaemon = true) {
-                    val pcm = ShortArray(FRAME_SAMPLES)
-                    val samples = FloatArray(FRAME_SAMPLES)
-                    while (running) {
-                        val read = rec.read(pcm, 0, FRAME_SAMPLES)
-                        if (read <= 0) continue
-                        for (i in 0 until read) {
-                            samples[i] = pcm[i] / 32768f
-                        }
-                        val frame = if (read == FRAME_SAMPLES) samples else samples.copyOf(read)
-                        latest = Fft.magnitudes(frame, binCount)
-                    }
-                }
-        } catch (e: Exception) {
-            _state.value = AudioCaptureState.ERROR
-            stop()
-        }
+    override fun start() {
+        val minBuffer = AudioRecord.getMinBufferSize(
+            SAMPLE_RATE,
+            AudioFormat.CHANNEL_IN_MONO,
+            AudioFormat.ENCODING_PCM_16BIT,
+        )
+        check(minBuffer > 0) { "Microphone configuration is not supported" }
+        val input = AudioRecord(
+            MediaRecorder.AudioSource.MIC,
+            SAMPLE_RATE,
+            AudioFormat.CHANNEL_IN_MONO,
+            AudioFormat.ENCODING_PCM_16BIT,
+            maxOf(minBuffer, FRAME_SAMPLES * 2),
+        )
+        record = input
+        check(input.state == AudioRecord.STATE_INITIALIZED) { "Microphone failed to initialize" }
+        input.startRecording()
+    }
+
+    override fun read(samples: FloatArray): Int {
+        val count = checkNotNull(record).read(pcm, 0, FRAME_SAMPLES)
+        for (i in 0 until count) samples[i] = pcm[i] / 32768f
+        return count
     }
 
     override fun stop() {
-        running = false
-        val rec = record
-        // Stop recording first so a blocked AudioRecord.read() can return and the worker can exit.
-        try {
-            if (rec?.recordingState == AudioRecord.RECORDSTATE_RECORDING) rec.stop()
-        } catch (_: Exception) {
-        }
-        worker?.join(1_000)
-        worker = null
-        try {
-            rec?.release()
-        } catch (_: Exception) {
-        }
+        record?.let { if (it.recordingState == AudioRecord.RECORDSTATE_RECORDING) it.stop() }
+    }
+
+    override fun close() {
+        val input = record
         record = null
-        if (_state.value == AudioCaptureState.RUNNING) _state.value = AudioCaptureState.IDLE
+        try {
+            if (input?.recordingState == AudioRecord.RECORDSTATE_RECORDING) input.stop()
+        } finally {
+            input?.release()
+        }
     }
 }
 
 @Composable
 public actual fun rememberAudioCapture(binCount: Int): AudioCapture {
     val context = LocalContext.current
-    val pending = remember { mutableStateOf<((Boolean) -> Unit)?>(null) }
+    val permission = remember { SharedAudioPermission() }
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            pending.value?.invoke(granted)
-            pending.value = null
+            permission.complete(granted)
         }
 
     val capture =
-        remember(binCount) {
+        remember(binCount, context) {
             AndroidAudioCapture(binCount) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) ==
-                    PackageManager.PERMISSION_GRANTED
-                ) {
-                    true
-                } else {
-                    suspendCancellableCoroutine { cont ->
-                        pending.value = { granted -> cont.resume(granted) }
-                        launcher.launch(Manifest.permission.RECORD_AUDIO)
+                withContext(Dispatchers.Main.immediate) {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) ==
+                        PackageManager.PERMISSION_GRANTED
+                    ) {
+                        true
+                    } else {
+                        permission.await { launcher.launch(Manifest.permission.RECORD_AUDIO) }
                     }
                 }
             }
@@ -138,6 +101,9 @@ public actual fun rememberAudioCapture(binCount: Int): AudioCapture {
 
     DisposableEffect(capture) {
         onDispose { capture.stop() }
+    }
+    DisposableEffect(permission) {
+        onDispose { permission.complete(false) }
     }
     return capture
 }

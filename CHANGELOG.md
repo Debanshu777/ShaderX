@@ -12,6 +12,9 @@ These features are on `main` and are not in the published 0.1.3 artifact:
 - Live texture sources and uniform refresh while time animation is paused.
 - ShaderLab microphone/FFT examples in the sample-only `audiolib` module.
 - Focused documentation guides, a searchable documentation build, and contributor templates.
+- Deterministic Skia cache/session cleanup, corrected animated Compose invalidation, and shared immutable metadata for animation frame copies.
+- Bounded sample-image previews, reusable FFT workspaces, and asynchronous Android/desktop microphone lifecycle handling.
+- A production browser playground bundled with the documentation, plus lighter on-demand sample recordings.
 
 See the [changes since 0.1.3](https://github.com/Debanshu777/ShaderX/compare/0.1.3...main).
 

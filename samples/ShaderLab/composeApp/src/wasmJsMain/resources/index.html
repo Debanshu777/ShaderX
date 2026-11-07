@@ -5,19 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShaderLab — ShaderX Compose Multiplatform shader demo</title>
     <meta name="description" content="Explore ShaderX GPU shader effects in the browser. A Compose Multiplatform gallery with live controls for grayscale, gradients, distortion, and audio-reactive effects.">
+    <meta name="robots" content="noindex,follow">
+    <link rel="canonical" href="https://debanshu777.github.io/ShaderX/playground/">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ShaderX">
     <meta property="og:title" content="ShaderLab — ShaderX shader demo">
     <meta property="og:description" content="Try GPU shader effects and live parameter controls built with ShaderX and Compose Multiplatform.">
+    <meta property="og:url" content="https://debanshu777.github.io/ShaderX/playground/">
+    <meta property="og:image" content="https://debanshu777.github.io/ShaderX/assets/shaderx-banner.png">
+    <meta property="og:image:alt" content="ShaderX: blue halftone flower — GPU shader effects for Kotlin and Compose Multiplatform">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ShaderLab — ShaderX shader demo">
+    <meta name="twitter:description" content="Try GPU shader effects and live parameter controls built with ShaderX and Compose Multiplatform.">
+    <meta name="twitter:image" content="https://debanshu777.github.io/ShaderX/assets/shaderx-banner.png">
     <style>
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+        html, body, #shaderlab-app { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+        body { background: #0d1117; color: #e6edf3; font: 16px/1.6 system-ui, sans-serif; }
+        #shaderlab-loading { position: fixed; inset: 0; display: grid; place-content: center; padding: 1.5rem; background: #0d1117; overflow: auto; }
+        #shaderlab-loading[hidden] { display: none; }
+        #shaderlab-loading > div { max-width: 38rem; }
+        h1 { font-size: clamp(1.5rem, 5vw, 2.5rem); line-height: 1.2; }
+        a { color: #79c0ff; }
+        button { padding: 0.6rem 1rem; border: 1px solid #79c0ff; border-radius: 0.4rem; background: transparent; color: inherit; cursor: pointer; font: inherit; }
     </style>
 </head>
 <body>
-    <noscript>
-        <h1>ShaderLab: ShaderX shader demo</h1>
-        <p>This interactive gallery requires JavaScript and a browser with WebAssembly GC support.</p>
-        <p><a href="https://github.com/Debanshu777/ShaderX">Read the ShaderX documentation and view sample recordings on GitHub.</a></p>
-    </noscript>
-    <script src="composeApp.js"></script>
+    <main id="shaderlab-app" aria-label="Interactive ShaderLab playground"></main>
+    <section id="shaderlab-loading" aria-labelledby="shaderlab-title">
+        <div>
+            <h1 id="shaderlab-title">ShaderLab: try ShaderX in your browser</h1>
+            <p id="shaderlab-status" role="status">Loading the shader playground. The first visit downloads the WebAssembly app and graphics runtime.</p>
+            <p>Use a current browser with WebAssembly GC support. This demo follows the development library; check the guides before using an effect in a released app.</p>
+            <noscript><p>Enable JavaScript to run the playground, or watch the sample recordings.</p></noscript>
+            <p><a href="https://debanshu777.github.io/ShaderX/">Read the ShaderX guides</a> · <a href="https://debanshu777.github.io/ShaderX/samples/">Watch sample recordings</a></p>
+            <button id="shaderlab-retry" type="button" hidden>Reload playground</button>
+        </div>
+    </section>
+    <script>
+        (() => {
+            const loading = document.getElementById("shaderlab-loading");
+            const status = document.getElementById("shaderlab-status");
+            const retry = document.getElementById("shaderlab-retry");
+            const failed = () => {
+                if (loading.hidden) return;
+                status.textContent = "The playground could not start. Check your connection and browser support, then reload or view the recordings.";
+                retry.hidden = false;
+            };
+            window.addEventListener("error", failed, true);
+            window.addEventListener("unhandledrejection", failed);
+            retry.addEventListener("click", () => window.location.reload());
+            window.setTimeout(() => {
+                if (!loading.hidden && retry.hidden) {
+                    status.textContent = "Still loading the graphics runtime. On a slower connection this can take longer; the guides and recordings remain available.";
+                }
+            }, 15000);
+        })();
+    </script>
+    <script src="composeApp.js" defer></script>
 </body>
 </html>
