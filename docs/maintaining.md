@@ -59,7 +59,9 @@ After a documentation PR is merged and the site is deployed:
 3. Record a baseline in the Search results report: impressions, clicks, queries, and landing pages. Compare equivalent periods after deployment, allowing time for crawling and indexing. A `site:` search is not a complete indexation report.
 4. Check the home page and samples on mobile and desktop with [PageSpeed Insights](https://pagespeed.web.dev/). Review available field data separately from lab results; a small project may not have enough visits for URL-level field data. [Google's Core Web Vitals guidance](https://developers.google.com/search/docs/appearance/core-web-vitals) targets LCP within 2.5 seconds, INP under 200 milliseconds, and CLS under 0.1. A good lab score alone does not establish real-user performance or a ranking improvement.
 
-The optional verification configuration has this shape; replace the placeholder with the `content` value supplied by Search Console:
+The repository includes the public HTML-verification token issued for the documentation property. Once that change is deployed, complete verification from the account that created the property. The site checker verifies the configured token is present in the generated home page. Keep it after verification; it is public site metadata, not a credential.
+
+For a new property or ownership change, the configuration has this shape; replace the placeholder with the `content` value supplied by Search Console:
 
 ```yaml
 extra:

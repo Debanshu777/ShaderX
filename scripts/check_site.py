@@ -96,6 +96,9 @@ def check():
         if relative == "404.html":
             continue
         expected = urljoin(base, relative.removesuffix("index.html"))
+        verification = config.get("extra", {}).get("google_site_verification")
+        if relative == "index.html" and verification and page.meta.get("google-site-verification") != verification:
+            errors.append("index.html: missing or incorrect configured Search Console verification tag")
         if page.canonicals != [expected]:
             errors.append(f"{relative}: expected one canonical URL: {expected}")
         is_playground = relative == "playground/index.html"
