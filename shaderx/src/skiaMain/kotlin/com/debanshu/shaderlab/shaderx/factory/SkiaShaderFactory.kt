@@ -22,6 +22,7 @@ import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
+import org.jetbrains.skia.impl.use
 
 /**
  * Skia-based implementation of [ShaderFactory] for iOS and Desktop platforms.
@@ -32,8 +33,8 @@ import org.jetbrains.skia.RuntimeShaderBuilder
  * [clearCache] is called, each evicted [RuntimeEffect] is closed to release its native
  * off-heap memory.
  *
- * Composite chaining is not supported (Compose's `RenderEffect` does not expose its
- * underlying Skia `ImageFilter`, preventing `ImageFilter.makeCompose` usage).
+ * Composite chaining is not implemented by this backend. Multi-effect composites return
+ * an explicit unsupported-effect result; callers can combine operations in one shader.
  *
  * @param maxCacheSize Maximum number of shaders to cache (default: 50)
  */
@@ -45,7 +46,7 @@ internal class SkiaShaderFactory(
      * Skia's RuntimeEffect compilation is expensive; evicted effects are closed to
      * release native off-heap memory.
      */
-    private val effectCache = LruCache<String, RuntimeEffect>(maxCacheSize)
+    private val effectCache = LruCache<String, RuntimeEffect>(maxCacheSize) { it.close() }
 
     override val supportsChaining: Boolean = false
 
@@ -80,15 +81,14 @@ internal class SkiaShaderFactory(
     ): ShaderResult<RenderEffect> =
         try {
             val runtimeEffect = getOrCreateEffect(effect.shaderSource)
-            val builder = RuntimeShaderBuilder(runtimeEffect)
-            val uniforms = effect.buildUniforms(width, height)
-            applyUniforms(builder, uniforms)
-
-            ShaderResult.success(
-                ImageFilter
-                    .makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
-                    .asComposeRenderEffect(),
-            )
+            RuntimeShaderBuilder(runtimeEffect).use { builder ->
+                applyUniforms(builder, effect.buildUniforms(width, height))
+                ShaderResult.success(
+                    ImageFilter
+                        .makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
+                        .asComposeRenderEffect(),
+                )
+            }
         } catch (e: Exception) {
             ShaderResult.failure(
                 ShaderError.CompilationError(
@@ -109,13 +109,17 @@ internal class SkiaShaderFactory(
         return try {
             val runtimeEffect = getOrCreateEffect(effect.shaderSource)
             val builder = RuntimeShaderBuilder(runtimeEffect)
-            val uniforms = effect.buildUniforms(width, height)
-            applyUniforms(builder, uniforms)
-            val renderEffect =
-                ImageFilter
-                    .makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
-                    .asComposeRenderEffect()
-            ShaderResult.success(SkiaShaderSession(builder, renderEffect))
+            try {
+                applyUniforms(builder, effect.buildUniforms(width, height))
+                val renderEffect =
+                    ImageFilter
+                        .makeRuntimeShader(builder, ShaderConstants.CONTENT_UNIFORM_NAME, null)
+                        .asComposeRenderEffect()
+                ShaderResult.success(SkiaShaderSession(builder, renderEffect))
+            } catch (e: Exception) {
+                builder.close()
+                throw e
+            }
         } catch (e: Exception) {
             ShaderResult.failure(
                 ShaderError.CompilationError(
@@ -135,10 +139,10 @@ internal class SkiaShaderFactory(
     override fun isSupported(): Boolean = true
 
     /** Clears the cache and closes each cached [RuntimeEffect] to free native memory. */
-    override fun clearCache() = effectCache.clear { it.close() }
+    override fun clearCache() = effectCache.clear()
 
     /** Equivalent to [clearCache]. */
-    override fun close() = effectCache.clear { it.close() }
+    override fun close() = effectCache.clear()
 
     override val cacheSize: Int get() = effectCache.size
 
@@ -233,16 +237,14 @@ internal class SkiaShaderFactory(
                     }
 
                     is TextureUniform -> {
-                        // A native Image is allocated per call; compilation is the cached cost, so
-                        // this per-frame allocation is acceptable for live-data effects.
-                        val image = Image.makeFromBitmap(uniform.image.asSkiaBitmap())
-                        builder.child(
-                            uniform.name,
+                        // The builder retains the native child; release temporary wrappers now
+                        // instead of waiting for GC on every live-texture frame.
+                        Image.makeFromBitmap(uniform.image.asSkiaBitmap()).use { image ->
                             image.makeShader(
                                 uniform.tileModeX.toSkiaTileMode(),
                                 uniform.tileModeY.toSkiaTileMode(),
-                            ),
-                        )
+                            ).use { shader -> builder.child(uniform.name, shader) }
+                        }
                     }
                 }
             }
@@ -263,16 +265,19 @@ internal class SkiaShaderFactory(
  * [refresh] updates builder uniforms and recreates the [ImageFilter] (cheap — compilation
  * is cached; only uniform binding + filter creation runs each frame).
  */
-private class SkiaShaderSession(
+internal class SkiaShaderSession(
     private val builder: RuntimeShaderBuilder,
     override val currentRenderEffect: RenderEffect,
 ) : ShaderSession {
+    private var closed = false
+
     override fun refresh(
         effect: RuntimeShaderEffect,
         width: Float,
         height: Float,
     ): ShaderResult<RenderEffect> =
         try {
+            check(!closed) { "Shader session is closed" }
             val animated = effect as? AnimatedShaderEffect
             val frameUniforms =
                 if (animated != null) {
@@ -296,6 +301,9 @@ private class SkiaShaderSession(
         }
 
     override fun close() {
-        // RuntimeShaderBuilder does not require explicit release; RuntimeEffect is cache-owned
+        if (!closed) {
+            closed = true
+            builder.close()
+        }
     }
 }

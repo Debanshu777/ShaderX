@@ -28,8 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.debanshu.shaderlab.audiolib.AudioCaptureState
-import com.debanshu.shaderlab.audiolib.Fft
-import com.debanshu.shaderlab.audiolib.packMagnitudesToImage
+import com.debanshu.shaderlab.audiolib.SpectrumImageCache
 import com.debanshu.shaderlab.audiolib.rememberAudioCapture
 import com.debanshu.shaderlab.shaderx.compose.shaderEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.AudioDistortionEffect
@@ -168,10 +167,10 @@ private fun MicFftLoop(
     val currentBins by rememberUpdatedState(displayBins)
     LaunchedEffect(capture, state) {
         if (state != AudioCaptureState.RUNNING) return@LaunchedEffect
+        val images = SpectrumImageCache()
         while (isActive) {
             withFrameMillis {
-                val resampled = Fft.resample(capture.currentSpectrum(), currentBins)
-                fftSlot.image = packMagnitudesToImage(resampled)
+                fftSlot.image = images.imageFor(capture.currentSpectrum(), currentBins)
             }
         }
     }

@@ -41,6 +41,8 @@ public interface AudioCapture {
      *
      * Pull-based: call once per frame from the render loop. Push platforms (Android/JVM/iOS) return
      * the most recent buffer captured off-thread; pull platforms (Wasm/Web Audio) snapshot on call.
+     * Treat the returned array as read-only: published snapshots are never modified by capture,
+     * so consumers may retain them to skip work when the audio has not changed.
      */
     public fun currentSpectrum(): FloatArray
 
@@ -53,7 +55,11 @@ public interface AudioCapture {
      */
     public suspend fun start()
 
-    /** Stops capture and releases the microphone. Safe to call when not running. */
+    /**
+     * Stops publishing capture data and releases the microphone. Safe to call when not running.
+     * Android and desktop perform blocking device shutdown on a worker; a later [start] waits for
+     * that shutdown before opening another input. The UI caller does not join the capture thread.
+     */
     public fun stop()
 }
 

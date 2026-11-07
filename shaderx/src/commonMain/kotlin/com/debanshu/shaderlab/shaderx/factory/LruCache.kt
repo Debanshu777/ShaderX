@@ -4,16 +4,18 @@ package com.debanshu.shaderlab.shaderx.factory
  * A bounded, access-order Least-Recently-Used cache.
  *
  * Thread-safety guarantees depend on the platform actual:
- * - Android/JVM: fully synchronized via `java.util.LinkedHashMap(accessOrder=true)`.
+ * - Android: fully synchronized via `java.util.LinkedHashMap(accessOrder=true)`.
  * - Skia (iOS/Desktop/Wasm): insertion-order map with manual move-to-tail on read;
  *   safe for single-threaded Compose rendering; callers must synchronize externally
  *   if accessed from multiple threads on those targets.
  *
  * @param maxSize Maximum number of entries to retain. When exceeded, the least-recently-used
- *   entry is evicted automatically.
+ *   entry is evicted automatically. Must be positive.
+ * @param onEvict Releases values discarded on eviction, clearing, or a concurrent cache miss.
  */
 internal expect class LruCache<K : Any, V : Any>(
     maxSize: Int,
+    onEvict: (V) -> Unit = {},
 ) {
     val size: Int
 
@@ -27,8 +29,8 @@ internal expect class LruCache<K : Any, V : Any>(
     ): V
 
     /**
-     * Removes all entries. [onEvict] is called for each evicted value, allowing callers
-     * to release platform resources (e.g. close Skia `Managed` objects).
+     * Removes all entries, invoking the constructor's disposal callback and then [onEvict]
+     * for each entry. The optional callback can observe explicitly cleared entries.
      */
     fun clear(onEvict: (V) -> Unit = {})
 }

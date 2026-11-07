@@ -1,9 +1,13 @@
 ---
-title: Install ShaderX and apply your first Compose shader
-description: Install ShaderX from Maven Central in Kotlin Multiplatform or Android, configure a Gradle version catalog, and apply a grayscale shader with a complete Kotlin example.
+title: How to add shaders to Compose Multiplatform
+description: Add GPU shaders to a Compose Multiplatform project with ShaderX. Configure Gradle, apply a shader modifier, and separate background effects from foreground content.
 ---
 
-# Installation and quickstart
+# How to add shaders to Compose Multiplatform
+
+To add a GPU shader to your Compose Multiplatform project, add ShaderX to `commonMain`, import `shaderEffect`, and apply `Modifier.shaderEffect(...)` to the composable you want to transform. ShaderX uses Android's AGSL runtime on Android API 33+ and Skia on iOS, desktop, and WebAssembly.
+
+The steps below start with an existing Compose project and a built-in grayscale effect. You can then implement a [custom AGSL/SkSL shader](custom-effects.md) using the same modifier. For an Android-only Jetpack Compose project, use the Android dependency block below.
 
 These examples use the published **0.1.3** release. See [release status](index.md#releases-and-development-docs) for APIs that currently require a checkout of `main`.
 
@@ -87,6 +91,41 @@ fun GrayscalePhoto(painter: Painter, modifier: Modifier = Modifier) {
 ```
 
 The effect transforms the content drawn by the composable. Make sure that content has a nonzero layout size. Set `intensity = 0.5f` to blend the original colors with grayscale, or pass `null` as the effect to disable it.
+
+For animated effects on `main` / 0.1.4 development, the same modifier owns and closes its animation session. Pass the effect directly; use a [scoped factory](compose.md#scope-the-shader-cache) when a screen should release its compiled cache on disposal.
+
+## Apply a shader to the background only
+
+`shaderEffect` transforms the content inside its drawing layer. Applying it to a container also affects that container's text and child UI. To keep the foreground unchanged, draw an affected background as a separate child, then place the foreground above it:
+
+```kotlin
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import com.debanshu.shaderlab.shaderx.compose.shaderEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.GradientEffect
+
+@Composable
+fun GradientBackground(
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .shaderEffect(GradientEffect(intensity = 1f))
+                .background(Color.White),
+        )
+        content()
+    }
+}
+```
+
+Give the outer container a size through its modifier or foreground content. The white background supplies opaque pixels for `GradientEffect` to tint; an empty transparent layer has no visible pixels to transform. Keep `.shaderEffect(...)` before `.background(...)` so the background is drawn inside the affected layer. For an ordinary static gradient, Compose's built-in `Brush` is sufficient; use a shader when its pixel calculations or distortion are needed.
 
 ## Next steps
 

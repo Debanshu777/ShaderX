@@ -23,6 +23,8 @@ ShaderX shares effect definitions in Kotlin and uses a platform backend to rende
 
 The library's minimum Android SDK is **33 (Android 13)**. Although Android introduced some `RenderEffect` APIs earlier, ShaderX's factory requires API 33 for its rendering paths, including blur and composite effects.
 
+Android's offline `ImageProcessor` remains unsupported. The development implementation returns `ProcessingError` immediately, without decoding the image or compiling its shader. This does not affect on-screen rendering through Compose.
+
 Android supports ordered chains such as `GrayscaleEffect() + VignetteEffect()`. The current offline image processor creates a software bitmap canvas; that canvas cannot render the hardware `RenderNode`. It returns `ShaderError.ProcessingError`. Use `Modifier.shaderEffect` for on-screen rendering instead.
 
 ## iOS and desktop
@@ -31,7 +33,9 @@ The library builds for physical arm64 iOS devices and arm64 iOS simulators. It d
 
 Desktop uses the JVM target on Windows, macOS, and Linux. Use JDK 21 for this repository. This is not a Kotlin/Native macOS, Linux, or Windows library.
 
-Skia factories are not thread-safe. Scope a factory to a Compose window or a single processing thread, or synchronize access externally.
+Skia factories and processors are not thread-safe. Scope a factory to a Compose window or a single processing thread. For background exports, create a separate factory on the worker and close it there after processing. If sharing a factory across threads, serialize all factory, processor, and session operations, including cache clearing and disposal; synchronizing only cache lookups is insufficient.
+
+On `main` / 0.1.4 development, Skia cache eviction closes compiled-effect wrappers immediately, and failed compilation leaves existing cache entries intact. Sessions retain their own native references until closed. Texture binding releases temporary image and shader wrappers after the builder retains the child shader, limiting native memory waiting for garbage collection during live updates.
 
 ## WebAssembly
 

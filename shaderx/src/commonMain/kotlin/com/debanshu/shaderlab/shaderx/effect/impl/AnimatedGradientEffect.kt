@@ -31,109 +31,9 @@ public class AnimatedGradientEffect(
     override val displayName: String = "Animated Gradient"
     override val isAnimating: Boolean get() = animate
 
-    override val shaderSource: String =
-        """
-        uniform shader content;
-        uniform float2 resolution;
-        layout(color) uniform half4 startColor;
-        layout(color) uniform half4 endColor;
-        uniform float speed;
-        uniform float time;
+    override val shaderSource: String get() = SHADER_SOURCE
 
-        half4 main(float2 fragCoord) {
-            half4 originalColor = content.eval(fragCoord);
-            float2 uv = fragCoord / resolution;
-
-            float angle = atan(uv.y - 0.5, uv.x - 0.5);
-            float mixValue = sin(angle + time * speed) * 0.5 + 0.5;
-            mixValue = clamp(mixValue, 0.0, 1.0);
-
-            half4 gradientColor = mix(startColor, endColor, mixValue);
-            half3 blendedRgb = mix(originalColor.rgb, gradientColor.rgb, 0.6);
-            return half4(blendedRgb, originalColor.a);
-        }
-        """.trimIndent()
-
-    override val parameterHandlers: Map<String, ParamHandler<*>> =
-        mapOf(
-            PARAM_START_COLOR to
-                colorHandler<AnimatedGradientEffect>(
-                    spec =
-                        ColorParameter(
-                            id = PARAM_START_COLOR,
-                            label = "Start Color",
-                            defaultColor = DEFAULT_START_COLOR,
-                        ),
-                    read = { it.startColor },
-                    write = { e, v ->
-                        AnimatedGradientEffect(
-                            v,
-                            e.endColor,
-                            e.speed,
-                            e.animate,
-                            e.time,
-                        )
-                    },
-                ),
-            PARAM_END_COLOR to
-                colorHandler<AnimatedGradientEffect>(
-                    spec =
-                        ColorParameter(
-                            id = PARAM_END_COLOR,
-                            label = "End Color",
-                            defaultColor = DEFAULT_END_COLOR,
-                        ),
-                    read = { it.endColor },
-                    write = { e, v ->
-                        AnimatedGradientEffect(
-                            e.startColor,
-                            v,
-                            e.speed,
-                            e.animate,
-                            e.time,
-                        )
-                    },
-                ),
-            PARAM_SPEED to
-                floatHandler<AnimatedGradientEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_SPEED,
-                            label = "Speed",
-                            range = 0.1f..5f,
-                            defaultValue = 1f,
-                        ),
-                    read = { it.speed },
-                    write = { e, v ->
-                        AnimatedGradientEffect(
-                            e.startColor,
-                            e.endColor,
-                            v,
-                            e.animate,
-                            e.time,
-                        )
-                    },
-                ),
-            PARAM_ANIMATE to
-                toggleHandler<AnimatedGradientEffect>(
-                    spec =
-                        ToggleParameter(
-                            id = PARAM_ANIMATE,
-                            label = "Animate",
-                            isEnabledByDefault = true,
-                        ),
-                    read = { it.animate },
-                    write = { e, v ->
-                        AnimatedGradientEffect(
-                            e.startColor,
-                            e.endColor,
-                            e.speed,
-                            v,
-                            e.time,
-                        )
-                    },
-                ),
-        )
+    override val parameterHandlers: Map<String, ParamHandler<*>> get() = PARAMETER_HANDLERS
 
     override fun buildUniforms(
         width: Float,
@@ -175,5 +75,109 @@ public class AnimatedGradientEffect(
         public const val PARAM_ANIMATE: String = "animate"
         public const val DEFAULT_START_COLOR: Long = 0xFF7B2FF7
         public const val DEFAULT_END_COLOR: Long = 0xFF00D4FF
+
+        private val SHADER_SOURCE: String =
+            """
+            uniform shader content;
+            uniform float2 resolution;
+            layout(color) uniform half4 startColor;
+            layout(color) uniform half4 endColor;
+            uniform float speed;
+            uniform float time;
+
+            half4 main(float2 fragCoord) {
+                half4 originalColor = content.eval(fragCoord);
+                float2 uv = fragCoord / resolution;
+
+                float angle = atan(uv.y - 0.5, uv.x - 0.5);
+                float mixValue = sin(angle + time * speed) * 0.5 + 0.5;
+                mixValue = clamp(mixValue, 0.0, 1.0);
+
+                half4 gradientColor = mix(startColor, endColor, mixValue);
+                half3 blendedRgb = mix(originalColor.rgb, gradientColor.rgb, 0.6);
+                return half4(blendedRgb, originalColor.a);
+            }
+            """.trimIndent()
+
+        private val PARAMETER_HANDLERS: Map<String, ParamHandler<*>> =
+            mapOf(
+                PARAM_START_COLOR to
+                    colorHandler<AnimatedGradientEffect>(
+                        spec =
+                            ColorParameter(
+                                id = PARAM_START_COLOR,
+                                label = "Start Color",
+                                defaultColor = DEFAULT_START_COLOR,
+                            ),
+                        read = { it.startColor },
+                        write = { e, v ->
+                            AnimatedGradientEffect(
+                                v,
+                                e.endColor,
+                                e.speed,
+                                e.animate,
+                                e.time,
+                            )
+                        },
+                    ),
+                PARAM_END_COLOR to
+                    colorHandler<AnimatedGradientEffect>(
+                        spec =
+                            ColorParameter(
+                                id = PARAM_END_COLOR,
+                                label = "End Color",
+                                defaultColor = DEFAULT_END_COLOR,
+                            ),
+                        read = { it.endColor },
+                        write = { e, v ->
+                            AnimatedGradientEffect(
+                                e.startColor,
+                                v,
+                                e.speed,
+                                e.animate,
+                                e.time,
+                            )
+                        },
+                    ),
+                PARAM_SPEED to
+                    floatHandler<AnimatedGradientEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_SPEED,
+                                label = "Speed",
+                                range = 0.1f..5f,
+                                defaultValue = 1f,
+                            ),
+                        read = { it.speed },
+                        write = { e, v ->
+                            AnimatedGradientEffect(
+                                e.startColor,
+                                e.endColor,
+                                v,
+                                e.animate,
+                                e.time,
+                            )
+                        },
+                    ),
+                PARAM_ANIMATE to
+                    toggleHandler<AnimatedGradientEffect>(
+                        spec =
+                            ToggleParameter(
+                                id = PARAM_ANIMATE,
+                                label = "Animate",
+                                isEnabledByDefault = true,
+                            ),
+                        read = { it.animate },
+                        write = { e, v ->
+                            AnimatedGradientEffect(
+                                e.startColor,
+                                e.endColor,
+                                e.speed,
+                                v,
+                                e.time,
+                            )
+                        },
+                    ),
+            )
     }
 }

@@ -16,6 +16,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -36,13 +38,14 @@ fun CameraPreview(
         if (isFrontCamera) CameraSelector.DEFAULT_FRONT_CAMERA
         else CameraSelector.DEFAULT_BACK_CAMERA
 
-    LaunchedEffect(selector) {
+    LaunchedEffect(context, lifecycleOwner, selector) {
         val provider =
             suspendCancellableCoroutine<ProcessCameraProvider> { cont ->
-                ProcessCameraProvider.getInstance(context).addListener(
+                val providerFuture = ProcessCameraProvider.getInstance(context)
+                providerFuture.addListener(
                     {
                         try {
-                            cont.resume(ProcessCameraProvider.getInstance(context).get())
+                            cont.resume(providerFuture.get())
                         } catch (e: Exception) {
                             cont.resumeWithException(e)
                         }
@@ -55,10 +58,15 @@ fun CameraPreview(
                 setSurfaceProvider { req -> surfaceRequests.value = req }
             }
         try {
-            provider.unbindAll()
             provider.bindToLifecycle(lifecycleOwner, selector, preview)
+            awaitCancellation()
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (_: Exception) {
             // Camera binding failed
+        } finally {
+            provider.unbind(preview)
+            surfaceRequests.value = null
         }
     }
 

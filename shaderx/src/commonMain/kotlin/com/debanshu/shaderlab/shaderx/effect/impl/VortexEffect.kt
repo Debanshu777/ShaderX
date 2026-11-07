@@ -29,89 +29,9 @@ public class VortexEffect(
     override val displayName: String = "Vortex"
     override val isAnimating: Boolean get() = animate
 
-    override val shaderSource: String =
-        """
-        uniform shader content;
-        uniform float2 resolution;
-        uniform float strength;
-        uniform float radius;
-        uniform float speed;
-        uniform float time;
+    override val shaderSource: String get() = SHADER_SOURCE
 
-        half4 main(float2 fragCoord) {
-            float2 uv = fragCoord / resolution;
-            float2 centered = uv - float2(0.5, 0.5);
-            float dist = length(centered);
-
-            float angle = atan(centered.y, centered.x);
-            float twirl = strength * (1.0 - smoothstep(radius, 0.0, dist)) * sin(time * speed);
-            angle += twirl;
-
-            float2 twisted = float2(cos(angle), sin(angle)) * dist + float2(0.5, 0.5);
-            float2 sampleCoord = twisted * resolution;
-            sampleCoord = clamp(sampleCoord, float2(0.0), resolution);
-
-            return content.eval(sampleCoord);
-        }
-        """.trimIndent()
-
-    override val parameterHandlers: Map<String, ParamHandler<*>> =
-        mapOf(
-            PARAM_STRENGTH to
-                floatHandler<VortexEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_STRENGTH,
-                            label = "Strength",
-                            range = 0.1f..5f,
-                            defaultValue = 1f,
-                        ),
-                    read = { it.strength },
-                    write = { e, v -> VortexEffect(v, e.radius, e.speed, e.animate, e.time) },
-                ),
-            PARAM_RADIUS to
-                floatHandler<VortexEffect>(
-                    spec =
-                        PercentageParameter(
-                            id = PARAM_RADIUS,
-                            label = "Radius",
-                            defaultValue = 0.5f,
-                        ),
-                    read = { it.radius },
-                    write = { e, v -> VortexEffect(e.strength, v, e.speed, e.animate, e.time) },
-                ),
-            PARAM_SPEED to
-                floatHandler<VortexEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_SPEED,
-                            label = "Speed",
-                            range = 0.1f..5f,
-                            defaultValue = 1f,
-                        ),
-                    read = { it.speed },
-                    write = { e, v ->
-                        VortexEffect(
-                            e.strength,
-                            e.radius,
-                            v,
-                            e.animate,
-                            e.time,
-                        )
-                    },
-                ),
-            PARAM_ANIMATE to
-                toggleHandler<VortexEffect>(
-                    spec =
-                        ToggleParameter(
-                            id = PARAM_ANIMATE,
-                            label = "Animate",
-                            isEnabledByDefault = true,
-                        ),
-                    read = { it.animate },
-                    write = { e, v -> VortexEffect(e.strength, e.radius, e.speed, v, e.time) },
-                ),
-        )
+    override val parameterHandlers: Map<String, ParamHandler<*>> get() = PARAMETER_HANDLERS
 
     override fun buildUniforms(
         width: Float,
@@ -150,5 +70,89 @@ public class VortexEffect(
         public const val PARAM_RADIUS: String = "radius"
         public const val PARAM_SPEED: String = "speed"
         public const val PARAM_ANIMATE: String = "animate"
+
+        private val SHADER_SOURCE: String =
+            """
+            uniform shader content;
+            uniform float2 resolution;
+            uniform float strength;
+            uniform float radius;
+            uniform float speed;
+            uniform float time;
+
+            half4 main(float2 fragCoord) {
+                float2 uv = fragCoord / resolution;
+                float2 centered = uv - float2(0.5, 0.5);
+                float dist = length(centered);
+
+                float angle = atan(centered.y, centered.x);
+                float twirl = strength * (1.0 - smoothstep(radius, 0.0, dist)) * sin(time * speed);
+                angle += twirl;
+
+                float2 twisted = float2(cos(angle), sin(angle)) * dist + float2(0.5, 0.5);
+                float2 sampleCoord = twisted * resolution;
+                sampleCoord = clamp(sampleCoord, float2(0.0), resolution);
+
+                return content.eval(sampleCoord);
+            }
+            """.trimIndent()
+
+        private val PARAMETER_HANDLERS: Map<String, ParamHandler<*>> =
+            mapOf(
+                PARAM_STRENGTH to
+                    floatHandler<VortexEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_STRENGTH,
+                                label = "Strength",
+                                range = 0.1f..5f,
+                                defaultValue = 1f,
+                            ),
+                        read = { it.strength },
+                        write = { e, v -> VortexEffect(v, e.radius, e.speed, e.animate, e.time) },
+                    ),
+                PARAM_RADIUS to
+                    floatHandler<VortexEffect>(
+                        spec =
+                            PercentageParameter(
+                                id = PARAM_RADIUS,
+                                label = "Radius",
+                                defaultValue = 0.5f,
+                            ),
+                        read = { it.radius },
+                        write = { e, v -> VortexEffect(e.strength, v, e.speed, e.animate, e.time) },
+                    ),
+                PARAM_SPEED to
+                    floatHandler<VortexEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_SPEED,
+                                label = "Speed",
+                                range = 0.1f..5f,
+                                defaultValue = 1f,
+                            ),
+                        read = { it.speed },
+                        write = { e, v ->
+                            VortexEffect(
+                                e.strength,
+                                e.radius,
+                                v,
+                                e.animate,
+                                e.time,
+                            )
+                        },
+                    ),
+                PARAM_ANIMATE to
+                    toggleHandler<VortexEffect>(
+                        spec =
+                            ToggleParameter(
+                                id = PARAM_ANIMATE,
+                                label = "Animate",
+                                isEnabledByDefault = true,
+                            ),
+                        read = { it.animate },
+                        write = { e, v -> VortexEffect(e.strength, e.radius, e.speed, v, e.time) },
+                    ),
+            )
     }
 }

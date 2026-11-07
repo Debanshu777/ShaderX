@@ -54,6 +54,8 @@ internal class IosAudioCapture(
             val avEngine = AVAudioEngine()
             val input = avEngine.inputNode
             val format = input.inputFormatForBus(0u)
+            val analyzer = SpectrumAnalyzer()
+            var samples = FloatArray(FRAME_SAMPLES.toInt())
 
             input.installTapOnBus(0u, FRAME_SAMPLES, format) { buffer, _ ->
                 val pcm = buffer as? AVAudioPCMBuffer ?: return@installTapOnBus
@@ -61,8 +63,9 @@ internal class IosAudioCapture(
                 val count = pcm.frameLength.toInt()
                 if (count <= 0) return@installTapOnBus
                 val channel = channelData[0] ?: return@installTapOnBus
-                val samples = FloatArray(count) { channel[it] }
-                latest = Fft.magnitudes(samples, binCount)
+                if (samples.size < count) samples = FloatArray(count)
+                for (i in 0 until count) samples[i] = channel[i]
+                latest = analyzer.magnitudes(samples, binCount, count)
             }
 
             avEngine.prepare()

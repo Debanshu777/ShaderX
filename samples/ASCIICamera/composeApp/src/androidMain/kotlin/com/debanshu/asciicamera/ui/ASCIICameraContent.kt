@@ -30,8 +30,7 @@ import com.debanshu.asciicamera.picker.rememberImagePickerLauncher
 import com.debanshu.asciicamera.viewmodel.ASCIICameraViewModel
 import com.debanshu.asciicamera.viewmodel.AsciiCameraTab
 import com.debanshu.asciicamera.viewmodel.EffectMode
-import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
-import com.debanshu.shaderlab.shaderx.factory.create
+import com.debanshu.shaderlab.shaderx.compose.rememberShaderFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +39,7 @@ fun ASCIICameraContent(
     viewModel: ASCIICameraViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val shaderFactory = remember { ShaderFactory.create() }
+    val shaderFactory = rememberShaderFactory()
     val pickImageLauncher = rememberImagePickerLauncher { viewModel.setPickedImageBytes(it) }
     var contentWidth by remember { mutableIntStateOf(0) }
     var contentHeight by remember { mutableIntStateOf(0) }

@@ -11,7 +11,11 @@ package com.debanshu.shaderlab.shaderx.factory
  */
 internal actual class LruCache<K : Any, V : Any> actual constructor(
     private val maxSize: Int,
+    private val onEvict: (V) -> Unit,
 ) {
+    init {
+        require(maxSize > 0) { "maxSize must be positive" }
+    }
     private val map = LinkedHashMap<K, V>()
 
     actual val size: Int get() = map.size
@@ -27,21 +31,26 @@ internal actual class LruCache<K : Any, V : Any> actual constructor(
             map[key] = existing
             return existing
         }
-        // Evict LRU entry if at capacity
+        // A failed compilation must not evict a useful cached effect.
+        val value = compute()
+        // Evict LRU entry if at capacity, releasing cache-owned native resources.
         if (map.size >= maxSize) {
             val iter = map.entries.iterator()
             if (iter.hasNext()) {
-                iter.next()
+                val evicted = iter.next().value
                 iter.remove()
+                onEvict(evicted)
             }
         }
-        val value = compute()
         map[key] = value
         return value
     }
 
     actual fun clear(onEvict: (V) -> Unit) {
-        map.values.forEach(onEvict)
+        map.values.forEach {
+            this.onEvict(it)
+            onEvict(it)
+        }
         map.clear()
     }
 }

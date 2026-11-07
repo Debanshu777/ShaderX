@@ -8,7 +8,7 @@ import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
  * A composite effect that combines multiple shader effects in sequence.
  *
  * Each effect is applied in order, with the output of one becoming
- * the input of the next. Chaining is supported on Android (API 31+);
+ * the input of the next. Chaining is supported on Android (API 33+);
  * on other platforms a [ShaderError.UnsupportedEffect] error is returned.
  *
  * ## Usage

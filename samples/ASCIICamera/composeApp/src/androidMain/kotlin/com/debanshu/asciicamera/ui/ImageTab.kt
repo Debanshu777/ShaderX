@@ -12,14 +12,22 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import com.debanshu.asciicamera.picker.decodeImageBytes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable fun ImageTab(
     pickedImageBytes: ByteArray?,
@@ -29,8 +37,13 @@ import com.debanshu.asciicamera.picker.decodeImageBytes
     onSizeChanged: (Int, Int) -> Unit = { _, _ -> },
     renderEffect: RenderEffect? = null,
 ) {
-    val painter = decodeImageBytes(pickedImageBytes)
-    val decodeError = pickedImageBytes != null && painter == null
+    var painter by remember(pickedImageBytes) { mutableStateOf<Painter?>(null) }
+    var isLoading by remember(pickedImageBytes) { mutableStateOf(pickedImageBytes != null) }
+    LaunchedEffect(pickedImageBytes) {
+        painter = withContext(Dispatchers.Default) { decodeImageBytes(pickedImageBytes) }
+        isLoading = false
+    }
+    val decodeError = pickedImageBytes != null && !isLoading && painter == null
 
     Box(
         modifier =
@@ -50,6 +63,12 @@ import com.debanshu.asciicamera.picker.decodeImageBytes
                     Button(onClick = onPickImage) {
                         Text("Pick an image")
                     }
+                }
+            }
+
+            isLoading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Loading image…")
                 }
             }
 
@@ -91,7 +110,7 @@ import com.debanshu.asciicamera.picker.decodeImageBytes
                             },
                 ) {
                     Image(
-                        painter = painter,
+                        painter = checkNotNull(painter),
                         contentDescription = "Picked image",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Fit,

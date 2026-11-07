@@ -41,96 +41,9 @@ public class AudioDistortionEffect(
     override val displayName: String = "Audio Distortion"
     override val isAnimating: Boolean get() = animate
 
-    override val shaderSource: String =
-        """
-        uniform shader content;
-        uniform shader fftData;
-        uniform float2 resolution;
-        uniform float fftSize;
-        uniform float intensity;
-        uniform float time;
+    override val shaderSource: String get() = SHADER_SOURCE
 
-        half4 main(float2 fragCoord) {
-            float2 uv = fragCoord / resolution;
-
-            float magnitude = fftData.eval(float2(uv.x * fftSize, 0.5)).r;
-            float neighbour = fftData.eval(float2(fract(uv.x + 1.0 / fftSize) * fftSize, 0.5)).r;
-
-            float strength = intensity * 0.45;
-            float yPush = magnitude * strength * resolution.y;
-            float xShear = (neighbour - magnitude) * strength * resolution.x;
-            float wobble = sin(uv.y * 12.0 + time * 4.0) * magnitude * strength * 0.15 * resolution.x;
-
-            float2 distorted = fragCoord + float2(xShear + wobble, -yPush);
-            float2 sampleCoord = clamp(distorted, float2(0.0), resolution);
-            return content.eval(sampleCoord);
-        }
-        """.trimIndent()
-
-    override val parameterHandlers: Map<String, ParamHandler<*>> =
-        mapOf(
-            PARAM_INTENSITY to
-                floatHandler<AudioDistortionEffect>(
-                    spec =
-                        PercentageParameter(
-                            id = PARAM_INTENSITY,
-                            label = "Distortion",
-                            defaultValue = 1f,
-                        ),
-                    read = { it.intensity },
-                    write = { e, v ->
-                        AudioDistortionEffect(
-                            e.fftData,
-                            e.fftSize,
-                            v,
-                            e.animate,
-                            e.time,
-                            e.fftDataSource,
-                        )
-                    },
-                ),
-            PARAM_FFT_SIZE to
-                floatHandler<AudioDistortionEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_FFT_SIZE,
-                            label = "Frequency Bins",
-                            range = 8f..512f,
-                            defaultValue = DEFAULT_FFT_SIZE,
-                        ),
-                    read = { it.fftSize },
-                    write = { e, v ->
-                        AudioDistortionEffect(
-                            e.fftData,
-                            v,
-                            e.intensity,
-                            e.animate,
-                            e.time,
-                            e.fftDataSource,
-                        )
-                    },
-                ),
-            PARAM_ANIMATE to
-                toggleHandler<AudioDistortionEffect>(
-                    spec =
-                        ToggleParameter(
-                            id = PARAM_ANIMATE,
-                            label = "Animate",
-                            isEnabledByDefault = true,
-                        ),
-                    read = { it.animate },
-                    write = { e, v ->
-                        AudioDistortionEffect(
-                            e.fftData,
-                            e.fftSize,
-                            e.intensity,
-                            v,
-                            e.time,
-                            e.fftDataSource,
-                        )
-                    },
-                ),
-        )
+    override val parameterHandlers: Map<String, ParamHandler<*>> get() = PARAMETER_HANDLERS
 
     private fun resolveFftData(): ImageBitmap = fftDataSource?.invoke() ?: fftData
 
@@ -184,5 +97,96 @@ public class AudioDistortionEffect(
         public const val DEFAULT_FFT_SIZE: Float = 64f
 
         private val EMPTY_FFT: ImageBitmap = ImageBitmap(1, 1)
+
+        private val SHADER_SOURCE: String =
+            """
+            uniform shader content;
+            uniform shader fftData;
+            uniform float2 resolution;
+            uniform float fftSize;
+            uniform float intensity;
+            uniform float time;
+
+            half4 main(float2 fragCoord) {
+                float2 uv = fragCoord / resolution;
+
+                float magnitude = fftData.eval(float2(uv.x * fftSize, 0.5)).r;
+                float neighbour = fftData.eval(float2(fract(uv.x + 1.0 / fftSize) * fftSize, 0.5)).r;
+
+                float strength = intensity * 0.45;
+                float yPush = magnitude * strength * resolution.y;
+                float xShear = (neighbour - magnitude) * strength * resolution.x;
+                float wobble = sin(uv.y * 12.0 + time * 4.0) * magnitude * strength * 0.15 * resolution.x;
+
+                float2 distorted = fragCoord + float2(xShear + wobble, -yPush);
+                float2 sampleCoord = clamp(distorted, float2(0.0), resolution);
+                return content.eval(sampleCoord);
+            }
+            """.trimIndent()
+
+        private val PARAMETER_HANDLERS: Map<String, ParamHandler<*>> =
+            mapOf(
+                PARAM_INTENSITY to
+                    floatHandler<AudioDistortionEffect>(
+                        spec =
+                            PercentageParameter(
+                                id = PARAM_INTENSITY,
+                                label = "Distortion",
+                                defaultValue = 1f,
+                            ),
+                        read = { it.intensity },
+                        write = { e, v ->
+                            AudioDistortionEffect(
+                                e.fftData,
+                                e.fftSize,
+                                v,
+                                e.animate,
+                                e.time,
+                                e.fftDataSource,
+                            )
+                        },
+                    ),
+                PARAM_FFT_SIZE to
+                    floatHandler<AudioDistortionEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_FFT_SIZE,
+                                label = "Frequency Bins",
+                                range = 8f..512f,
+                                defaultValue = DEFAULT_FFT_SIZE,
+                            ),
+                        read = { it.fftSize },
+                        write = { e, v ->
+                            AudioDistortionEffect(
+                                e.fftData,
+                                v,
+                                e.intensity,
+                                e.animate,
+                                e.time,
+                                e.fftDataSource,
+                            )
+                        },
+                    ),
+                PARAM_ANIMATE to
+                    toggleHandler<AudioDistortionEffect>(
+                        spec =
+                            ToggleParameter(
+                                id = PARAM_ANIMATE,
+                                label = "Animate",
+                                isEnabledByDefault = true,
+                            ),
+                        read = { it.animate },
+                        write = { e, v ->
+                            AudioDistortionEffect(
+                                e.fftData,
+                                e.fftSize,
+                                e.intensity,
+                                v,
+                                e.time,
+                                e.fftDataSource,
+                            )
+                        },
+                    ),
+            )
     }
 }

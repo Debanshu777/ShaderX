@@ -20,9 +20,9 @@ class Links(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        for key in ("href", "src"):
+        for key in ("href", "src", "poster"):
             if key in attrs:
-                self.urls.append(attrs[key])
+                self.urls.append((tag, key, attrs[key]))
 
 
 def check():
@@ -53,7 +53,7 @@ def check():
 
         parser = Links()
         parser.feed(markdown.markdown(source, extensions=["fenced_code", "tables"]))
-        for url in parser.urls:
+        for tag, attribute, url in parser.urls:
             parsed = urlsplit(url)
             path = unquote(parsed.path)
             if parsed.netloc == "github.com" and path.startswith(REPO_PATH):
@@ -65,8 +65,16 @@ def check():
                     continue
             elif parsed.scheme or parsed.netloc or not path:
                 continue
+            elif file in guides and tag == "video" and attribute == "poster":
+                # The builder rewrites src/href but leaves video posters as-is.
+                # Resolve posters from the generated /guide/ URL instead.
+                page_directory = file.parent if file.name == "index.md" else file.with_suffix("")
+                target = (page_directory / path).resolve()
             else:
                 target = file.parent / path
+            # The production browser app is assembled into the site after Zensical.
+            if target.resolve() == (ROOT / "docs/playground").resolve():
+                target = ROOT / "samples/ShaderLab/composeApp/src/wasmJsMain/resources/index.html"
             if not target.exists():
                 errors.append(f"{file.relative_to(ROOT)}: missing link target {url}")
 

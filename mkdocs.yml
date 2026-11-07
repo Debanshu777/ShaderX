@@ -8,6 +8,10 @@ edit_uri: edit/main/docs/
 copyright: Copyright © 2026 Debanshu Datta. Apache License 2.0.
 strict: true
 
+extra:
+  # Public ownership token supplied by Search Console; keep it after verification.
+  google_site_verification: KZ2oZG2q_kNtKu9nOgivCXFYzFH_lnw2AlRgdpEOkck
+
 theme:
   variant: modern
   custom_dir: docs-overrides

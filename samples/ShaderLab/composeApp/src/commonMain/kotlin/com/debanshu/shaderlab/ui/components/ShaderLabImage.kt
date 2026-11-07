@@ -6,11 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import com.debanshu.shaderlab.imagelib.decodeImageBytes
+import com.debanshu.shaderlab.imagelib.rememberDecodedImage
 import com.debanshu.shaderlab.viewmodel.ImageSource
 
 @Composable
@@ -30,10 +29,8 @@ fun ShaderLabImage(
         }
 
         is ImageSource.Picked -> {
-            val imageBitmap =
-                remember(imageSource.bytes) {
-                    imageSource.bytes?.let { decodeImageBytes(it) }
-                }
+            val decoded = rememberDecodedImage(imageSource.bytes)
+            val imageBitmap = decoded.bitmap
             if (imageBitmap != null) {
                 Image(
                     bitmap = imageBitmap,
@@ -43,11 +40,14 @@ fun ShaderLabImage(
                 )
             } else {
                 Box(
-                    modifier = modifier.background(MaterialTheme.colorScheme.errorContainer),
+                    modifier = modifier.background(
+                        if (decoded.isLoading) MaterialTheme.colorScheme.surfaceVariant
+                        else MaterialTheme.colorScheme.errorContainer,
+                    ),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Unable to load image",
+                        text = if (decoded.isLoading) "Loading image…" else "Unable to load image",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onErrorContainer,
                     )

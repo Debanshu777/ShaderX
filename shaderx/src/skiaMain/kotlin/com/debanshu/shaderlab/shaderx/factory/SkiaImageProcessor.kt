@@ -15,6 +15,7 @@ import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.jetbrains.skia.Surface
+import org.jetbrains.skia.impl.use
 
 /**
  * Skia-based implementation of [ImageProcessor] for iOS and Desktop platforms.
@@ -35,51 +36,30 @@ internal class SkiaImageProcessor(
         height: Float,
     ): ShaderResult<ByteArray> {
         return try {
-            val image = Image.makeFromEncoded(imageBytes)
-            val imageWidth = image.width
-            val imageHeight = image.height
+            Image.makeFromEncoded(imageBytes).use { image ->
+                val effectWidth = if (width > 0) width else image.width.toFloat()
+                val effectHeight = if (height > 0) height else image.height.toFloat()
 
-            val effectWidth = if (width > 0) width else imageWidth.toFloat()
-            val effectHeight = if (height > 0) height else imageHeight.toFloat()
-
-            val imageFilterResult = createImageFilter(effect, effectWidth, effectHeight)
-            val imageFilter = when (imageFilterResult) {
-                is ShaderResult.Success -> imageFilterResult.value
-
-                is ShaderResult.Failure -> {
-                    image.close()
-                    return ShaderResult.failure(imageFilterResult.error)
+                createImageFilter(effect, effectWidth, effectHeight).flatMap { filter ->
+                    filter.use {
+                        Surface.makeRasterN32Premul(image.width, image.height).use { surface ->
+                            Paint().use { paint ->
+                                paint.imageFilter = filter
+                                surface.canvas.drawImage(image, 0f, 0f, paint)
+                            }
+                            surface.makeImageSnapshot().use { snapshot ->
+                                val data = snapshot.encodeToData(EncodedImageFormat.PNG)
+                                if (data == null) {
+                                    ShaderResult.failure(
+                                        ShaderError.ProcessingError("Failed to encode result image"),
+                                    )
+                                } else {
+                                    data.use { ShaderResult.success(it.bytes) }
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-
-            // Use explicit try/finally instead of .use {} — Skia's Managed objects have
-            // close() on all targets but do not implement AutoCloseable on WasmJS.
-            val surface = Surface.makeRasterN32Premul(imageWidth, imageHeight)
-            var result: ByteArray? = null
-            try {
-                val paint = Paint()
-                try {
-                    paint.imageFilter = imageFilter
-                    surface.canvas.drawImage(image, 0f, 0f, paint)
-                } finally {
-                    paint.close()
-                }
-                val snapshot = surface.makeImageSnapshot()
-                val data = snapshot.encodeToData(EncodedImageFormat.PNG)
-                snapshot.close()
-                result = data?.bytes?.also { data.close() }
-            } finally {
-                surface.close()
-            }
-
-            image.close()
-
-            if (result != null) {
-                ShaderResult.success(result)
-            } else {
-                ShaderResult.failure(
-                    ShaderError.ProcessingError("Failed to encode result image"),
-                )
             }
         } catch (e: Exception) {
             ShaderResult.failure(
@@ -114,16 +94,16 @@ internal class SkiaImageProcessor(
                 try {
                     // Reuse the factory's cached RuntimeEffect — no recompilation
                     val runtimeEffect = factory.getOrCreateEffect(effect.shaderSource)
-                    val builder = RuntimeShaderBuilder(runtimeEffect)
-                    val uniforms = effect.buildUniforms(width, height)
-                    SkiaShaderFactory.applyUniforms(builder, uniforms)
-                    ShaderResult.success(
-                        ImageFilter.makeRuntimeShader(
-                            builder,
-                            ShaderConstants.CONTENT_UNIFORM_NAME,
-                            null,
-                        ),
-                    )
+                    RuntimeShaderBuilder(runtimeEffect).use { builder ->
+                        SkiaShaderFactory.applyUniforms(builder, effect.buildUniforms(width, height))
+                        ShaderResult.success(
+                            ImageFilter.makeRuntimeShader(
+                                builder,
+                                ShaderConstants.CONTENT_UNIFORM_NAME,
+                                null,
+                            ),
+                        )
+                    }
                 } catch (e: Exception) {
                     ShaderResult.failure(
                         ShaderError.CompilationError(

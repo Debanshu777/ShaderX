@@ -42,6 +42,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,17 +57,20 @@ import com.debanshu.shaderlab.imagelib.PickResult
 import com.debanshu.shaderlab.imagelib.createImageExporter
 import com.debanshu.shaderlab.imagelib.rememberImagePickerLauncher
 import com.debanshu.shaderlab.imagelib.rememberPermissionHandler
+import com.debanshu.shaderlab.shaderx.compose.rememberShaderFactory
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.AudioDistortionEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.AudioVisualizerEffect
 import com.debanshu.shaderlab.shaderx.factory.ImageProcessor
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.create
+import com.debanshu.shaderlab.shaderx.result.ShaderResult
 import com.debanshu.shaderlab.viewmodel.ImageSource
 import com.debanshu.shaderlab.viewmodel.ShaderLabTab
 import com.debanshu.shaderlab.viewmodel.ShaderLabUiState
 import com.debanshu.shaderlab.viewmodel.ShaderLabViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
@@ -80,8 +85,8 @@ fun ShaderLabContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val permissionHandler = rememberPermissionHandler()
-    val shaderFactory = remember { ShaderFactory.create() }
-    val imageProcessor = remember { ImageProcessor.create(shaderFactory) }
+    val shaderFactory = rememberShaderFactory()
+    var isExporting by remember { mutableStateOf(false) }
 
     val imagePicker =
         rememberImagePickerLauncher { result ->
@@ -173,78 +178,103 @@ fun ShaderLabContent(
 
                     IconButton(
                         onClick = {
+                            if (isExporting) return@IconButton
+                            isExporting = true
                             scope.launch {
-                                // Check write permission before export
-                                val permissionStatus = permissionHandler.checkPermission(ImagePermission.WRITE_IMAGES)
-                                val hasPermission =
-                                    when (permissionStatus) {
-                                        PermissionStatus.GRANTED, PermissionStatus.NOT_REQUIRED -> {
-                                            true
+                                try {
+                                    // Check write permission before export
+                                    val permissionStatus = permissionHandler.checkPermission(ImagePermission.WRITE_IMAGES)
+                                    val hasPermission =
+                                        when (permissionStatus) {
+                                            PermissionStatus.GRANTED, PermissionStatus.NOT_REQUIRED -> {
+                                                true
+                                            }
+
+                                            PermissionStatus.NOT_REQUESTED -> {
+                                                val result = permissionHandler.requestPermission(ImagePermission.WRITE_IMAGES)
+                                                result == PermissionStatus.GRANTED || result == PermissionStatus.NOT_REQUIRED
+                                            }
+
+                                            PermissionStatus.DENIED -> {
+                                                false
+                                            }
                                         }
 
-                                        PermissionStatus.NOT_REQUESTED -> {
-                                            val result = permissionHandler.requestPermission(ImagePermission.WRITE_IMAGES)
-                                            result == PermissionStatus.GRANTED || result == PermissionStatus.NOT_REQUIRED
-                                        }
-
-                                        PermissionStatus.DENIED -> {
-                                            false
-                                        }
+                                    if (!hasPermission) {
+                                        snackbarHostState.showSnackbar("Storage access denied. Please grant permission in settings.")
+                                        return@launch
                                     }
 
-                                if (!hasPermission) {
-                                    snackbarHostState.showSnackbar("Storage access denied. Please grant permission in settings.")
-                                    return@launch
-                                }
+                                    val selectedImage = uiState.selectedImage
+                                    val activeEffect = uiState.activeEffect
+                                    when (selectedImage) {
+                                        is ImageSource.Picked -> {
+                                            val originalBytes = selectedImage.bytes
+                                            if (originalBytes != null) {
+                                                val exporter = createImageExporter()
+                                                if (exporter.isSupported) {
+                                                    // Apply shader effect if active and supported
+                                                    val bytesToExport =
+                                                        if (activeEffect != null) {
+                                                            val processed = withContext(Dispatchers.Default) {
+                                                                // A blocking export owns its factory so the UI cannot
+                                                                // evict or close its native resources concurrently.
+                                                                val exportFactory = ShaderFactory.create()
+                                                                try {
+                                                                    ImageProcessor.create(exportFactory)
+                                                                        .process(originalBytes, activeEffect)
+                                                                } finally {
+                                                                    exportFactory.close()
+                                                                }
+                                                            }
+                                                            when (processed) {
+                                                                is ShaderResult.Success -> processed.value
+                                                                is ShaderResult.Failure -> {
+                                                                    snackbarHostState.showSnackbar("Effect export failed: ${processed.error.message}")
+                                                                    return@launch
+                                                                }
+                                                            }
+                                                        } else {
+                                                            originalBytes
+                                                        }
 
-                                val selectedImage = uiState.selectedImage
-                                val activeEffect = uiState.activeEffect
-                                when (selectedImage) {
-                                    is ImageSource.Picked -> {
-                                        val originalBytes = selectedImage.bytes
-                                        if (originalBytes != null) {
-                                            val exporter = createImageExporter()
-                                            if (exporter.isSupported) {
-                                                // Apply shader effect if active and supported
-                                                val bytesToExport =
-                                                    if (activeEffect != null && shaderFactory.isSupported()) {
-                                                        withContext(Dispatchers.Default) {
-                                                            imageProcessor.process(originalBytes, activeEffect).getOrNull()
-                                                        } ?: originalBytes
-                                                    } else {
-                                                        originalBytes
-                                                    }
+                                                    val config = ExportConfig()
+                                                    val fileName = "shaderlab_${Random.nextInt(100000, 999999)}"
+                                                    when (val result = exporter.exportImage(bytesToExport, fileName, config)) {
+                                                        is ExportResult.Success -> {
+                                                            snackbarHostState.showSnackbar("Image saved successfully!")
+                                                        }
 
-                                                val config = ExportConfig()
-                                                val fileName = "shaderlab_${Random.nextInt(100000, 999999)}"
-                                                when (val result = exporter.exportImage(bytesToExport, fileName, config)) {
-                                                    is ExportResult.Success -> {
-                                                        snackbarHostState.showSnackbar("Image saved successfully!")
-                                                    }
+                                                        is ExportResult.Error -> {
+                                                            snackbarHostState.showSnackbar("Export failed: ${result.message}")
+                                                        }
 
-                                                    is ExportResult.Error -> {
-                                                        snackbarHostState.showSnackbar("Export failed: ${result.message}")
+                                                        is ExportResult.NotSupported -> {
+                                                            snackbarHostState.showSnackbar("Export not supported on this platform")
+                                                        }
                                                     }
-
-                                                    is ExportResult.NotSupported -> {
-                                                        snackbarHostState.showSnackbar("Export not supported on this platform")
-                                                    }
+                                                } else {
+                                                    snackbarHostState.showSnackbar("Export not available")
                                                 }
                                             } else {
-                                                snackbarHostState.showSnackbar("Export not available")
+                                                snackbarHostState.showSnackbar("Cannot export - image data not available")
                                             }
-                                        } else {
-                                            snackbarHostState.showSnackbar("Cannot export - image data not available")
+                                        }
+
+                                        is ImageSource.Bundled -> {
+                                            snackbarHostState.showSnackbar("Please select a picked image to export")
                                         }
                                     }
-
-                                    is ImageSource.Bundled -> {
-                                        snackbarHostState.showSnackbar("Please select a picked image to export")
-                                    }
+                                } catch (cancelled: CancellationException) {
+                                    throw cancelled
+                                } catch (error: Exception) {
+                                    snackbarHostState.showSnackbar("Export failed: ${error.message ?: "Unable to save image"}")
+                                } finally {
+                                    isExporting = false
                                 }
                             }
                         },
-                        enabled = uiState.selectedImage is ImageSource.Picked && !uiState.isExporting,
+                        enabled = uiState.selectedImage is ImageSource.Picked && !isExporting,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Save,

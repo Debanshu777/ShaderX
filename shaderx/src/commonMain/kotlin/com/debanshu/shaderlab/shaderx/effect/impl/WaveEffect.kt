@@ -37,68 +37,9 @@ public class WaveEffect(
     override val displayName: String = "Wave"
     override val isAnimating: Boolean get() = animate
 
-    override val shaderSource: String =
-        """
-        uniform shader content;
-        uniform float2 resolution;
-        uniform float amplitude;
-        uniform float frequency;
-        uniform float time;
+    override val shaderSource: String get() = SHADER_SOURCE
 
-        half4 main(float2 fragCoord) {
-            float2 uv = fragCoord / resolution;
-
-            // Apply wave distortion
-            float xOffset = sin(uv.y * frequency + time) * amplitude;
-            float yOffset = cos(uv.x * frequency + time) * amplitude;
-
-            float2 distortedCoord = fragCoord + float2(xOffset, yOffset);
-
-            // Clamp to valid range
-            distortedCoord = clamp(distortedCoord, float2(0.0), resolution);
-
-            return content.eval(distortedCoord);
-        }
-        """.trimIndent()
-
-    override val parameterHandlers: Map<String, ParamHandler<*>> =
-        mapOf(
-            PARAM_AMPLITUDE to
-                floatHandler<WaveEffect>(
-                    spec =
-                        PixelParameter(
-                            id = PARAM_AMPLITUDE,
-                            label = "Amplitude",
-                            range = 0f..50f,
-                            defaultValue = 10f,
-                        ),
-                    read = { it.amplitude },
-                    write = { e, v -> WaveEffect(v, e.frequency, e.animate, e.time) },
-                ),
-            PARAM_FREQUENCY to
-                floatHandler<WaveEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_FREQUENCY,
-                            label = "Frequency",
-                            range = 1f..20f,
-                            defaultValue = 5f,
-                        ),
-                    read = { it.frequency },
-                    write = { e, v -> WaveEffect(e.amplitude, v, e.animate, e.time) },
-                ),
-            PARAM_ANIMATE to
-                toggleHandler<WaveEffect>(
-                    spec =
-                        ToggleParameter(
-                            id = PARAM_ANIMATE,
-                            label = "Animate",
-                            isEnabledByDefault = true,
-                        ),
-                    read = { it.animate },
-                    write = { e, v -> WaveEffect(e.amplitude, e.frequency, v, e.time) },
-                ),
-        )
+    override val parameterHandlers: Map<String, ParamHandler<*>> get() = PARAMETER_HANDLERS
 
     override fun buildUniforms(
         width: Float,
@@ -131,5 +72,68 @@ public class WaveEffect(
         public const val PARAM_AMPLITUDE: String = "amplitude"
         public const val PARAM_FREQUENCY: String = "frequency"
         public const val PARAM_ANIMATE: String = "animate"
+
+        private val SHADER_SOURCE: String =
+            """
+            uniform shader content;
+            uniform float2 resolution;
+            uniform float amplitude;
+            uniform float frequency;
+            uniform float time;
+
+            half4 main(float2 fragCoord) {
+                float2 uv = fragCoord / resolution;
+
+                // Apply wave distortion
+                float xOffset = sin(uv.y * frequency + time) * amplitude;
+                float yOffset = cos(uv.x * frequency + time) * amplitude;
+
+                float2 distortedCoord = fragCoord + float2(xOffset, yOffset);
+
+                // Clamp to valid range
+                distortedCoord = clamp(distortedCoord, float2(0.0), resolution);
+
+                return content.eval(distortedCoord);
+            }
+            """.trimIndent()
+
+        private val PARAMETER_HANDLERS: Map<String, ParamHandler<*>> =
+            mapOf(
+                PARAM_AMPLITUDE to
+                    floatHandler<WaveEffect>(
+                        spec =
+                            PixelParameter(
+                                id = PARAM_AMPLITUDE,
+                                label = "Amplitude",
+                                range = 0f..50f,
+                                defaultValue = 10f,
+                            ),
+                        read = { it.amplitude },
+                        write = { e, v -> WaveEffect(v, e.frequency, e.animate, e.time) },
+                    ),
+                PARAM_FREQUENCY to
+                    floatHandler<WaveEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_FREQUENCY,
+                                label = "Frequency",
+                                range = 1f..20f,
+                                defaultValue = 5f,
+                            ),
+                        read = { it.frequency },
+                        write = { e, v -> WaveEffect(e.amplitude, v, e.animate, e.time) },
+                    ),
+                PARAM_ANIMATE to
+                    toggleHandler<WaveEffect>(
+                        spec =
+                            ToggleParameter(
+                                id = PARAM_ANIMATE,
+                                label = "Animate",
+                                isEnabledByDefault = true,
+                            ),
+                        read = { it.animate },
+                        write = { e, v -> WaveEffect(e.amplitude, e.frequency, v, e.time) },
+                    ),
+            )
     }
 }

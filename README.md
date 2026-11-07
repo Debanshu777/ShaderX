@@ -10,7 +10,7 @@ ShaderX is a **Kotlin Multiplatform shader library** for **Jetpack Compose and C
 [![CI](https://github.com/Debanshu777/ShaderX/actions/workflows/ci.yml/badge.svg)](https://github.com/Debanshu777/ShaderX/actions/workflows/ci.yml)
 [![Apache 2.0 license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-[Documentation](https://debanshu777.github.io/ShaderX/) · [Quickstart](#quickstart) · [Effects](https://debanshu777.github.io/ShaderX/effects/) · [Samples](https://debanshu777.github.io/ShaderX/samples/) · [Contributing](CONTRIBUTING.md)
+[Documentation](https://debanshu777.github.io/ShaderX/) · [Live playground](https://debanshu777.github.io/ShaderX/playground/) · [Quickstart](#quickstart) · [Effects](https://debanshu777.github.io/ShaderX/effects/) · [Samples](https://debanshu777.github.io/ShaderX/samples/) · [Contributing](CONTRIBUTING.md)
 
 ## See it in motion
 
@@ -27,7 +27,7 @@ Explore live effect controls, transform a camera preview into ASCII art, or make
   </tr>
   <tr>
     <td align="center">An effect playground with live parameter controls.<br /><a href="samples/ShaderLab">Explore ShaderLab</a></td>
-    <td align="center">The same shared Compose UI in the browser.<br /><a href="https://debanshu777.github.io/ShaderX/samples/#shaderlab">Run the web sample</a></td>
+    <td align="center">The same shared Compose UI in the browser.<br /><a href="https://debanshu777.github.io/ShaderX/playground/">Try it in your browser</a></td>
   </tr>
   <tr>
     <th>ASCIICamera</th>
@@ -71,7 +71,7 @@ kotlin {
 ```
 
 For an Android-only Compose app, use the same dependency inside `dependencies { ... }`.
-Use **JDK 21**, **Kotlin 2.3.21**, and **Compose Multiplatform 1.10.3** as the starting toolchain. Android requires **minSdk 33**. See [installation and version catalogs](docs/getting-started.md).
+Use **JDK 21**, **Kotlin 2.3.21**, and **Compose Multiplatform 1.10.3** as the starting toolchain. Android requires **minSdk 33**. See [installation and version catalogs](https://debanshu777.github.io/ShaderX/getting-started/).
 
 > **Release status:** `0.1.3` is the published Maven Central release. This branch develops `0.1.4`; session-driven animation, texture uniforms, and the new audio effects are development features. Guides identify those features explicitly. The quickstart below works with `0.1.3`.
 
@@ -116,7 +116,7 @@ Replace `GrayscaleEffect()` with `SepiaEffect()`, `NativeBlurEffect(radius = 8f)
 | Desktop | JVM; Windows, macOS, Linux | Skia / `RuntimeEffect` | Unsupported |
 | Web | `wasmJs`; browser with Wasm GC support | Skia / `RuntimeEffect` | Unsupported |
 
-Multi-effect chains on Skia return `ShaderError.UnsupportedEffect`. Android's current offline `ImageProcessor` path returns a processing failure; use the Compose modifier for Android rendering. See the [platform and feature matrix](docs/platforms.md) before choosing an API.
+Multi-effect chains on Skia return `ShaderError.UnsupportedEffect`. Android's current offline `ImageProcessor` path returns a processing failure; use the Compose modifier for Android rendering. See the [platform and feature matrix](https://debanshu777.github.io/ShaderX/platforms/) before choosing an API.
 
 ## Built-in shader effects
 
@@ -125,17 +125,17 @@ Multi-effect chains on Skia return `ShaderError.UnsupportedEffect`. Android's cu
 | **0.1.3** | `GrayscaleEffect`, `SepiaEffect`, `GradientEffect`, `VignetteEffect`, `PixelateEffect`, `ChromaticAberrationEffect`, `InvertEffect`, `NativeBlurEffect`, `WaveEffect` |
 | **main / 0.1.4 development** | All of the above, plus `AnimatedGradientEffect`, `PlasmaEffect`, `RippleEffect`, `VortexEffect`, `AudioVisualizerEffect`, `AudioDistortionEffect` |
 
-The [effect catalog](docs/effects.md) covers parameters and examples. The [Compose guide](docs/compose.md) explains animation, Android effect chaining, and cache ownership.
+The [effect catalog](https://debanshu777.github.io/ShaderX/effects/) covers parameters and examples. The [Compose guide](https://debanshu777.github.io/ShaderX/compose/) explains animation, Android effect chaining, and cache ownership.
 
 ## Samples
 
 | Sample | What it demonstrates | Run / preview |
 | --- | --- | --- |
-| [ShaderLab](samples/ShaderLab) | Effect gallery, live controls, image loading, and development audio effects | [Setup](docs/samples.md#shaderlab) · [Android recording](assets/shader_lab.gif) · [Web recording](assets/shader_lab_web.gif) |
-| [ASCIICamera](samples/ASCIICamera) | Custom shaders on an Android CameraX preview | [Setup](docs/samples.md#asciicamera) · [Recording](assets/ASCIICamera.gif) |
-| [VerticalCarousel](samples/VerticalCarousel) | Scroll-driven shader parameters on movie cards | [Setup and TMDB token](docs/samples.md#verticalcarousel) · [Recording](assets/vertical_carousal.gif) |
+| [ShaderLab](samples/ShaderLab) | Effect gallery, live controls, image loading, and development audio effects | [Playground](https://debanshu777.github.io/ShaderX/playground/) · [Setup](https://debanshu777.github.io/ShaderX/samples/#shaderlab) · [Android recording](assets/shader_lab.gif) · [Web recording](assets/shader_lab_web.gif) |
+| [ASCIICamera](samples/ASCIICamera) | Custom shaders on an Android CameraX preview | [Setup](https://debanshu777.github.io/ShaderX/samples/#asciicamera) · [Recording](assets/ASCIICamera.gif) |
+| [VerticalCarousel](samples/VerticalCarousel) | Scroll-driven shader parameters on movie cards | [Setup and TMDB token](https://debanshu777.github.io/ShaderX/samples/#verticalcarousel) · [Recording](assets/vertical_carousal.gif) |
 
-Run the desktop gallery from a checkout with JDK 21 and the [Android SDK configured](docs/contributing.md#local-setup):
+Run the desktop gallery from a checkout with JDK 21 and the [Android SDK configured](https://debanshu777.github.io/ShaderX/contributing/#local-setup):
 
 ```shell
 ./gradlew :samples:ShaderLab:composeApp:run
@@ -143,17 +143,20 @@ Run the desktop gallery from a checkout with JDK 21 and the [Android SDK configu
 
 ## Documentation and contribution
 
-- [Installation and quickstart](docs/getting-started.md)
-- [Platform support and limitations](docs/platforms.md)
-- [Custom AGSL/SkSL shaders](docs/custom-effects.md)
-- [Offline image processing](docs/image-processing.md)
-- [Troubleshooting](docs/troubleshooting.md)
-- [Contributor setup and test commands](docs/contributing.md)
+- [Installation and quickstart](https://debanshu777.github.io/ShaderX/getting-started/)
+- [Platform support and limitations](https://debanshu777.github.io/ShaderX/platforms/)
+- [Custom AGSL/SkSL shaders](https://debanshu777.github.io/ShaderX/custom-effects/)
+- [Offline image processing](https://debanshu777.github.io/ShaderX/image-processing/)
+- [Troubleshooting](https://debanshu777.github.io/ShaderX/troubleshooting/)
+- [Contributor setup and test commands](https://debanshu777.github.io/ShaderX/contributing/)
+- [Building GPU Shader Effects for Compose Multiplatform: From Scratch to ShaderX](https://medium.com/gitconnected/building-gpu-shader-effects-for-compose-multiplatform-from-scratch-to-shaderx-326659c4f47b) — the companion article
 - [Release history](CHANGELOG.md)
+
+Performance checks cover native-resource disposal, rendered animation, bounded sample-image decoding, and reusable audio processing. Optional allocation diagnostics and the Android export host tests are documented in [performance validation](https://debanshu777.github.io/ShaderX/contributing/#performance-validation). The docs preview bundles the production Wasm playground; see [local validation](https://debanshu777.github.io/ShaderX/contributing/#preview-and-check-documentation).
 
 Bug reports, documentation fixes, and new effects are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), then [open an issue](https://github.com/Debanshu777/ShaderX/issues/new/choose) with a reproducible example.
 
-Every code change includes updates to this README and the affected documentation guides. [Agent instructions](AGENTS.md) map changes to guides, and CI checks that both are updated. The [documentation site](https://debanshu777.github.io/ShaderX/) publishes automatically only after a pull request merges into `main` and its documentation build passes; see the [maintainer guide](docs/maintaining.md) for the workflow.
+Every code change includes updates to this README and the affected documentation guides. [Agent instructions](AGENTS.md) map changes to guides, and CI checks that both are updated. The [documentation site](https://debanshu777.github.io/ShaderX/) publishes automatically only after a pull request merges into `main` and its documentation build passes; see the [maintainer guide](https://debanshu777.github.io/ShaderX/maintaining/) for the workflow.
 
 Maintainers publish from **Actions → Release ShaderX → Run workflow**, choosing `prerelease`, `patch`, `minor`, or `major`. The workflow calculates the version, tests the library, publishes to Maven Central, and creates a GitHub release with the dependency snippet. Stable releases require `main`; betas can use a feature branch. See the [release workflow guide](https://debanshu777.github.io/ShaderX/maintaining/#release-workflow) for setup and recovery. CI retains platform test reports, and browser tests wait for Skia initialization before running.
 

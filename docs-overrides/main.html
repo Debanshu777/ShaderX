@@ -2,11 +2,15 @@
 
 {% block extrahead %}
   {{ super() }}
+  {% if config.extra.google_site_verification %}
+    <meta name="google-site-verification" content="{{ config.extra.google_site_verification | e }}">
+  {% endif %}
   {% if page and page.canonical_url %}
     {% set description = page.meta.description or config.site_description %}
+    {% set title = page.meta.title or page.title %}
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="ShaderX">
-    <meta property="og:title" content="{{ page.title | e }} — ShaderX">
+    <meta property="og:title" content="{{ title | e }} — ShaderX">
     <meta property="og:description" content="{{ description | e }}">
     <meta property="og:url" content="{{ page.canonical_url | e }}">
     <meta property="og:image" content="{{ config.site_url }}assets/shaderx-banner.png">
@@ -14,7 +18,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="{{ config.site_url }}assets/shaderx-banner.png">
     <meta name="twitter:image:alt" content="ShaderX: blue halftone flower — GPU shader effects for Kotlin and Compose Multiplatform">
-    <meta name="twitter:title" content="{{ page.title | e }} — ShaderX">
+    <meta name="twitter:title" content="{{ title | e }} — ShaderX">
     <meta name="twitter:description" content="{{ description | e }}">
     {% if page.canonical_url == config.site_url %}
       <script type="application/ld+json">
@@ -22,6 +26,7 @@
           "@context": "https://schema.org",
           "@type": "SoftwareSourceCode",
           "name": "ShaderX",
+          "author": {"@type": "Person", "name": "Debanshu Datta"},
           "description": config.site_description,
           "url": page.canonical_url,
           "codeRepository": config.repo_url,

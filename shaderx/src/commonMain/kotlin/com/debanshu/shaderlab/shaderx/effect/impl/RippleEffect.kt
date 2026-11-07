@@ -28,136 +28,9 @@ public class RippleEffect(
     override val displayName: String = "Ripple"
     override val isAnimating: Boolean get() = animate
 
-    override val shaderSource: String =
-        """
-        uniform shader content;
-        uniform float2 resolution;
-        uniform float frequency;
-        uniform float decay;
-        uniform float speed;
-        uniform float amplitude;
-        uniform float time;
+    override val shaderSource: String get() = SHADER_SOURCE
 
-        half4 main(float2 fragCoord) {
-            float2 uv = fragCoord / resolution;
-            float2 center = float2(0.5, 0.5);
-            float dist = distance(uv, center);
-
-            float wave = sin(dist * frequency - time * speed) * exp(-dist * decay);
-            float2 offset = float2(wave * amplitude * resolution.x, wave * amplitude * resolution.y);
-            float2 sampleCoord = clamp(fragCoord + offset, float2(0.0), resolution);
-
-            return content.eval(sampleCoord);
-        }
-        """.trimIndent()
-
-    override val parameterHandlers: Map<String, ParamHandler<*>> =
-        mapOf(
-            PARAM_FREQUENCY to
-                floatHandler<RippleEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_FREQUENCY,
-                            label = "Frequency",
-                            range = 1f..30f,
-                            defaultValue = 10f,
-                        ),
-                    read = { it.frequency },
-                    write = { e, v ->
-                        RippleEffect(
-                            v,
-                            e.decay,
-                            e.speed,
-                            e.amplitude,
-                            e.animate,
-                            e.time,
-                        )
-                    },
-                ),
-            PARAM_DECAY to
-                floatHandler<RippleEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_DECAY,
-                            label = "Decay",
-                            range = 0.5f..8f,
-                            defaultValue = 2f,
-                        ),
-                    read = { it.decay },
-                    write = { e, v ->
-                        RippleEffect(
-                            e.frequency,
-                            v,
-                            e.speed,
-                            e.amplitude,
-                            e.animate,
-                            e.time,
-                        )
-                    },
-                ),
-            PARAM_SPEED to
-                floatHandler<RippleEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_SPEED,
-                            label = "Speed",
-                            range = 0.1f..5f,
-                            defaultValue = 1.5f,
-                        ),
-                    read = { it.speed },
-                    write = { e, v ->
-                        RippleEffect(
-                            e.frequency,
-                            e.decay,
-                            v,
-                            e.amplitude,
-                            e.animate,
-                            e.time,
-                        )
-                    },
-                ),
-            PARAM_AMPLITUDE to
-                floatHandler<RippleEffect>(
-                    spec =
-                        FloatParameter(
-                            id = PARAM_AMPLITUDE,
-                            label = "Amplitude",
-                            range = 0.001f..0.1f,
-                            defaultValue = 0.02f,
-                        ),
-                    read = { it.amplitude },
-                    write = { e, v ->
-                        RippleEffect(
-                            e.frequency,
-                            e.decay,
-                            e.speed,
-                            v,
-                            e.animate,
-                            e.time,
-                        )
-                    },
-                ),
-            PARAM_ANIMATE to
-                toggleHandler<RippleEffect>(
-                    spec =
-                        ToggleParameter(
-                            id = PARAM_ANIMATE,
-                            label = "Animate",
-                            isEnabledByDefault = true,
-                        ),
-                    read = { it.animate },
-                    write = { e, v ->
-                        RippleEffect(
-                            e.frequency,
-                            e.decay,
-                            e.speed,
-                            e.amplitude,
-                            v,
-                            e.time,
-                        )
-                    },
-                ),
-        )
+    override val parameterHandlers: Map<String, ParamHandler<*>> get() = PARAMETER_HANDLERS
 
     override fun buildUniforms(
         width: Float,
@@ -200,5 +73,136 @@ public class RippleEffect(
         public const val PARAM_SPEED: String = "speed"
         public const val PARAM_AMPLITUDE: String = "amplitude"
         public const val PARAM_ANIMATE: String = "animate"
+
+        private val SHADER_SOURCE: String =
+            """
+            uniform shader content;
+            uniform float2 resolution;
+            uniform float frequency;
+            uniform float decay;
+            uniform float speed;
+            uniform float amplitude;
+            uniform float time;
+
+            half4 main(float2 fragCoord) {
+                float2 uv = fragCoord / resolution;
+                float2 center = float2(0.5, 0.5);
+                float dist = distance(uv, center);
+
+                float wave = sin(dist * frequency - time * speed) * exp(-dist * decay);
+                float2 offset = float2(wave * amplitude * resolution.x, wave * amplitude * resolution.y);
+                float2 sampleCoord = clamp(fragCoord + offset, float2(0.0), resolution);
+
+                return content.eval(sampleCoord);
+            }
+            """.trimIndent()
+
+        private val PARAMETER_HANDLERS: Map<String, ParamHandler<*>> =
+            mapOf(
+                PARAM_FREQUENCY to
+                    floatHandler<RippleEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_FREQUENCY,
+                                label = "Frequency",
+                                range = 1f..30f,
+                                defaultValue = 10f,
+                            ),
+                        read = { it.frequency },
+                        write = { e, v ->
+                            RippleEffect(
+                                v,
+                                e.decay,
+                                e.speed,
+                                e.amplitude,
+                                e.animate,
+                                e.time,
+                            )
+                        },
+                    ),
+                PARAM_DECAY to
+                    floatHandler<RippleEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_DECAY,
+                                label = "Decay",
+                                range = 0.5f..8f,
+                                defaultValue = 2f,
+                            ),
+                        read = { it.decay },
+                        write = { e, v ->
+                            RippleEffect(
+                                e.frequency,
+                                v,
+                                e.speed,
+                                e.amplitude,
+                                e.animate,
+                                e.time,
+                            )
+                        },
+                    ),
+                PARAM_SPEED to
+                    floatHandler<RippleEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_SPEED,
+                                label = "Speed",
+                                range = 0.1f..5f,
+                                defaultValue = 1.5f,
+                            ),
+                        read = { it.speed },
+                        write = { e, v ->
+                            RippleEffect(
+                                e.frequency,
+                                e.decay,
+                                v,
+                                e.amplitude,
+                                e.animate,
+                                e.time,
+                            )
+                        },
+                    ),
+                PARAM_AMPLITUDE to
+                    floatHandler<RippleEffect>(
+                        spec =
+                            FloatParameter(
+                                id = PARAM_AMPLITUDE,
+                                label = "Amplitude",
+                                range = 0.001f..0.1f,
+                                defaultValue = 0.02f,
+                            ),
+                        read = { it.amplitude },
+                        write = { e, v ->
+                            RippleEffect(
+                                e.frequency,
+                                e.decay,
+                                e.speed,
+                                v,
+                                e.animate,
+                                e.time,
+                            )
+                        },
+                    ),
+                PARAM_ANIMATE to
+                    toggleHandler<RippleEffect>(
+                        spec =
+                            ToggleParameter(
+                                id = PARAM_ANIMATE,
+                                label = "Animate",
+                                isEnabledByDefault = true,
+                            ),
+                        read = { it.animate },
+                        write = { e, v ->
+                            RippleEffect(
+                                e.frequency,
+                                e.decay,
+                                e.speed,
+                                e.amplitude,
+                                v,
+                                e.time,
+                            )
+                        },
+                    ),
+            )
     }
 }

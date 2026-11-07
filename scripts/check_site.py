@@ -10,6 +10,8 @@ import xml.etree.ElementTree as ET
 
 import yaml
 
+from playground_assets import validate_package
+
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
 
@@ -20,6 +22,7 @@ class Page(HTMLParser):
         self.meta = {}
         self.canonicals = []
         self.urls = []
+        self.media = []
         self.ids = set()
         self.title = ""
         self.h1_count = 0
@@ -39,10 +42,12 @@ class Page(HTMLParser):
             self.in_title = True
         if tag == "h1":
             self.h1_count += 1
+        if tag in ("img", "video") and set(attrs.get("class", "").split()) & {"shaderx-banner", "shaderx-demo"}:
+            self.media.append((tag, attrs))
         if tag == "script" and attrs.get("type") == "application/ld+json":
             self.in_json = True
             self.json_blocks.append("")
-        for key in ("href", "src"):
+        for key in ("href", "src", "poster"):
             if key in attrs:
                 self.urls.append(attrs[key])
 
@@ -73,11 +78,17 @@ def check():
         print("No built HTML found. Run zensical build --strict first.", file=sys.stderr)
         return 1
 
+    guide_titles = {}
     for guide in (ROOT / "docs").rglob("*.md"):
         relative = guide.relative_to(ROOT / "docs")
         output = (SITE / relative.parent / "index.html") if relative.name == "index.md" else (SITE / relative.with_suffix("") / "index.html")
         if output.resolve() not in pages:
             errors.append(f"Missing HTML for {relative}")
+        source = guide.read_text(encoding="utf-8")
+        if source.startswith("---\n") and "\n---\n" in source[4:]:
+            metadata = yaml.safe_load(source[4:].split("\n---\n", 1)[0])
+            if isinstance(metadata, dict) and metadata.get("title"):
+                guide_titles[output.resolve()] = metadata["title"]
 
     titles, descriptions, canonical_urls = set(), set(), set()
     for file, page in pages.items():
@@ -85,18 +96,43 @@ def check():
         if relative == "404.html":
             continue
         expected = urljoin(base, relative.removesuffix("index.html"))
+        verification = config.get("extra", {}).get("google_site_verification")
+        if relative == "index.html" and verification and page.meta.get("google-site-verification") != verification:
+            errors.append("index.html: missing or incorrect configured Search Console verification tag")
         if page.canonicals != [expected]:
             errors.append(f"{relative}: expected one canonical URL: {expected}")
-        canonical_urls.add(expected)
+        is_playground = relative == "playground/index.html"
+        if not is_playground:
+            canonical_urls.add(expected)
         if not page.title.strip() or page.title in titles:
             errors.append(f"{relative}: empty or duplicate title")
         titles.add(page.title)
+        if file in guide_titles:
+            guide_title = guide_titles[file]
+            if page.title != f"{guide_title} - {config['site_name']}":
+                errors.append(f"{relative}: document title must use the descriptive guide title")
+            for key in ("og:title", "twitter:title"):
+                if page.meta.get(key) != f"{guide_title} — {config['site_name']}":
+                    errors.append(f"{relative}: {key} must use the descriptive guide title")
         description = page.meta.get("description", "").strip()
         if not description or description in descriptions:
             errors.append(f"{relative}: empty or duplicate description")
         descriptions.add(description)
         if page.h1_count != 1:
             errors.append(f"{relative}: expected one h1, found {page.h1_count}")
+        for name in ("robots", "googlebot"):
+            directives = page.meta.get(name, "").lower().replace(",", " ").split()
+            if ("noindex" in directives or "none" in directives) and not is_playground:
+                errors.append(f"{relative}: {name} prevents search indexing")
+        if is_playground and "noindex" not in page.meta.get("robots", "").lower().replace(",", " ").split():
+            errors.append("playground/index.html: the runtime-only demo must stay noindex; searchable content belongs in the guides")
+        for tag, attrs in page.media:
+            for dimension in ("width", "height"):
+                value = attrs.get(dimension) or ""
+                if not value.isdigit() or int(value) <= 0:
+                    errors.append(f"{relative}: showcase {tag} requires a positive {dimension}")
+            if tag == "video" and (attrs.get("preload") != "none" or "controls" not in attrs or "autoplay" in attrs):
+                errors.append(f"{relative}: showcase video requires controls, preload=none, and no autoplay")
         for key in ("og:title", "og:description", "og:url", "og:image", "og:image:alt",
                     "twitter:card", "twitter:title", "twitter:description", "twitter:image"):
             if not page.meta.get(key):
@@ -142,11 +178,13 @@ def check():
     except json.JSONDecodeError as error:
         errors.append(f"Invalid structured data: {error}")
 
+    errors.extend(validate_package(SITE / "playground"))
+
     for error in errors:
         print(error, file=sys.stderr)
     if errors:
         return 1
-    print(f"Checked {len(canonical_urls)} pages: metadata, links, anchors, sitemap, search, and structured data.")
+    print(f"Checked {len(canonical_urls)} indexable pages and the playground: metadata, links, anchors, sitemap, search, structured data, and packaged assets.")
     return 0
 
 
