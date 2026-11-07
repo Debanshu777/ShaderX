@@ -9,7 +9,11 @@
     <meta property="og:title" content="{{ page.title | e }} — ShaderX">
     <meta property="og:description" content="{{ description | e }}">
     <meta property="og:url" content="{{ page.canonical_url | e }}">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="{{ config.site_url }}assets/shaderx-banner.png">
+    <meta property="og:image:alt" content="ShaderX: blue halftone sunflower — GPU shader effects for Kotlin and Compose Multiplatform">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="{{ config.site_url }}assets/shaderx-banner.png">
+    <meta name="twitter:image:alt" content="ShaderX: blue halftone sunflower — GPU shader effects for Kotlin and Compose Multiplatform">
     <meta name="twitter:title" content="{{ page.title | e }} — ShaderX">
     <meta name="twitter:description" content="{{ description | e }}">
     {% if page.canonical_url == config.site_url %}

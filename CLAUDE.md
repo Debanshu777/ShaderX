@@ -3,6 +3,10 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this
 repository.
 
+Follow [AGENTS.md](AGENTS.md) for the shared documentation-update rules. Update
+affected guides in the same PR as code changes, preserve the inline README
+showcase, and run the documented site checks before completing a task.
+
 ## Project overview
 
 **ShaderX** is a Kotlin Multiplatform library that exposes GPU shader effects through Compose

@@ -27,6 +27,12 @@ class Links(HTMLParser):
 
 def check():
     errors = []
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    for asset in ("assets/shader_lab.gif", "assets/shader_lab_web.gif",
+                  "assets/ASCIICamera.gif", "assets/vertical_carousal.gif",
+                  "docs/assets/shaderx-banner.png"):
+        if f'src="{asset}"' not in readme:
+            errors.append(f"README.md: restore the inline showcase image {asset}")
     descriptions = set()
     guides = sorted((ROOT / "docs").rglob("*.md"))
     files = guides + [ROOT / name for name in ("README.md", "CONTRIBUTING.md", "CHANGELOG.md")]

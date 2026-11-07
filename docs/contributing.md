@@ -79,6 +79,7 @@ Documentation builds use Python 3.11+ and do not require an Android or Apple too
 python3 -m venv .venv-docs
 .venv-docs/bin/python -m pip install -r requirements-docs.txt
 .venv-docs/bin/python scripts/check_docs.py
+.venv-docs/bin/python -m unittest discover -s scripts/tests -v
 .venv-docs/bin/zensical build --strict
 .venv-docs/bin/python scripts/check_site.py
 .venv-docs/bin/zensical serve
@@ -87,3 +88,5 @@ python3 -m venv .venv-docs
 On Windows, use `.venv-docs\Scripts\python` and `.venv-docs\Scripts\zensical`. Open the URL printed by Zensical. Guides should also remain readable as ordinary Markdown on GitHub. Use descriptive page titles, accurate examples, relative links between guides, and a unique `description` in each page's front matter.
 
 The [maintainer guide](maintaining.md) covers documentation publishing, repository discovery settings, and release updates.
+
+Read [AGENTS.md](https://github.com/Debanshu777/ShaderX/blob/main/AGENTS.md) for the change-to-guide map used by coding agents. Update relevant guides in the same PR as behavior or setup changes. The Documentation PR check flags implementation changes without a guide update; internal-only changes can use the explicit no-impact rationale described in the [maintainer guide](maintaining.md#keep-documentation-current-with-coding-agents). After merge to `main`, a successful documentation build publishes automatically.

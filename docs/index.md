@@ -5,9 +5,20 @@ description: Add GPU shader effects to Jetpack Compose and Compose Multiplatform
 
 # ShaderX: GPU shader effects for Compose Multiplatform
 
+![ShaderX — a blue halftone sunflower, GPU shader effects for Kotlin and Compose Multiplatform](assets/shaderx-banner.png){ .shaderx-banner }
+
 ShaderX is a Kotlin Multiplatform library for applying GPU shader effects to Compose UI. Use the same Kotlin API for Android's AGSL backend and the Skia backend on iOS, JVM desktop, and WebAssembly.
 
 Start with grayscale, blur, gradients, or pixelation, then write a custom AGSL/SkSL shader when you need a different effect.
+
+[Get started](getting-started.md){ .md-button .md-button--primary }
+[Explore the effects](effects.md){ .md-button }
+
+## See ShaderX in action
+
+![Animated ShaderLab gallery running in a browser with live effect controls](https://raw.githubusercontent.com/Debanshu777/ShaderX/main/assets/shader_lab_web.gif){ .shaderx-demo }
+
+The [sample gallery](samples.md) includes Android and WebAssembly ShaderLab recordings, a live ASCII camera, and a scroll-driven movie carousel, with source code and run commands for each.
 
 ## Start building
 

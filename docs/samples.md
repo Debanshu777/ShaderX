@@ -11,7 +11,9 @@ Clone the repository and complete [local setup](contributing.md#local-setup) bef
 
 The [ShaderLab gallery](https://github.com/Debanshu777/ShaderX/tree/main/samples/ShaderLab) targets Android, iOS, JVM desktop, and Wasm. Explore effect parameters and image previews; on `main`, the Audio tab demonstrates microphone capture and spectrum textures.
 
-[Watch the browser recording](https://github.com/Debanshu777/ShaderX/blob/main/assets/shader_lab_web.gif) · [Watch the Android recording](https://github.com/Debanshu777/ShaderX/blob/main/assets/shader_lab.gif)
+![ShaderLab running in a WebAssembly browser with live effect controls](https://raw.githubusercontent.com/Debanshu777/ShaderX/main/assets/shader_lab_web.gif){ .shaderx-demo loading=lazy }
+
+![ShaderLab Android gallery demonstrating configurable shader effects](https://raw.githubusercontent.com/Debanshu777/ShaderX/main/assets/shader_lab.gif){ .shaderx-demo loading=lazy }
 
 ```shell
 # Android device or emulator running API 33+
@@ -42,7 +44,9 @@ The [ASCIICamera sample](https://github.com/Debanshu777/ShaderX/tree/main/sample
 ./gradlew :samples:ASCIICamera:androidApp:installDebug
 ```
 
-[Watch the camera recording](https://github.com/Debanshu777/ShaderX/blob/main/assets/ASCIICamera.gif). This demonstrates on-screen rendering, not offline `ImageProcessor` export. Performance depends on device, preview size, and effect; the recording is not a frame-rate guarantee.
+![Live CameraX preview rendered as ASCII characters](https://raw.githubusercontent.com/Debanshu777/ShaderX/main/assets/ASCIICamera.gif){ .shaderx-demo loading=lazy }
+
+This demonstrates on-screen rendering. Performance depends on device, preview size, and effect.
 
 ## VerticalCarousel
 
@@ -62,4 +66,4 @@ TMDB_ACCESS_TOKEN=your_read_access_token
 
 Without a working token or connection, the sample falls back to sample movie data. Never commit the token. See [TMDB authentication](https://developer.themoviedb.org/docs/authentication-application) for token setup.
 
-[Watch the carousel recording](https://github.com/Debanshu777/ShaderX/blob/main/assets/vertical_carousal.gif).
+![Movie cards scrolling through a vertical carousel with shader effects](https://raw.githubusercontent.com/Debanshu777/ShaderX/main/assets/vertical_carousal.gif){ .shaderx-demo loading=lazy }

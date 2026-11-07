@@ -97,11 +97,15 @@ def check():
         descriptions.add(description)
         if page.h1_count != 1:
             errors.append(f"{relative}: expected one h1, found {page.h1_count}")
-        for key in ("og:title", "og:description", "og:url", "twitter:card", "twitter:title", "twitter:description"):
+        for key in ("og:title", "og:description", "og:url", "og:image", "og:image:alt",
+                    "twitter:card", "twitter:title", "twitter:description", "twitter:image"):
             if not page.meta.get(key):
                 errors.append(f"{relative}: missing {key}")
         if page.meta.get("og:url") != expected:
             errors.append(f"{relative}: Open Graph URL differs from canonical")
+        for key in ("og:image", "twitter:image"):
+            if page.meta.get(key) != urljoin(base, "assets/shaderx-banner.png"):
+                errors.append(f"{relative}: {key} must reference the hosted banner")
 
         for link in page.urls:
             parsed = urlsplit(urljoin(expected, link))

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/shaderx-banner.png" width="100%" alt="ShaderX — GPU shader effects for Kotlin and Compose Multiplatform, illustrated by a blue halftone sunflower" />
+</p>
+
 # ShaderX — GPU shader effects for Compose Multiplatform
 
 ShaderX is a **Kotlin Multiplatform shader library** for **Jetpack Compose and Compose Multiplatform**. Apply grayscale, blur, gradients, pixelation, and custom AGSL/SkSL effects to your UI on **Android, iOS, desktop, and WebAssembly** with `Modifier.shaderEffect`.
@@ -6,9 +10,40 @@ ShaderX is a **Kotlin Multiplatform shader library** for **Jetpack Compose and C
 [![CI](https://github.com/Debanshu777/ShaderX/actions/workflows/ci.yml/badge.svg)](https://github.com/Debanshu777/ShaderX/actions/workflows/ci.yml)
 [![Apache 2.0 license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-[Documentation](docs/index.md) · [Quickstart](#quickstart) · [Effects](docs/effects.md) · [Samples](docs/samples.md) · [Contributing](CONTRIBUTING.md) · [Releases](https://github.com/Debanshu777/ShaderX/releases)
+[Documentation](https://debanshu777.github.io/ShaderX/) · [Quickstart](#quickstart) · [Effects](https://debanshu777.github.io/ShaderX/effects/) · [Samples](https://debanshu777.github.io/ShaderX/samples/) · [Contributing](CONTRIBUTING.md)
 
-<a href="docs/samples.md"><img src="assets/shader_lab_web.gif" width="640" alt="ShaderLab browser demo showing ShaderX effects and adjustable parameters in Compose Multiplatform"/></a>
+## See it in motion
+
+Explore live effect controls, transform a camera preview into ASCII art, or make a movie carousel respond to every scroll. These recordings show the sample apps built with ShaderX.
+
+<table>
+  <tr>
+    <th width="50%">ShaderLab · Android</th>
+    <th width="50%">ShaderLab · WebAssembly</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/shader_lab.gif" width="320" alt="Animated Android ShaderLab demo with adjustable GPU shader effects" /></td>
+    <td align="center"><img src="assets/shader_lab_web.gif" width="420" alt="Animated ShaderLab browser demo running Compose Multiplatform on WebAssembly" /></td>
+  </tr>
+  <tr>
+    <td align="center">An effect playground with live parameter controls.<br /><a href="samples/ShaderLab">Explore ShaderLab</a></td>
+    <td align="center">The same shared Compose UI in the browser.<br /><a href="https://debanshu777.github.io/ShaderX/samples/#shaderlab">Run the web sample</a></td>
+  </tr>
+  <tr>
+    <th>ASCIICamera</th>
+    <th>VerticalCarousel</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/ASCIICamera.gif" width="320" alt="Animated CameraX preview transformed into ASCII characters with a custom ShaderX shader" /></td>
+    <td align="center"><img src="assets/vertical_carousal.gif" width="320" alt="Animated movie carousel applying shader effects as cards scroll" /></td>
+  </tr>
+  <tr>
+    <td align="center">Custom shaders on a live Android camera feed.<br /><a href="samples/ASCIICamera">Explore ASCIICamera</a></td>
+    <td align="center">Scroll-driven effects on movie cards.<br /><a href="samples/VerticalCarousel">Explore VerticalCarousel</a></td>
+  </tr>
+</table>
+
+[Run the samples →](https://debanshu777.github.io/ShaderX/samples/)
 
 ## Installation
 
