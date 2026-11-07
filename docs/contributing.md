@@ -23,6 +23,9 @@ No Maven publishing credentials or TMDB token are needed for library tests or Sh
 # Common tests and Skia integration tests on the JVM
 ./gradlew :shaderx:jvmTest
 
+# Common tests in headless Chrome (install Chrome first)
+./gradlew :shaderx:wasmJsBrowserTest
+
 # A focused test class
 ./gradlew :shaderx:jvmTest --tests 'com.debanshu.shaderlab.shaderx.FactorySmokeTest'
 
@@ -34,6 +37,10 @@ No Maven publishing credentials or TMDB token are needed for library tests or Sh
 ```
 
 JVM test results are in `shaderx/build/reports/tests/jvmTest/index.html`. Dokka output is in `shaderx/build/dokka/html/index.html`. Use the [sample commands](samples.md) to test visual output on the affected platforms; unit tests cannot establish how an effect looks on every GPU.
+
+Browser tests use a Mocha setup hook to await Skia's WebAssembly runtime before executing the common tests that allocate `ImageBitmap`s. This avoids a startup race on slower runners; it does not skip or retry failing assertions. Browser results are in `shaderx/build/reports/tests/wasmJsBrowserTest/index.html`. CI runs `:shaderx:build` (which already includes `check`) and uploads XML/HTML test reports for each runner even on failure.
+
+Release numbering and branch guards have Python regression tests alongside the documentation-policy tests; run `python -m unittest discover -s scripts/tests -v`. The [release workflow](maintaining.md#release-workflow) chooses versions from tags and passes `-PshaderxVersion=...` to Gradle. Ordinary builds keep the development default, and library tests do not need publishing secrets.
 
 ## Project structure
 

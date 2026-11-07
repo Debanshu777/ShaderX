@@ -52,14 +52,48 @@ Use topics that describe implemented capabilities. GLSL is related but is not th
 
 These settings are managed on GitHub, not by the README or Maven POM. Set the repository's **About → Website** to `https://debanshu777.github.io/ShaderX/` so visitors can find the documentation from the project page. The first successful merge deployment makes that URL live. Description and topics can be updated through repository settings or `gh repo edit`. Add a social preview image through repository settings if a project-branded image is available.
 
-## Release checklist
+## Release workflow
 
-1. Review the diff and platform limitations. Run the relevant Gradle checks and sample validation.
-2. Set the intended publication version in `shaderx/build.gradle.kts` and move completed changelog entries into a versioned section.
-3. Create the matching GitHub release only when ready to publish: the existing **Publish** workflow triggers on released and prereleased events.
-4. Verify the artifact is resolvable on Maven Central before updating install snippets. A Git tag alone is not proof of publication.
-5. Update the dependency examples in `README.md`, `docs/getting-started.md`, and `docs/llms.txt`; update the development/release labels across the catalog, guides, and changelog.
-6. Run the documentation checks and publish the refreshed site.
+Once `.github/workflows/release.yml` is merged into `main`, use **Actions → Release ShaderX → Run workflow**. Choose the source using GitHub's **Use workflow from** branch selector, then choose a release type. A selected feature branch must contain the release workflow and its scripts. Review its code before publishing a beta: publishing executes that branch's build with repository signing credentials.
+
+| Release type | Source branch | Version when the highest stable tag is `0.1.3` |
+| --- | --- | --- |
+| `prerelease` (default) | `main` or a feature branch | `0.1.4-beta.<run number>.<attempt>` |
+| `patch` | `main` | `0.1.4` |
+| `minor` | `main` | `0.2.0` |
+| `major` | `main` | `1.0.0` |
+
+These are numbering examples, not claims that the artifacts are published. The workflow reads all repository tags, accepts the existing bare tags and new `v`-prefixed tags, and compares stable versions numerically. Beta tags do not advance the stable version. Run and attempt numbers distinguish beta builds and retries. New tags use `v`, while Maven versions omit it. No manual version bump or automated commit to a protected branch is needed: the workflow passes `-PshaderxVersion=...` to the library build. The default in `shaderx/build.gradle.kts` remains the local development version.
+
+Both stable releases and betas run `:shaderx:build` on macOS with JDK 21, covering Android, JVM, iOS and browser targets before publication. The workflow then reserves the version's tag at the exact selected commit, signs and publishes all `:shaderx` publications using `:shaderx:publishAndReleaseToMavenCentral`, and creates a GitHub release with generated notes and the dependency snippet. Betas are marked as prereleases and never replace GitHub's latest stable release. The summary includes the same coordinates. Runs are serialized across branches; publication is never cancelled by a newer dispatch.
+
+This replaces the old release-event **Publish** workflow. Creating a GitHub release by hand no longer publishes artifacts, and the workflow publishes directly rather than relying on a second workflow triggered by its bot-created release. Library releases do not deploy the documentation site.
+
+### One-time credentials
+
+Keep these repository secrets under **Settings → Secrets and variables → Actions**:
+
+| Secret | Value |
+| --- | --- |
+| `MAVEN_CENTRAL_USERNAME` | Central Portal user-token username |
+| `MAVEN_CENTRAL_PASSWORD` | Central Portal user-token password |
+| `GPG_KEY_CONTENTS` | ASCII-armored private signing key; its public key must be distributed |
+| `SIGNING_PASSWORD` | Key passphrase, if the key has one |
+| `SIGNING_KEY_ID` | Optional signing key ID |
+
+These names match the previous publishing workflow. See the publishing plugin's [Maven Central setup](https://vanniktech.github.io/gradle-maven-publish-plugin/central/) for namespace registration and credentials. The workflow uses its built-in `GITHUB_TOKEN` to create tags and releases; it needs no PAT and does not push to `main`. Repository tag rules must allow this token to create `v*` tags. Missing required credentials fail before the build; credentials are exposed to Gradle only in the publication step.
+
+### Failed runs and retries
+
+- **Before tag reservation:** fix the failure and start a new run (or rerun the failed job). Test reports are attached even when the build fails.
+- **After tag reservation:** keep the tag. Maven Central versions are immutable, and a failed command might already have uploaded or published artifacts. Inspect the Central Portal deployment before doing anything else. A new stable run skips past the reserved version; a new beta run or retry gets a different run/attempt suffix. Do not delete or move a reserved tag to force version reuse.
+- **Maven Central succeeded but GitHub release creation failed:** verify the artifacts, then create the GitHub release for the existing reserved tag, using the version and source SHA in the run log. Mark a beta as a prerelease. Do not rerun publication just to repair release notes.
+
+The publishing task waits for Central Portal publication, but verify that the version resolves from Maven Central before changing consumer installation guidance. A tag alone is not proof of publication.
+
+### Release documentation
+
+Before dispatching a stable release, review the changelog, platform limitations, and relevant sample output. After confirming publication, update the dependency examples in `README.md`, `docs/getting-started.md`, and `docs/llms.txt`; update development/release labels across the catalog and guides, move completed changelog entries into the versioned section, and advance the local development version when appropriate. Run the documentation checks and merge that documentation PR to publish the refreshed site. Until publication is verified, keep the current published `0.1.3` and development `0.1.4` labels.
 
 The Maven description and keywords in `shaderx/build.gradle.kts` should continue to reflect the same scope as the repository and guides. They take effect with the next artifact publication.
 

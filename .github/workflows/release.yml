@@ -1,0 +1,114 @@
+name: Release ShaderX
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: Release type (stable releases require main)
+        type: choice
+        required: true
+        default: prerelease
+        options: [prerelease, patch, minor, major]
+
+permissions:
+  contents: read
+
+# Serialize version allocation and publication across all source branches.
+concurrency:
+  group: shaderx-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Select release version and check branch
+        id: version
+        env:
+          RELEASE_TYPE: ${{ inputs.releaseType }}
+        run: python scripts/release_version.py
+      - name: Check publishing credentials
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          GPG_KEY_CONTENTS: ${{ secrets.GPG_KEY_CONTENTS }}
+        run: |
+          for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_PASSWORD GPG_KEY_CONTENTS; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing repository secret: $name"
+              exit 1
+            fi
+          done
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Test release tooling
+        run: python -m unittest discover -s scripts/tests -v
+      - name: Build and test all library targets
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: ./gradlew :shaderx:build --no-daemon --no-configuration-cache "-PshaderxVersion=$RELEASE_VERSION"
+      - name: Reserve release tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          # Atomic creation fails if another publisher has already claimed this version.
+          # Reserve before publishing: Maven Central versions cannot be overwritten.
+          gh api "repos/$GITHUB_REPOSITORY/git/refs" \
+            -f "ref=refs/tags/$RELEASE_TAG" -f "sha=$GITHUB_SHA"
+      - name: Publish and release to Maven Central
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
+        run: ./gradlew :shaderx:publishAndReleaseToMavenCentral --no-daemon --no-configuration-cache "-PshaderxVersion=$RELEASE_VERSION"
+      - name: Create GitHub release and dependency snippet
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          PREVIOUS_TAG: ${{ steps.version.outputs.previous_tag }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+        run: |
+          notes="$RUNNER_TEMP/shaderx-release-notes.md"
+          {
+            printf 'Built from `%s` (`%s`).\n\n' "$GITHUB_REF_NAME" "$GITHUB_SHA"
+            printf '```kotlin\nimplementation("io.github.debanshu777:shaderx:%s")\n```\n' "$RELEASE_VERSION"
+          } > "$notes"
+          args=(--verify-tag --title "ShaderX $RELEASE_VERSION" --notes-file "$notes" --generate-notes)
+          if [ -n "$PREVIOUS_TAG" ]; then
+            args+=(--notes-start-tag "$PREVIOUS_TAG")
+          fi
+          if [ "$PRERELEASE" = true ]; then
+            args+=(--prerelease --latest=false)
+          else
+            args+=(--latest)
+          fi
+          gh release create "$RELEASE_TAG" "${args[@]}"
+          cat "$notes" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-test-reports
+          path: |
+            shaderx/build/reports/tests/
+            shaderx/build/test-results/
+          if-no-files-found: ignore

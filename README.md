@@ -155,6 +155,8 @@ Bug reports, documentation fixes, and new effects are welcome. Read [CONTRIBUTIN
 
 Every code change includes updates to this README and the affected documentation guides. [Agent instructions](AGENTS.md) map changes to guides, and CI checks that both are updated. The [documentation site](https://debanshu777.github.io/ShaderX/) publishes automatically only after a pull request merges into `main` and its documentation build passes; see the [maintainer guide](docs/maintaining.md) for the workflow.
 
+Maintainers publish from **Actions → Release ShaderX → Run workflow**, choosing `prerelease`, `patch`, `minor`, or `major`. The workflow calculates the version, tests the library, publishes to Maven Central, and creates a GitHub release with the dependency snippet. Stable releases require `main`; betas can use a feature branch. See the [release workflow guide](https://debanshu777.github.io/ShaderX/maintaining/#release-workflow) for setup and recovery. CI retains platform test reports, and browser tests wait for Skia initialization before running.
+
 ## License
 
 ShaderX is released under the [Apache License 2.0](LICENSE).

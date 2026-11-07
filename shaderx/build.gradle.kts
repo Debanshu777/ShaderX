@@ -13,7 +13,8 @@ plugins {
 }
 
 group = "io.github.debanshu777"
-version = "0.1.4"
+// Release workflows supply an immutable tag-derived version; local builds keep the development version.
+version = providers.gradleProperty("shaderxVersion").getOrElse("0.1.4")
 
 kotlin {
     applyDefaultHierarchyTemplate()
