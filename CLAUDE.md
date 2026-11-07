@@ -3,13 +3,20 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this
 repository.
 
+Follow [AGENTS.md](AGENTS.md) for the shared documentation-update rules. Every
+codebase change requires updates to both `README.md` and affected Markdown guides
+in `docs/` in the same PR, including tests, internal refactors, tooling, and CI.
+Preserve the inline README showcase and run the documented site checks before
+completing a task. Publishing runs only after a PR merges into `main`.
+
 ## Project overview
 
 **ShaderX** is a Kotlin Multiplatform library that exposes GPU shader effects through Compose
 Multiplatform `Modifier` extensions. Targets: **Android (API 33+ via AGSL)**, **iOS**, **JVM/Desktop
 **, and **Wasm/JS** (the last three via Skia's `RuntimeEffect`). Published to Maven Central as
-`io.github.debanshu777:shaderx`. The repo also contains demo apps under `samples/` (`ShaderLab`,
-`ASCIICamera`, `VerticalCarousel`) that consume the library via `projects.shaderx`. ShaderLab also
+`io.github.debanshu777:shaderx`. The repo also contains demo apps under `samples/`: `ShaderLab` and
+`ASCIICamera` consume the local library via `projects.shaderx`; `VerticalCarousel` uses published
+version 0.1.3. ShaderLab also
 includes sample-only modules `imagelib` and `audiolib` (mic capture + FFT → spectrum textures).
 
 ## Common commands
@@ -23,6 +30,16 @@ JDK 21 is required (CI uses Temurin 21; `:shaderx` Android target compiles to `J
 - JVM-only test source set: `./gradlew :shaderx:jvmTest`
 - Single test class: `./gradlew :shaderx:jvmTest --tests "FQCN"`
 - Publish locally for consumers: `./gradlew :shaderx:publishToMavenLocal`
+
+**Documentation**
+
+- Guides and contributor setup: `docs/index.md` and `docs/contributing.md`.
+- Install the pinned tools in a virtual environment: `python -m pip install -r requirements-docs.txt`.
+- Validate: `python scripts/check_docs.py`, `zensical build --strict`, then `python scripts/check_site.py`.
+- Preview: `zensical serve`. Publishing instructions are in `docs/maintaining.md`.
+- Published Maven Central baseline is 0.1.3; source version 0.1.4 is in development. Keep examples
+  explicit about which version they require. External custom effects implement `RuntimeShaderEffect`;
+  the abstract effect bases require internal handlers and cannot be extended from consumer modules.
 
 **Sample apps** (module paths verified against `settings.gradle.kts`)
 
@@ -114,7 +131,7 @@ only when applying `RenderEffect` manually via `graphicsLayer`.
 
 ### Composite chaining
 
-Composite effect chaining (`CompositeEffect` with >1 effects) is **only supported on Android API 31+
+Composite effect chaining (`CompositeEffect` with >1 effects) is **only supported on Android API 33+
 **. On other platforms, `factory.createRenderEffect(composite, w, h)` returns
 `ShaderResult.Failure(ShaderError.UnsupportedEffect(...))`. Handle errors via `onFailure` or `fold`.
 

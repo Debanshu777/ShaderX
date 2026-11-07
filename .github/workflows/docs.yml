@@ -1,0 +1,80 @@
+name: Documentation
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+  # Only merged, trusted code is built by this event. It also allows publication
+  # after merging a fork PR, whose normal pull_request token is read-only.
+  pull_request_target:
+    branches: [main]
+    types: [closed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    if: github.event_name == 'pull_request' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Never check out an unmerged head with pull_request_target.
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.merge_commit_sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: requirements-docs.txt
+      - name: Install documentation tools
+        run: python -m pip install -r requirements-docs.txt
+      - name: Check documentation source
+        run: python scripts/check_docs.py
+      - name: Test documentation change detection
+        run: python -m unittest discover -s scripts/tests -v
+      - name: Check documentation impact
+        if: github.event_name == 'pull_request'
+        env:
+          DOCS_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: python scripts/check_docs_impact.py --base "$DOCS_BASE_SHA"
+      - name: Build documentation
+        run: zensical build --strict
+      - name: Check generated metadata and links
+        run: python scripts/check_site.py
+      - name: Upload preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-site
+          path: site/
+      - name: Prepare Pages artifact
+        if: github.event_name == 'pull_request_target' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/
+
+  deploy:
+    if: github.event_name == 'pull_request_target' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    needs: build
+    runs-on: ubuntu-latest
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy documentation
+        id: deployment
+        uses: actions/deploy-pages@v4

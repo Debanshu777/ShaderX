@@ -1,0 +1,81 @@
+# Zensical supports this standard MkDocs configuration format.
+site_name: ShaderX
+site_description: GPU shader effects for Jetpack Compose and Compose Multiplatform. Kotlin guides for Android, iOS, desktop, and WebAssembly.
+site_url: https://debanshu777.github.io/ShaderX/
+repo_url: https://github.com/Debanshu777/ShaderX
+repo_name: Debanshu777/ShaderX
+edit_uri: edit/main/docs/
+copyright: Copyright © 2026 Debanshu Datta. Apache License 2.0.
+strict: true
+
+theme:
+  variant: modern
+  custom_dir: docs-overrides
+  language: en
+  font: false
+  icon:
+    logo: material/blur
+    repo: fontawesome/brands/github
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.footer
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+
+nav:
+  - Overview: index.md
+  - Get started:
+      - Installation: getting-started.md
+      - Platform support: platforms.md
+      - Effect catalog: effects.md
+  - Guides:
+      - Compose integration: compose.md
+      - Custom shaders: custom-effects.md
+      - Image processing: image-processing.md
+      - Sample applications: samples.md
+      - Troubleshooting: troubleshooting.md
+  - Contribute:
+      - Contributor guide: contributing.md
+      - Maintainer guide: maintaining.md
+
+plugins:
+  - search
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+    absolute_links: warn
+  links:
+    not_found: warn
+    anchors: warn
+    unrecognized_links: warn

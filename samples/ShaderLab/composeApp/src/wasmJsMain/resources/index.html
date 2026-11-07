@@ -1,14 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShaderLab</title>
+    <title>ShaderLab — ShaderX Compose Multiplatform shader demo</title>
+    <meta name="description" content="Explore ShaderX GPU shader effects in the browser. A Compose Multiplatform gallery with live controls for grayscale, gradients, distortion, and audio-reactive effects.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="ShaderLab — ShaderX shader demo">
+    <meta property="og:description" content="Try GPU shader effects and live parameter controls built with ShaderX and Compose Multiplatform.">
     <style>
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
     </style>
 </head>
 <body>
+    <noscript>
+        <h1>ShaderLab: ShaderX shader demo</h1>
+        <p>This interactive gallery requires JavaScript and a browser with WebAssembly GC support.</p>
+        <p><a href="https://github.com/Debanshu777/ShaderX">Read the ShaderX documentation and view sample recordings on GitHub.</a></p>
+    </noscript>
     <script src="composeApp.js"></script>
 </body>
 </html>

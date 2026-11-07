@@ -23,3 +23,9 @@ graphify-out/
 # Signing keys and secrets
 *.gpg
 *.asc
+
+# Documentation build and Python environment
+site/
+.venv-docs/
+__pycache__/
+.cache/

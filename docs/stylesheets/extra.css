@@ -1,0 +1,24 @@
+/* Match the README's blue flower and GitHub dark background. */
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: #0d1117;
+  --md-primary-fg-color: #58a6ff;
+  --md-accent-fg-color: #79c0ff;
+}
+
+.shaderx-banner {
+  display: block;
+  width: 100%;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.shaderx-demo {
+  display: block;
+  max-height: 32rem;
+  margin: 1rem auto;
+  border-radius: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

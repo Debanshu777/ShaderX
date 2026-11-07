@@ -8,16 +8,14 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build:
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest ]
-        include:
-          - os: ubuntu-latest
-            targets: "Android"
-          - os: macos-latest
-            targets: "iOS, JVM, WasmJS"
     
     runs-on: ${{ matrix.os }}
     
@@ -39,5 +37,13 @@ jobs:
       - name: Build shaderx library
         run: ./gradlew :shaderx:build --no-daemon
 
-      - name: Run tests
-        run: ./gradlew :shaderx:check --no-daemon
+      # build already includes check. Keep the XML/HTML reports even on failure.
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ matrix.os }}
+          path: |
+            shaderx/build/reports/tests/
+            shaderx/build/test-results/
+          if-no-files-found: ignore

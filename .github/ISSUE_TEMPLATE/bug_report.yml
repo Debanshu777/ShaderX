@@ -1,0 +1,51 @@
+name: Bug report
+description: Report a reproducible ShaderX build or rendering problem.
+body:
+  - type: input
+    id: version
+    attributes:
+      label: ShaderX version or commit
+      placeholder: '0.1.3, or a commit SHA from main'
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Affected platform
+      multiple: true
+      options:
+        - Android
+        - iOS device
+        - iOS simulator
+        - JVM desktop
+        - WebAssembly browser
+        - Build or documentation
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include OS/device or browser, Kotlin, Compose, JDK, and Android API level where relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide steps and the smallest code sample or public sample project that reproduces the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+      description: Include a screenshot or recording for visual problems if possible.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output
+      description: Include the shader error callback or Gradle error. Remove tokens and personal data.
+      render: text
