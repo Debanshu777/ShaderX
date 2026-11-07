@@ -27,7 +27,7 @@ is published on Maven Central before recommending it in an install command.
 The existing guides distinguish published 0.1.3 from development 0.1.4; update
 those labels only when the release is verified.
 
-Keep the sunflower banner and **all four inline sample recordings** in the
+Keep the flower banner and **all four inline sample recordings** in the
 README. Preserve the visual showcase when shortening or reorganizing prose.
 Use the hosted docs for deep dives and relative links within `docs/`. New guides
 need a unique front-matter title and description and an entry in `mkdocs.yml`.

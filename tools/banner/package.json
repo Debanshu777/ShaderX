@@ -1,0 +1,9 @@
+{
+  "name": "shaderx-banner",
+  "private": true,
+  "type": "module",
+  "description": "Reproducible README artwork using Paper's Halftone CMYK shader",
+  "dependencies": {
+    "@paper-design/shaders": "0.0.82"
+  }
+}

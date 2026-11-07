@@ -35,7 +35,7 @@ Docs-Reason: Internal cache refactor preserves every documented API and behavior
 
 Comments in the PR template do not count as an explanation. Editing the PR body reruns the check. Reviewers still need to assess correctness: a changed Markdown file is evidence of review, not proof that an explanation is accurate. Branch protection can require **Documentation / build** if maintainers want to enforce this as a merge requirement.
 
-`scripts/check_docs.py` also requires the sunflower banner and all four demo recordings to remain embedded in the README. Site checks verify metadata, social-preview images, and links before any deployment.
+`scripts/check_docs.py` also requires the flower banner and all four demo recordings to remain embedded in the README. Site checks verify metadata, social-preview images, and links before any deployment.
 
 ## Repository description and topics
 
@@ -72,6 +72,6 @@ The Maven description and keywords in `shaderx/build.gradle.kts` should continue
 
 [XCalendar](https://github.com/Debanshu777/XCalendar) demonstrates visual examples, explicit platform setup, and a browsable project structure. ShaderX keeps all four sample recordings inline in the README, with source links and run commands in the sample guide.
 
-The original blue sunflower banner takes visual inspiration from FileKit's library presentation and [Paper's halftone CMYK shader](https://shaders.paper.design/halftone-cmyk). It is a generated illustration, not a screenshot of a built-in ShaderX halftone effect. The banner asset is shared by the README, documentation home page, and social-preview metadata; its generation prompt is kept in `assets/banner-prompt.txt`.
+The blue flower banner takes visual inspiration from FileKit's library presentation and uses [Paper's actual halftone CMYK shader](https://shaders.paper.design/halftone-cmyk), with settings tuned in its live editor. It is brand artwork, not a screenshot of a built-in ShaderX halftone effect. The asset is shared by the README, documentation home page, and social-preview metadata. The [banner renderer](https://github.com/Debanshu777/ShaderX/tree/main/tools/banner) includes the source image, pinned shader dependency, exact settings, and PNG export instructions; it adds clean typography after rendering the WebGL effect.
 
 Follow [Google's SEO guidance](https://developers.google.com/search/docs/fundamentals/seo-starter-guide) with useful page content, descriptive links, and accurate titles. Use [GitHub topics](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics) for repository discovery. Avoid keyword stuffing, invented performance claims, and claims that unreleased functionality is available from Maven Central.

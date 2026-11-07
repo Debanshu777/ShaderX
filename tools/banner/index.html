@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShaderX · Paper shader banner</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0d1117; color: #f0f6fc; font: 16px system-ui, sans-serif; }
+  main { max-width: 1200px; margin: 32px auto; padding: 24px; }
+  h1 { font-size: 24px; }
+  p { color: #9baabd; line-height: 1.6; }
+  canvas#banner { width: 100%; height: auto; display: block; }
+  #shader { width: 1600px; height: 640px; position: fixed; top: 0; left: 0; pointer-events: none; opacity: 0; }
+  a, button { color: #79c0ff; }
+  #download { display: inline-block; margin-top: 24px; border: 1px solid #58a6ff; border-radius: 8px; background: #12243b; padding: 12px 20px; font: inherit; cursor: pointer; text-decoration: none; }
+  button { border: 1px solid #58a6ff; border-radius: 8px; background: #12243b; padding: 12px 20px; font: inherit; cursor: pointer; }
+</style>
+<main>
+  <h1>ShaderX banner · actual Paper Halftone CMYK shader</h1>
+  <p>The flower photograph is rendered by Paper's WebGL shader with the settings tuned in its live editor. Typography and edge fades are added after the shader pass.</p>
+  <canvas id="banner" width="1600" height="640" aria-label="ShaderX blue halftone flower banner"></canvas>
+  <a id="download" download="shaderx-banner.png">Download PNG</a>
+  <button id="save" disabled>Save banner to repository</button>
+  <p id="status" role="status">Rendering shader…</p>
+</main>
+<div id="shader" aria-hidden="true"></div>
+<script type="module" src="./render.js"></script>
+</html>

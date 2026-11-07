@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/shaderx-banner.png" width="100%" alt="ShaderX — GPU shader effects for Kotlin and Compose Multiplatform, illustrated by a blue halftone sunflower" />
+  <img src="docs/assets/shaderx-banner.png" width="100%" alt="ShaderX — GPU shader effects for Kotlin and Compose Multiplatform, illustrated by a blue halftone flower" />
 </p>
 
 # ShaderX — GPU shader effects for Compose Multiplatform
