@@ -1,11 +1,11 @@
 ---
 title: Compose shader modifiers, animation, and error handling
-description: Integrate ShaderX with Compose state, handle shader errors, chain Android effects, scope GPU caches, and use development animation sessions and live FFT textures.
+description: Integrate ShaderX with Compose state, handle shader errors, chain Android effects, scope GPU caches, and use animation sessions and live FFT textures.
 ---
 
 # Compose integration
 
-Start with the [static quickstart](getting-started.md). Examples in this guide that use animation sessions or texture inputs require **main / 0.1.4 development**; the other examples also apply to 0.1.3.
+Start with the [static quickstart](getting-started.md). This guide describes **0.1.4**, including animation sessions and texture inputs. The static examples also apply to 0.1.3.
 
 ## Handle rendering errors
 
@@ -37,7 +37,7 @@ fun EffectPhoto(
 
 Use `shaderEffectWithResult` if you need both success and failure callbacks. Factory operations return `ShaderResult`; use `onSuccess`, `onFailure`, `fold`, `map`, or `flatMap` to compose results. Parameter validation can still throw for incompatible types, so these result types are not a promise that every API is exception-free.
 
-The development modifiers preserve the 0.1.3 argument order: `effect`, `factory`, `knownSize`, then `onError` or `onResult`. Existing fourth-position callbacks and trailing lambdas keep their meaning. Live-data invalidation uses a separate overload with an explicit `frameDataKey`; use named arguments such as `frameDataKey = currentFrame, onError = onShaderError` when selecting it.
+The 0.1.4 modifiers preserve the 0.1.3 argument order: `effect`, `factory`, `knownSize`, then `onError` or `onResult`. Existing fourth-position callbacks and trailing lambdas keep their meaning. Live-data invalidation uses a separate overload with an explicit `frameDataKey`; use named arguments such as `frameDataKey = currentFrame, onError = onShaderError` when selecting it.
 
 ## Update parameters
 
@@ -59,9 +59,11 @@ Pass `filmEffect` to `shaderEffect`. This multi-effect chain requires **Android 
 
 `CompositeEffect.of(...)` is the named equivalent. Composite parameter identifiers use the child index followed by U+001F and the original parameter ID, such as `"0\u001Fintensity"`. This keeps two children's `intensity` parameters distinct.
 
-## Animated effects in development
+<a id="animated-effects-in-development"></a>
 
-On `main`, `Modifier.shaderEffect` owns a `ShaderSession` and refreshes animated uniforms each frame. Pass the effect directly:
+## Animated effects
+
+In 0.1.4, `Modifier.shaderEffect` owns a `ShaderSession` and refreshes animated uniforms each frame. Pass the effect directly:
 
 ```kotlin
 import androidx.compose.foundation.Image
@@ -87,9 +89,11 @@ Shader compilation happens when a session is created; frame refreshes update uni
 
 The modifier starts its clock at zero when it creates a session. Toggling `animate`, changing structural configuration, or resizing therefore restarts that clock. While paused, the shader uses the supplied effect's `time`; it does not retain the last automatically generated phase. Use a manually managed session if your app needs its own pause, resume, or seek timeline.
 
-The older `rememberShaderEffect` helper is not needed for this API. It is intended for manually managed render effects; avoid pairing it with the session-owning modifier. On `main` / 0.1.4 development, the helper tracks time independently from effect equality, and `rememberRenderEffect` / `rememberRenderEffectResult` include time and factory changes when refreshing their result. The modifier still offers the session path for routine animation.
+The older `rememberShaderEffect` helper is not needed for this API. It is intended for manually managed render effects; avoid pairing it with the session-owning modifier. In 0.1.4, the helper tracks time independently from effect equality, and `rememberRenderEffect` / `rememberRenderEffectResult` include time and factory changes when refreshing their result. The modifier still offers the session path for routine animation.
 
-## Live textures and audio in development
+<a id="live-textures-and-audio-in-development"></a>
+
+## Live textures and audio
 
 Use an `ImageBitmap` source lambda for live FFT data so the session can pull the latest image without changing structural effect identity:
 
@@ -128,9 +132,9 @@ fun ShaderScope(content: @Composable () -> Unit) {
 }
 ```
 
-The helper closes the factory automatically. Do not close the process-wide default factory. For manually created factories, close them when done. The default cache size is 50 entries and must be positive. Android animated sessions own a separate shader; Skia sessions own a builder that retains the shared compiled effect. On `main` / 0.1.4 development, closing a Skia session releases that builder, and cache eviction or clearing releases the cache's reference without invalidating an active session. Do not refresh a closed session.
+The helper closes the factory automatically. Do not close the process-wide default factory. For manually created factories, close them when done. The default cache size is 50 entries and must be positive. Android animated sessions own a separate shader; Skia sessions own a builder that retains the shared compiled effect. In 0.1.4, closing a Skia session releases that builder, and cache eviction or clearing releases the cache's reference without invalidating an active session. Do not refresh a closed session.
 
-Custom `ShaderFactory` implementations that provide the 0.1.3 methods can keep using static rendering on the development library. The added `createAnimatedSession` method has a default that returns `ShaderError.UnsupportedEffect`. Override it and provide a correctly owned `ShaderSession` to support the modifier's animation path; the default reports the unsupported operation through the result or error callback.
+Custom `ShaderFactory` implementations that provide the 0.1.3 methods can keep using static rendering in 0.1.4. The added `createAnimatedSession` method has a default that returns `ShaderError.UnsupportedEffect`. Override it and provide a correctly owned `ShaderSession` to support the modifier's animation path; the default reports the unsupported operation through the result or error callback.
 
 ## Size and first render
 

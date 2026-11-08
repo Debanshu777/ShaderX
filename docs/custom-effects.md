@@ -5,7 +5,7 @@ description: Implement ShaderX's public RuntimeShaderEffect interface with a com
 
 # Custom AGSL and SkSL effects
 
-For effects in your own app or library, implement the public **`RuntimeShaderEffect`** interface. This example works with 0.1.3 and `main`.
+For effects in your own app or library, implement the public **`RuntimeShaderEffect`** interface. This example works with 0.1.3 and 0.1.4.
 
 `AbstractRuntimeShaderEffect` and `AbstractAnimatedShaderEffect` use internal parameter handlers. They are implementation helpers for effects inside ShaderX; external consumers cannot implement their internal abstract members.
 
@@ -83,6 +83,6 @@ The companion article, [Building GPU Shader Effects for Compose Multiplatform: F
 
 ## Animated custom effects
 
-On `main`, external effects can implement `AnimatedShaderEffect`, including `time`, `isAnimating`, `withTime`, and `buildFrameUniforms`. Use configuration-only `equals` and `hashCode`; including time or changing textures tears down session identity. The [animated effect interface](https://github.com/Debanshu777/ShaderX/blob/main/shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect.kt) defines the contract.
+In 0.1.4, external effects can implement `AnimatedShaderEffect`, including `time`, `isAnimating`, `withTime`, and `buildFrameUniforms`. Use configuration-only `equals` and `hashCode`; including time or changing textures tears down session identity. The [animated effect interface](https://github.com/Debanshu777/ShaderX/blob/main/shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect.kt) defines the contract.
 
 When contributing an effect directly to ShaderX, you can use its internal handler helpers through the abstract base classes. Follow the [contributor checklist](contributing.md#add-an-effect) and register the new built-in effect in `ShaderX.builtInEffects()`.

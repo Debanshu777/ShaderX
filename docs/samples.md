@@ -9,9 +9,9 @@ Clone the repository and complete [local setup](contributing.md#local-setup) bef
 
 ## ShaderLab
 
-The [ShaderLab gallery](https://github.com/Debanshu777/ShaderX/tree/main/samples/ShaderLab) targets Android, iOS, JVM desktop, and Wasm. Explore effect parameters and image previews; on `main`, the Audio tab demonstrates microphone capture and spectrum textures.
+The [ShaderLab gallery](https://github.com/Debanshu777/ShaderX/tree/main/samples/ShaderLab) targets Android, iOS, JVM desktop, and Wasm. Explore effect parameters and image previews; the Audio tab demonstrates microphone capture and spectrum textures.
 
-[Open the browser playground](playground/) to try the gallery without building it. The playground uses the development library from the same commit as its documentation deployment, rather than the published 0.1.3 artifact. Use a current browser with WebAssembly GC support. Audio capture requires HTTPS (or localhost) and microphone permission; the app requests that permission when you start capture.
+[Open the browser playground](playground/) to try the gallery without building it. The playground builds the local library from the same commit as its documentation deployment. It can include source changes after the latest Maven release; check the [release notes](https://github.com/Debanshu777/ShaderX/releases) when choosing an effect for your installed version. Use a current browser with WebAssembly GC support. Audio capture requires HTTPS (or localhost) and microphone permission; the app requests that permission when you start capture.
 
 The app and Skia runtime download when you open the playground, so the first visit can take longer on a slow connection. The loading screen links back to the guides and recordings if the browser cannot start it. The recordings below remain available without running WebAssembly.
 

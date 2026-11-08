@@ -5,7 +5,7 @@ description: Check ShaderX platform targets, Android API requirements, Skia comp
 
 # Platform support
 
-ShaderX shares effect definitions in Kotlin and uses a platform backend to render them. This matrix describes the current implementation on `main`; the nine effects listed for 0.1.3 in the [catalog](effects.md) are available in the published release.
+ShaderX shares effect definitions in Kotlin and uses a platform backend to render them. This matrix describes published **0.1.4**, which includes the 15 built-in effects in the [catalog](effects.md).
 
 | Capability | Android | iOS | JVM desktop | WebAssembly |
 | --- | --- | --- | --- | --- |
@@ -15,7 +15,7 @@ ShaderX shares effect definitions in Kotlin and uses a platform backend to rende
 | Native blur | Yes, API 33+ through ShaderX | Yes | Yes | Yes |
 | Multiple effects in a `CompositeEffect` | Yes | Unsupported | Unsupported | Unsupported |
 | Offline `ImageProcessor` | Currently fails; see below | Single effects | Single effects | Single effects |
-| Session animation and texture uniforms | Development | Development | Development | Development |
+| Session animation and texture uniforms | Yes, API 33+ | Yes | Yes | Yes |
 
 “Yes” describes an implemented backend, not a guarantee for every device or arbitrary shader source. Handle compilation and processing failures in your app.
 
@@ -23,9 +23,9 @@ ShaderX shares effect definitions in Kotlin and uses a platform backend to rende
 
 The library's minimum Android SDK is **33 (Android 13)**. Although Android introduced some `RenderEffect` APIs earlier, ShaderX's factory requires API 33 for its rendering paths, including blur and composite effects.
 
-Android's offline `ImageProcessor` remains unsupported. The development implementation returns `ProcessingError` immediately, without decoding the image or compiling its shader. This does not affect on-screen rendering through Compose.
+Android's offline `ImageProcessor` remains unsupported: a software bitmap canvas cannot render a hardware `RenderNode`. In 0.1.4, it returns `ShaderError.ProcessingError` immediately, without decoding the image, compiling its shader, or allocating a destination bitmap.
 
-Android supports ordered chains such as `GrayscaleEffect() + VignetteEffect()`. The current offline image processor creates a software bitmap canvas; that canvas cannot render the hardware `RenderNode`. It returns `ShaderError.ProcessingError`. Use `Modifier.shaderEffect` for on-screen rendering instead.
+On-screen Compose rendering supports ordered chains such as `GrayscaleEffect() + VignetteEffect()`. Use `Modifier.shaderEffect` for this rendering path.
 
 ## iOS and desktop
 
@@ -35,7 +35,7 @@ Desktop uses the JVM target on Windows, macOS, and Linux. Use JDK 21 for this re
 
 Skia factories and processors are not thread-safe. Scope a factory to a Compose window or a single processing thread. For background exports, create a separate factory on the worker and close it there after processing. If sharing a factory across threads, serialize all factory, processor, and session operations, including cache clearing and disposal; synchronizing only cache lookups is insufficient.
 
-On `main` / 0.1.4 development, Skia cache eviction closes compiled-effect wrappers immediately, and failed compilation leaves existing cache entries intact. Sessions retain their own native references until closed. Texture binding releases temporary image and shader wrappers after the builder retains the child shader, limiting native memory waiting for garbage collection during live updates.
+In 0.1.4, Skia cache eviction closes compiled-effect wrappers immediately, and failed compilation leaves existing cache entries intact. Sessions retain their own native references until closed. Texture binding releases temporary image and shader wrappers after the builder retains the child shader, limiting native memory waiting for garbage collection during live updates.
 
 ## WebAssembly
 
