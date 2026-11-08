@@ -37,6 +37,8 @@ fun EffectPhoto(
 
 Use `shaderEffectWithResult` if you need both success and failure callbacks. Factory operations return `ShaderResult`; use `onSuccess`, `onFailure`, `fold`, `map`, or `flatMap` to compose results. Parameter validation can still throw for incompatible types, so these result types are not a promise that every API is exception-free.
 
+The development modifiers preserve the 0.1.3 argument order: `effect`, `factory`, `knownSize`, then `onError` or `onResult`. Existing fourth-position callbacks and trailing lambdas keep their meaning. Live-data invalidation uses a separate overload with an explicit `frameDataKey`; use named arguments such as `frameDataKey = currentFrame, onError = onShaderError` when selecting it.
+
 ## Update parameters
 
 Keep effect values immutable and replace them when state changes. For example, pass `GrayscaleEffect(intensity = intensity)` from a composable whose `intensity` is state. Generic parameter editors can use the [typed parameter API](effects.md#discover-and-edit-parameters).
@@ -127,6 +129,8 @@ fun ShaderScope(content: @Composable () -> Unit) {
 ```
 
 The helper closes the factory automatically. Do not close the process-wide default factory. For manually created factories, close them when done. The default cache size is 50 entries and must be positive. Android animated sessions own a separate shader; Skia sessions own a builder that retains the shared compiled effect. On `main` / 0.1.4 development, closing a Skia session releases that builder, and cache eviction or clearing releases the cache's reference without invalidating an active session. Do not refresh a closed session.
+
+Custom `ShaderFactory` implementations that provide the 0.1.3 methods can keep using static rendering on the development library. The added `createAnimatedSession` method has a default that returns `ShaderError.UnsupportedEffect`. Override it and provide a correctly owned `ShaderSession` to support the modifier's animation path; the default reports the unsupported operation through the result or error callback.
 
 ## Size and first render
 

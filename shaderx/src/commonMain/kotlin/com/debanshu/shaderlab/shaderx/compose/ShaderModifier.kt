@@ -82,10 +82,6 @@ import kotlinx.coroutines.isActive
  * @param knownSize When non-null, this size is used directly for uniform calculations without
  *   waiting for measurement. When null (default), the composable measures itself via
  *   `onSizeChanged`. Nonpositive dimensions disable the filter until a positive size is supplied.
- * @param frameDataKey Optional key for per-frame data excluded from [ShaderEffect.equals] (e.g.
- *   identity of a live [com.debanshu.shaderlab.shaderx.uniform.TextureUniform] image). Pass a value
- *   that changes whenever that data changes so Compose does not skip this modifier and leave the
- *   animation loop bound to a stale effect. Session identity still uses structural equality only.
  * @param onError Optional callback invoked when shader creation fails
  * @return Modifier with the shader effect applied
  */
@@ -94,7 +90,37 @@ public fun Modifier.shaderEffect(
     effect: ShaderEffect?,
     factory: ShaderFactory = LocalShaderFactory.current,
     knownSize: IntSize? = null,
-    frameDataKey: Any? = null,
+    onError: ((ShaderError) -> Unit)? = null,
+): Modifier =
+    shaderEffect(
+        effect = effect,
+        factory = factory,
+        knownSize = knownSize,
+        frameDataKey = null,
+        onError = onError,
+    )
+
+/**
+ * Applies a shader effect with an explicit key for live frame data.
+ *
+ * This overload requires [frameDataKey] so the callback remains the fourth positional argument
+ * of the original [shaderEffect] overload.
+ *
+ * @param effect The shader effect to apply, or null to disable
+ * @param factory The factory used to create render effects
+ * @param knownSize Optional render size; see [shaderEffect]
+ * @param frameDataKey Key for per-frame data excluded from [ShaderEffect.equals], such as the
+ *   identity of a live [com.debanshu.shaderlab.shaderx.uniform.TextureUniform] image. Change this
+ *   value when that data changes so Compose updates the animation loop's effect reference.
+ *   Session identity still uses structural equality only. Pass null when no key is needed.
+ * @param onError Optional callback invoked when shader creation fails
+ */
+@Composable
+public fun Modifier.shaderEffect(
+    effect: ShaderEffect?,
+    factory: ShaderFactory = LocalShaderFactory.current,
+    knownSize: IntSize? = null,
+    frameDataKey: Any?,
     onError: ((ShaderError) -> Unit)? = null,
 ): Modifier {
     if (effect == null) return this
@@ -138,8 +164,6 @@ public fun Modifier.shaderEffect(
  * @param knownSize When non-null, this size is used directly without waiting for measurement.
  *   When null (default), size is measured via `onSizeChanged`, so initial content may be unfiltered.
  *   Nonpositive dimensions disable the filter until a positive size is supplied.
- * @param frameDataKey Optional key for per-frame data excluded from [ShaderEffect.equals]; see
- *   [Modifier.shaderEffect].
  * @param onResult Callback invoked with the shader result (success or failure)
  * @return Modifier with the shader effect applied
  */
@@ -148,7 +172,34 @@ public fun Modifier.shaderEffectWithResult(
     effect: ShaderEffect?,
     factory: ShaderFactory = LocalShaderFactory.current,
     knownSize: IntSize? = null,
-    frameDataKey: Any? = null,
+    onResult: ((ShaderResult<RenderEffect>) -> Unit)? = null,
+): Modifier =
+    shaderEffectWithResult(
+        effect = effect,
+        factory = factory,
+        knownSize = knownSize,
+        frameDataKey = null,
+        onResult = onResult,
+    )
+
+/**
+ * Applies a shader effect with an explicit live-data key and a result callback.
+ *
+ * This overload requires [frameDataKey] so the callback remains the fourth positional argument
+ * of the original [shaderEffectWithResult] overload.
+ *
+ * @param effect The shader effect to apply, or null to disable
+ * @param factory The factory used to create render effects
+ * @param knownSize Optional render size; see [shaderEffect]
+ * @param frameDataKey Key for per-frame data excluded from [ShaderEffect.equals]; see [shaderEffect]
+ * @param onResult Callback invoked with the shader result (success or failure)
+ */
+@Composable
+public fun Modifier.shaderEffectWithResult(
+    effect: ShaderEffect?,
+    factory: ShaderFactory = LocalShaderFactory.current,
+    knownSize: IntSize? = null,
+    frameDataKey: Any?,
     onResult: ((ShaderResult<RenderEffect>) -> Unit)? = null,
 ): Modifier {
     if (effect == null) return this

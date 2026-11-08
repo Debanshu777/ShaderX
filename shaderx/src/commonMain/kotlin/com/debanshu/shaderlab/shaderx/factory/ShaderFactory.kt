@@ -64,6 +64,9 @@ public interface ShaderFactory : AutoCloseable {
      * without recompilation: a separate runtime shader on Android, or a builder retaining
      * the cached compiled effect on Skia.
      *
+     * Custom factories that only implement static rendering may keep the default, which returns
+     * [ShaderError.UnsupportedEffect]. Override this method to opt into session animation.
+     *
      * @param effect The animated effect to create a session for
      * @param width Render target width in pixels
      * @param height Render target height in pixels
@@ -73,7 +76,13 @@ public interface ShaderFactory : AutoCloseable {
         effect: AnimatedShaderEffect,
         width: Float,
         height: Float,
-    ): ShaderResult<ShaderSession>
+    ): ShaderResult<ShaderSession> =
+        ShaderResult.failure(
+            ShaderError.UnsupportedEffect(
+                "Animated shader sessions are not supported by this factory",
+                effect.id,
+            ),
+        )
 
     /**
      * Checks if shaders are supported on the current platform/device.
