@@ -78,6 +78,18 @@ On macOS with the required target toolchains:
 
 In the consuming project's dependency repositories, temporarily add `mavenLocal()` before `mavenCentral()`, then use the development version declared in `shaderx/build.gradle.kts`. Do not add `mavenLocal()` to production setup instructions. For work in this repository, ShaderLab and ASCIICamera already depend on the local project.
 
+## API compatibility checks
+
+Before changing an existing public API, compare it with the published artifact as well as the current source. Preserve positional and default arguments, generated data-class methods, and concrete return types that consumer code can use.
+
+`WaveCompatibilityTest` covers the published `WaveEffect` copy and destructuring API, concrete return types, configuration-only equality, and shared immutable metadata. `ComposeShaderLifecycleTest` invokes both modifier callbacks through positional, named, trailing-lambda, and explicit `frameDataKey` calls. It also uses a custom factory implementing only the 0.1.3 methods and verifies that the default animated-session result reports `UnsupportedEffect`.
+
+```shell
+./gradlew :shaderx:jvmTest --tests '*WaveCompatibilityTest' --tests '*ComposeShaderLifecycleTest'
+```
+
+These are focused source and behavior regression checks. They do not establish binary compatibility for every Kotlin target or consumer toolchain; verify affected published signatures and consumer builds before a release.
+
 ## Performance validation
 
 Measure a specific workload before changing shader arithmetic or caching policy. Record the platform, device/GPU, build mode, viewport size, effect parameters, and whether the shader cache is cold or warm. Compare frame times and allocations at the same settings; a JVM allocation count is not a GPU frame-rate measurement.

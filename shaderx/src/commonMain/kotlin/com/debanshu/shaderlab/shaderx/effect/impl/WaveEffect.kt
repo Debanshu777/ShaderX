@@ -1,11 +1,13 @@
 package com.debanshu.shaderlab.shaderx.effect.impl
 
 import androidx.compose.runtime.Immutable
-import com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.AbstractRuntimeShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ParamHandler
 import com.debanshu.shaderlab.shaderx.effect.floatHandler
 import com.debanshu.shaderlab.shaderx.effect.toggleHandler
 import com.debanshu.shaderlab.shaderx.parameter.FloatParameter
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
 import com.debanshu.shaderlab.shaderx.parameter.PixelParameter
 import com.debanshu.shaderlab.shaderx.parameter.ToggleParameter
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
@@ -20,19 +22,21 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
  * Two [WaveEffect] instances are equal if their **configuration** parameters are equal,
  * regardless of [time]. This allows animation loops to see the effect as stable across
  * frames — only the uniforms change, not the effect identity.
+ * Data-class copying and destructuring retain the API published in 0.1.3.
  *
  * @property amplitude Maximum displacement in pixels
- * @property frequency Number of wave cycles across the image
+ * @property frequency Angular frequency in radians across each normalized image axis
  * @property animate Whether the effect should animate
  * @property time Current animation time in seconds (excluded from equality / hashCode)
  */
 @Immutable
-public class WaveEffect(
+public data class WaveEffect(
     public val amplitude: Float = 10f,
     public val frequency: Float = 5f,
     public val animate: Boolean = true,
     override val time: Float = 0f,
-) : AbstractAnimatedShaderEffect() {
+) : AbstractRuntimeShaderEffect(),
+    AnimatedShaderEffect {
     override val id: String = ID
     override val displayName: String = "Wave"
     override val isAnimating: Boolean get() = animate
@@ -52,15 +56,20 @@ public class WaveEffect(
             FloatUniform("time", time),
         )
 
-    override fun copyWithTime(newTime: Float): WaveEffect = WaveEffect(amplitude, frequency, animate, newTime)
+    override fun withTime(newTime: Float): WaveEffect = copy(time = newTime)
 
-    override fun structuralEquals(other: Any?): Boolean {
+    override fun withTypedParameter(
+        parameterId: String,
+        value: ParameterValue,
+    ): WaveEffect = super.withTypedParameter(parameterId, value) as WaveEffect
+
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is WaveEffect) return false
         return amplitude == other.amplitude && frequency == other.frequency && animate == other.animate
     }
 
-    override fun structuralHashCode(): Int {
+    override fun hashCode(): Int {
         var result = amplitude.hashCode()
         result = 31 * result + frequency.hashCode()
         result = 31 * result + animate.hashCode()

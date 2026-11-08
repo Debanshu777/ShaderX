@@ -58,6 +58,6 @@ val blueGradient = GradientEffect().withTypedParameter(
 )
 ```
 
-Parameter updates return a new value. Store that value in Compose state to redraw your UI. Built-in static effects typically expose `copy`; animated effects use immutable classes with parameter APIs. Do not assume every effect is a data class.
+Parameter updates return a new value. Store that value in Compose state to redraw your UI. Built-in static effects typically expose `copy`. `WaveEffect` also retains its 0.1.3 data-class API: `copy`, destructuring in `amplitude`, `frequency`, `animate`, `time` order, and concrete `WaveEffect` results from `withTime` and `withTypedParameter`. Its equality and hash code exclude `time`, including in development session animation. Other animated effects use immutable classes with parameter APIs; do not assume every effect is a data class.
 
 For exact defaults and the full parameter definitions, browse the [effect source](https://github.com/Debanshu777/ShaderX/tree/main/shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl) or generate the [API reference](index.md#source-and-api-reference).

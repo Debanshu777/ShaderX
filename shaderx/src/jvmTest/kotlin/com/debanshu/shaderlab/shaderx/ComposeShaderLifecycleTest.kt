@@ -22,10 +22,12 @@ import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.GrayscaleEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.ShaderSession
 import com.debanshu.shaderlab.shaderx.parameter.ParameterSpec
 import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
+import com.debanshu.shaderlab.shaderx.result.ShaderError
 import com.debanshu.shaderlab.shaderx.result.ShaderResult
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
 import kotlinx.coroutines.cancelAndJoin
@@ -37,9 +39,63 @@ import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.ImageFilter
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ComposeShaderLifecycleTest {
+    @Test
+    fun modifierCallbacks_preservePublishedPositionalNamedAndTrailingCalls() = compositionTest {
+        val factory = LegacyFactory()
+        val effect = GrayscaleEffect()
+        val size = IntSize(20, 20)
+        val errors = mutableListOf<String>()
+        val results = mutableListOf<String>()
+        val positionalError: (ShaderError) -> Unit = {
+            assertSame(factory.error, it)
+            errors += "positional"
+        }
+        val positionalResult: (ShaderResult<RenderEffect>) -> Unit = {
+            assertSame(factory.error, assertIs<ShaderResult.Failure<*>>(it).error)
+            results += "positional"
+        }
+        content {
+            Modifier.shaderEffect(effect, factory, size, positionalError)
+            Modifier.shaderEffect(effect, factory, size) { errors += "trailing" }
+            Modifier.shaderEffect(effect, factory, size, onError = { errors += "named" })
+            Modifier.shaderEffect(effect, factory, size, frameDataKey = "frame", onError = { errors += "keyed" })
+            Modifier.shaderEffectWithResult(effect, factory, size, positionalResult)
+            Modifier.shaderEffectWithResult(effect, factory, size) { results += "trailing" }
+            Modifier.shaderEffectWithResult(effect, factory, size, onResult = { results += "named" })
+            Modifier.shaderEffectWithResult(effect, factory, size, frameDataKey = "frame", onResult = { results += "keyed" })
+            // Compile both sets of default arguments without allocating native effects.
+            Modifier.shaderEffect(null)
+            Modifier.shaderEffect(null, frameDataKey = "frame")
+            Modifier.shaderEffectWithResult(null)
+            Modifier.shaderEffectWithResult(null, frameDataKey = "frame")
+        }
+        frames()
+        assertEquals(listOf("keyed", "named", "positional", "trailing"), errors.sorted())
+        assertEquals(listOf("keyed", "named", "positional", "trailing"), results.sorted())
+        assertEquals(8, factory.renderCalls)
+    }
+
+    @Test
+    fun legacyFactory_withoutSessionOverride_reportsUnsupportedAnimation() = compositionTest {
+        val factory = LegacyFactory()
+        val effect = WaveEffect()
+        val direct = assertIs<ShaderResult.Failure<*>>(factory.createAnimatedSession(effect, 20f, 20f))
+        val directError = assertIs<ShaderError.UnsupportedEffect>(direct.error)
+        assertEquals(effect.id, directError.effectId)
+        var callbackError: ShaderError? = null
+        content {
+            Modifier.shaderEffect(effect, factory, IntSize(20, 20)) { callbackError = it }
+        }
+        frames()
+        assertEquals(directError, callbackError)
+        assertEquals(0, factory.renderCalls)
+    }
+
     @Test
     fun equalLiveFrame_reachesExistingSessionAndLatestCallback() = compositionTest {
         val factory = RecordingFactory()
@@ -136,6 +192,20 @@ class ComposeShaderLifecycleTest {
         override fun withTypedParameter(parameterId: String, value: ParameterValue) = this
         override fun equals(other: Any?) = other is FrameEffect && configuration == other.configuration && animate == other.animate
         override fun hashCode() = 1 // Deliberate legal collision between unequal configurations.
+    }
+
+    // Implements only the factory members required by published 0.1.3.
+    private class LegacyFactory : ShaderFactory {
+        val error = ShaderError.UnsupportedEffect("Static rendering disabled in this test", "legacy_test")
+        var renderCalls = 0
+        override fun createRenderEffect(effect: ShaderEffect, width: Float, height: Float): ShaderResult<RenderEffect> {
+            renderCalls++
+            return ShaderResult.failure(error)
+        }
+        override fun isSupported() = true
+        override fun clearCache() {}
+        override fun close() {}
+        override val cacheSize = 0
     }
 
     private class RecordingFactory : ShaderFactory {

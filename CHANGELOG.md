@@ -13,6 +13,7 @@ These features are on `main` and are not in the published 0.1.3 artifact:
 - ShaderLab microphone/FFT examples in the sample-only `audiolib` module.
 - Focused documentation guides, a searchable documentation build, and contributor templates.
 - Deterministic Skia cache/session cleanup, corrected animated Compose invalidation, and shared immutable metadata for animation frame copies.
+- Preserve the 0.1.3 modifier callback argument order and `WaveEffect` data-class/concrete-return APIs; custom factories can report unsupported animation through a default session method. Regression tests cover these source and behavior contracts.
 - Bounded sample-image previews, reusable FFT workspaces, and asynchronous Android/desktop microphone lifecycle handling.
 - A production browser playground bundled with the documentation, plus lighter on-demand sample recordings.
 

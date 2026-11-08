@@ -154,6 +154,8 @@ Run the desktop gallery from a checkout with JDK 21 and the [Android SDK configu
 
 Performance checks cover native-resource disposal, rendered animation, bounded sample-image decoding, and reusable audio processing. Optional allocation diagnostics and the Android export host tests are documented in [performance validation](https://debanshu777.github.io/ShaderX/contributing/#performance-validation). The docs preview bundles the production Wasm playground; see [local validation](https://debanshu777.github.io/ShaderX/contributing/#preview-and-check-documentation).
 
+Development compatibility checks cover the published modifier callback signatures, `WaveEffect` copying and destructuring, and custom factories without animation sessions. See [API compatibility checks](https://debanshu777.github.io/ShaderX/contributing/#api-compatibility-checks).
+
 Bug reports, documentation fixes, and new effects are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), then [open an issue](https://github.com/Debanshu777/ShaderX/issues/new/choose) with a reproducible example.
 
 Every code change includes updates to this README and the affected documentation guides. [Agent instructions](AGENTS.md) map changes to guides, and CI checks that both are updated. The [documentation site](https://debanshu777.github.io/ShaderX/) publishes automatically only after a pull request merges into `main` and its documentation build passes; see the [maintainer guide](https://debanshu777.github.io/ShaderX/maintaining/) for the workflow.
