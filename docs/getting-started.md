@@ -9,7 +9,7 @@ To add a GPU shader to your Compose Multiplatform project, add ShaderX to `commo
 
 The steps below start with an existing Compose project and a built-in grayscale effect. You can then implement a [custom AGSL/SkSL shader](custom-effects.md) using the same modifier. For an Android-only Jetpack Compose project, use the Android dependency block below.
 
-These examples use the published **0.1.3** release. See [release status](index.md#releases-and-development-docs) for APIs that currently require a checkout of `main`.
+These examples use the published **0.1.4** release. It includes the animation sessions, texture inputs, and audio effects covered by these guides. See [release status](index.md#release-status) for version details.
 
 ## Requirements
 
@@ -38,7 +38,7 @@ In the shared module's `build.gradle.kts`:
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.debanshu777:shaderx:0.1.3")
+            implementation("io.github.debanshu777:shaderx:0.1.4")
         }
     }
 }
@@ -48,7 +48,7 @@ For an Android-only app, add it to the module's regular `dependencies` block ins
 
 ```kotlin
 dependencies {
-    implementation("io.github.debanshu777:shaderx:0.1.3")
+    implementation("io.github.debanshu777:shaderx:0.1.4")
 }
 ```
 
@@ -60,7 +60,7 @@ As an alternative to the literal dependency, add to `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
-shaderx = "0.1.3"
+shaderx = "0.1.4"
 
 [libraries]
 shaderx = { module = "io.github.debanshu777:shaderx", version.ref = "shaderx" }
@@ -92,7 +92,7 @@ fun GrayscalePhoto(painter: Painter, modifier: Modifier = Modifier) {
 
 The effect transforms the content drawn by the composable. Make sure that content has a nonzero layout size. Set `intensity = 0.5f` to blend the original colors with grayscale, or pass `null` as the effect to disable it.
 
-For animated effects on `main` / 0.1.4 development, the same modifier owns and closes its animation session. Pass the effect directly; use a [scoped factory](compose.md#scope-the-shader-cache) when a screen should release its compiled cache on disposal.
+For animated effects in 0.1.4, the same modifier owns and closes its animation session. Pass the effect directly; use a [scoped factory](compose.md#scope-the-shader-cache) when a screen should release its compiled cache on disposal.
 
 ## Apply a shader to the background only
 

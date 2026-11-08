@@ -5,15 +5,17 @@ description: Resolve ShaderX dependency, import, Android API, shader compilation
 
 # Troubleshooting
 
-## Gradle cannot find ShaderX 0.1.4
+<a id="gradle-cannot-find-shaderx-014"></a>
 
-The published version is **0.1.3**. The `0.1.4` version in the source build is under development. Use 0.1.3 from Maven Central or [publish the development version locally](contributing.md#try-the-library-in-another-project). Confirm `mavenCentral()` is in dependency repositories, not just plugin repositories.
+## Gradle cannot resolve ShaderX
+
+Use the published dependency `io.github.debanshu777:shaderx:0.1.4`. Confirm `mavenCentral()` is in dependency repositories, not just plugin repositories, and check that Gradle is not offline. For variant-selection errors, compare your JDK and Kotlin targets with the [installation requirements](getting-started.md#requirements). Use [Maven Local](contributing.md#try-the-library-in-another-project) only when intentionally testing a local build.
 
 ## Unresolved import or missing effect
 
 The package prefix is `com.debanshu.shaderlab.shaderx`, even though the Maven group is `io.github.debanshu777`. Import the `shaderEffect` extension from `.compose` and effects from `.effect.impl`.
 
-`AudioVisualizerEffect`, texture uniforms, and the other [development effects](effects.md#added-on-main-014-development) are not part of 0.1.3. Custom effects in external modules should implement `RuntimeShaderEffect`; the abstract base classes require internal handlers.
+`AudioVisualizerEffect`, texture uniforms, and the other [effects added in 0.1.4](effects.md#added-in-014) require 0.1.4; they are not part of 0.1.3. Custom effects in external modules should implement `RuntimeShaderEffect`; the abstract base classes require internal handlers.
 
 ## Unsupported Android SDK or JVM target
 
@@ -35,15 +37,15 @@ Multi-effect chains are supported only on Android. Skia reports `ShaderError.Uns
 
 ## Animation or audio does not update
 
-On `main`, pass a standalone `AnimatedShaderEffect` directly to `shaderEffect`. Use `animate = true` to advance time. Avoid wrapping it in a composite if you expect the modifier to manage its clock.
+In 0.1.4, pass a standalone `AnimatedShaderEffect` directly to `shaderEffect`. Use `animate = true` to advance time. Avoid wrapping it in a composite if you expect the modifier to manage its clock.
 
-For audio, supply a live bitmap source using `withFftDataSource`. Verify microphone permission and that the bitmap contains data with the expected number of bins. Browser microphone capture requires HTTPS or localhost. Pausing time does not pause live uniform refresh on `main`.
+For audio, supply a live bitmap source using `withFftDataSource`. Verify microphone permission and that the bitmap contains data with the expected number of bins. Browser microphone capture requires HTTPS or localhost. Pausing time does not pause live uniform refresh in 0.1.4.
 
 If you replace an effect's bitmap instead of using a live source, change `frameDataKey` with the bitmap. Live images are deliberately excluded from structural equality; the key lets composition deliver the new instance to the existing session. Manually created sessions must be closed when finished and must not be refreshed afterward.
 
 ## Image export fails on Android
 
-This is a known implementation limitation: Android's offline processor cannot render its hardware `RenderNode` into a software bitmap. It returns `ProcessingError`; on `main` / 0.1.4 development, this happens before image decoding or shader creation, including for malformed input bytes. On-screen Compose rendering is a separate path. See [image processing](image-processing.md) for supported uses.
+Android's offline export is unsupported because a software bitmap canvas cannot render a hardware `RenderNode`. In 0.1.4, the processor returns `ProcessingError` before image decoding or shader creation, including for malformed input bytes. On-screen Compose rendering is a separate path. See [image processing](image-processing.md) for supported uses.
 
 ## Report a reproducible problem
 

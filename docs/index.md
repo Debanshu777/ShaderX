@@ -40,11 +40,13 @@ For the project's background, read the companion article, [Building GPU Shader E
 | Fix a setup problem | [Troubleshooting](troubleshooting.md) |
 | Contribute a change | [Contributor guide](contributing.md) |
 
-## Releases and development docs
+<a id="releases-and-development-docs"></a>
 
-The published Maven Central version is **0.1.3**. The repository's `main` branch is developing **0.1.4**. The installation and static quickstart examples work with 0.1.3; session animation, texture inputs, and audio effects are marked as development features throughout these guides.
+## Release status
 
-Check the [release notes](https://github.com/Debanshu777/ShaderX/releases) before using a newer API. Do not change your dependency to `0.1.4` until that version is published, or [build the development version locally](contributing.md#try-the-library-in-another-project).
+The published Maven Central version is **0.1.4**. The installation examples and guides describe that release, including session animation, texture inputs, and all 15 built-in effects. The [effect catalog](effects.md) distinguishes the nine effects already available in 0.1.3 from the six added in 0.1.4.
+
+Check the [0.1.4 release notes](https://github.com/Debanshu777/ShaderX/releases/tag/v0.1.4) for the changes and retain the documented [platform limits](platforms.md). The repository and playground can include later source changes; [build locally](contributing.md#try-the-library-in-another-project) when testing a change that is not in your installed release.
 
 ## Source and API reference
 

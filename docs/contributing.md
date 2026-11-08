@@ -40,7 +40,7 @@ JVM test results are in `shaderx/build/reports/tests/jvmTest/index.html`. Dokka 
 
 Browser tests use a Mocha setup hook to await Skia's WebAssembly runtime before executing the common tests that allocate `ImageBitmap`s. This avoids a startup race on slower runners; it does not skip or retry failing assertions. Browser results are in `shaderx/build/reports/tests/wasmJsBrowserTest/index.html`. CI runs `:shaderx:build` (which already includes `check`) and uploads XML/HTML test reports for each runner even on failure.
 
-Release numbering and branch guards have Python regression tests alongside the documentation-policy tests; run `python -m unittest discover -s scripts/tests -v`. The [release workflow](maintaining.md#release-workflow) chooses versions from tags and passes `-PshaderxVersion=...` to Gradle. Ordinary builds keep the development default, and library tests do not need publishing secrets.
+Release numbering and branch guards have Python regression tests alongside the documentation-policy tests; run `python -m unittest discover -s scripts/tests -v`. The [release workflow](maintaining.md#release-workflow) chooses versions from tags and passes `-PshaderxVersion=...` to Gradle. Ordinary builds use the version declared in `shaderx/build.gradle.kts`, and library tests do not need publishing secrets.
 
 ## Project structure
 
@@ -64,7 +64,7 @@ Release numbering and branch guards have Python regression tests alongside the d
 4. Declare `uniform shader content;` and a `half4 main(float2 fragCoord)` entry point. Match all Kotlin uniforms to the shader declarations.
 5. Register built-in effects in `ShaderX.builtInEffects()`. For a native effect, implement it in both Android and Skia factory branches.
 6. Add appropriate parameter/contract tests and a shader-compilation check. Validate the appearance on relevant sample targets.
-7. Update the README effect list, [effect catalog](effects.md), and unreleased changelog. State availability accurately.
+7. Update the README effect list, [effect catalog](effects.md), and changelog. Mark unreleased changes separately and state availability accurately.
 
 The library enables Kotlin explicit API mode. New public declarations need explicit visibility and types; keep implementation details internal. Put dependencies in `gradle/libs.versions.toml`.
 
@@ -76,7 +76,7 @@ On macOS with the required target toolchains:
 ./gradlew :shaderx:publishToMavenLocal
 ```
 
-In the consuming project's dependency repositories, temporarily add `mavenLocal()` before `mavenCentral()`, then use the development version declared in `shaderx/build.gradle.kts`. Do not add `mavenLocal()` to production setup instructions. For work in this repository, ShaderLab and ASCIICamera already depend on the local project.
+In the consuming project's dependency repositories, temporarily add `mavenLocal()` before `mavenCentral()`, then use the local version declared in `shaderx/build.gradle.kts`. Do not add `mavenLocal()` to production setup instructions. For work in this repository, ShaderLab and ASCIICamera already depend on the local project.
 
 ## API compatibility checks
 

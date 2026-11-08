@@ -64,7 +64,7 @@ Add ShaderX to your shared module's `build.gradle.kts`:
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.debanshu777:shaderx:0.1.3")
+            implementation("io.github.debanshu777:shaderx:0.1.4")
         }
     }
 }
@@ -73,7 +73,7 @@ kotlin {
 For an Android-only Compose app, use the same dependency inside `dependencies { ... }`.
 Use **JDK 21**, **Kotlin 2.3.21**, and **Compose Multiplatform 1.10.3** as the starting toolchain. Android requires **minSdk 33**. See [installation and version catalogs](https://debanshu777.github.io/ShaderX/getting-started/).
 
-> **Release status:** `0.1.3` is the published Maven Central release. This branch develops `0.1.4`; session-driven animation, texture uniforms, and the new audio effects are development features. Guides identify those features explicitly. The quickstart below works with `0.1.3`.
+> **Release status:** `0.1.4` is published on Maven Central. It includes session-driven animation, texture uniforms, and 15 built-in effects. The guides describe this release and identify differences from `0.1.3`. See the [release notes](https://github.com/Debanshu777/ShaderX/releases/tag/v0.1.4).
 
 ## Quickstart
 
@@ -123,7 +123,7 @@ Multi-effect chains on Skia return `ShaderError.UnsupportedEffect`. Android's cu
 | Available in | Effects |
 | --- | --- |
 | **0.1.3** | `GrayscaleEffect`, `SepiaEffect`, `GradientEffect`, `VignetteEffect`, `PixelateEffect`, `ChromaticAberrationEffect`, `InvertEffect`, `NativeBlurEffect`, `WaveEffect` |
-| **main / 0.1.4 development** | All of the above, plus `AnimatedGradientEffect`, `PlasmaEffect`, `RippleEffect`, `VortexEffect`, `AudioVisualizerEffect`, `AudioDistortionEffect` |
+| **0.1.4** | All of the above, plus `AnimatedGradientEffect`, `PlasmaEffect`, `RippleEffect`, `VortexEffect`, `AudioVisualizerEffect`, `AudioDistortionEffect` |
 
 The [effect catalog](https://debanshu777.github.io/ShaderX/effects/) covers parameters and examples. The [Compose guide](https://debanshu777.github.io/ShaderX/compose/) explains animation, Android effect chaining, and cache ownership.
 
@@ -131,7 +131,7 @@ The [effect catalog](https://debanshu777.github.io/ShaderX/effects/) covers para
 
 | Sample | What it demonstrates | Run / preview |
 | --- | --- | --- |
-| [ShaderLab](samples/ShaderLab) | Effect gallery, live controls, image loading, and development audio effects | [Playground](https://debanshu777.github.io/ShaderX/playground/) · [Setup](https://debanshu777.github.io/ShaderX/samples/#shaderlab) · [Android recording](assets/shader_lab.gif) · [Web recording](assets/shader_lab_web.gif) |
+| [ShaderLab](samples/ShaderLab) | Effect gallery, live controls, image loading, and audio effects | [Playground](https://debanshu777.github.io/ShaderX/playground/) · [Setup](https://debanshu777.github.io/ShaderX/samples/#shaderlab) · [Android recording](assets/shader_lab.gif) · [Web recording](assets/shader_lab_web.gif) |
 | [ASCIICamera](samples/ASCIICamera) | Custom shaders on an Android CameraX preview | [Setup](https://debanshu777.github.io/ShaderX/samples/#asciicamera) · [Recording](assets/ASCIICamera.gif) |
 | [VerticalCarousel](samples/VerticalCarousel) | Scroll-driven shader parameters on movie cards | [Setup and TMDB token](https://debanshu777.github.io/ShaderX/samples/#verticalcarousel) · [Recording](assets/vertical_carousal.gif) |
 
@@ -154,7 +154,7 @@ Run the desktop gallery from a checkout with JDK 21 and the [Android SDK configu
 
 Performance checks cover native-resource disposal, rendered animation, bounded sample-image decoding, and reusable audio processing. Optional allocation diagnostics and the Android export host tests are documented in [performance validation](https://debanshu777.github.io/ShaderX/contributing/#performance-validation). The docs preview bundles the production Wasm playground; see [local validation](https://debanshu777.github.io/ShaderX/contributing/#preview-and-check-documentation).
 
-Development compatibility checks cover the published modifier callback signatures, `WaveEffect` copying and destructuring, and custom factories without animation sessions. See [API compatibility checks](https://debanshu777.github.io/ShaderX/contributing/#api-compatibility-checks).
+Compatibility checks cover the published modifier callback signatures, `WaveEffect` copying and destructuring, and custom factories without animation sessions. See [API compatibility checks](https://debanshu777.github.io/ShaderX/contributing/#api-compatibility-checks).
 
 Bug reports, documentation fixes, and new effects are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), then [open an issue](https://github.com/Debanshu777/ShaderX/issues/new/choose) with a reproducible example.
 

@@ -30,8 +30,8 @@ validation coverage without implying a public API change. Do not add filler.
 Read the implementation and tests before describing behavior. Check each code
 example's imports, signatures and platform restrictions. Verify that a version
 is published on Maven Central before recommending it in an install command.
-The existing guides distinguish published 0.1.3 from development 0.1.4; update
-those labels only when the release is verified.
+The guides use published 0.1.4 as their baseline. Label later unreleased APIs
+explicitly, and update version examples only after the release is verified.
 
 Keep the flower banner and **all four inline sample recordings** in the
 README. Preserve the visual showcase when shortening or reorganizing prose.

@@ -26,7 +26,7 @@ The build does not require analytics, remote fonts, or a paid documentation serv
 
 ### Build and preview the live playground
 
-The [playground](playground/) is the ShaderLab Wasm production distribution, served under `/ShaderX/playground/`. It follows the local development library, not the published Maven release. The public route becomes available when the PR adding it is merged and the combined documentation deployment succeeds; branch preview artifacts already include the route.
+The [playground](playground/) is the ShaderLab Wasm production distribution, served under `/ShaderX/playground/`. It builds the local library from the documentation deployment commit and can include changes after the latest Maven release. The public route is live and updates after a merged PR passes the combined documentation deployment; branch preview artifacts include the same route.
 
 With the [contributor toolchain](contributing.md#local-setup) installed, build the combined artifact:
 
@@ -120,20 +120,20 @@ webassembly shader shaders agsl sksl gpu image-processing animation
 
 Use topics that describe implemented capabilities. GLSL is related but is not the library's shader contract; AGSL and SkSL are more precise. Review existing topics before replacing them.
 
-These settings are managed on GitHub, not by the README or Maven POM. Set the repository's **About → Website** to `https://debanshu777.github.io/ShaderX/` so visitors can find the documentation from the project page. The first successful merge deployment makes that URL live. Description and topics can be updated through repository settings or `gh repo edit`. Add a social preview image through repository settings if a project-branded image is available.
+These settings are managed on GitHub, not by the README or Maven POM. Set the repository's **About → Website** to `https://debanshu777.github.io/ShaderX/` so visitors can find the documentation from the project page. That URL hosts the live documentation site. Description and topics can be updated through repository settings or `gh repo edit`. Add a social preview image through repository settings if a project-branded image is available.
 
 ## Release workflow
 
-Once `.github/workflows/release.yml` is merged into `main`, use **Actions → Release ShaderX → Run workflow**. Choose the source using GitHub's **Use workflow from** branch selector, then choose a release type. A selected feature branch must contain the release workflow and its scripts. Review its code before publishing a beta: publishing executes that branch's build with repository signing credentials.
+Use **Actions → Release ShaderX → Run workflow** for `.github/workflows/release.yml`. Choose the source using GitHub's **Use workflow from** branch selector, then choose a release type. A selected feature branch must contain the release workflow and its scripts. Review its code before publishing a beta: publishing executes that branch's build with repository signing credentials.
 
-| Release type | Source branch | Version when the highest stable tag is `0.1.3` |
+| Release type | Source branch | Version when the highest stable tag is `v0.1.4` |
 | --- | --- | --- |
-| `prerelease` (default) | `main` or a feature branch | `0.1.4-beta.<run number>.<attempt>` |
-| `patch` | `main` | `0.1.4` |
+| `prerelease` (default) | `main` or a feature branch | `0.1.5-beta.<run number>.<attempt>` |
+| `patch` | `main` | `0.1.5` |
 | `minor` | `main` | `0.2.0` |
 | `major` | `main` | `1.0.0` |
 
-These are numbering examples, not claims that the artifacts are published. The workflow reads all repository tags, accepts the existing bare tags and new `v`-prefixed tags, and compares stable versions numerically. Beta tags do not advance the stable version. Run and attempt numbers distinguish beta builds and retries. New tags use `v`, while Maven versions omit it. No manual version bump or automated commit to a protected branch is needed: the workflow passes `-PshaderxVersion=...` to the library build. The default in `shaderx/build.gradle.kts` remains the local development version.
+These are numbering examples, not claims that the artifacts are published. The workflow reads all repository tags, accepts the existing bare tags and new `v`-prefixed tags, and compares stable versions numerically. Beta tags do not advance the stable version. Run and attempt numbers distinguish beta builds and retries. New tags use `v`, while Maven versions omit it. No manual version bump or automated commit to a protected branch is needed: the workflow passes `-PshaderxVersion=...` to the library build. Ordinary builds use the default in `shaderx/build.gradle.kts` when the property is absent; that default is not proof of Maven publication.
 
 Both stable releases and betas run `:shaderx:build` on macOS with JDK 21, covering Android, JVM, iOS and browser targets before publication. The workflow then reserves the version's tag at the exact selected commit, signs and publishes all `:shaderx` publications using `:shaderx:publishAndReleaseToMavenCentral`, and creates a GitHub release with generated notes and the dependency snippet. Betas are marked as prereleases and never replace GitHub's latest stable release. The summary includes the same coordinates. Runs are serialized across branches; publication is never cancelled by a newer dispatch.
 
@@ -159,11 +159,11 @@ These names match the previous publishing workflow. See the publishing plugin's 
 - **After tag reservation:** keep the tag. Maven Central versions are immutable, and a failed command might already have uploaded or published artifacts. Inspect the Central Portal deployment before doing anything else. A new stable run skips past the reserved version; a new beta run or retry gets a different run/attempt suffix. Do not delete or move a reserved tag to force version reuse.
 - **Maven Central succeeded but GitHub release creation failed:** verify the artifacts, then create the GitHub release for the existing reserved tag, using the version and source SHA in the run log. Mark a beta as a prerelease. Do not rerun publication just to repair release notes.
 
-The publishing task waits for Central Portal publication, but verify that the version resolves from Maven Central before changing consumer installation guidance. A tag alone is not proof of publication.
+The publishing task can succeed while Central still reports `PUBLISHING`. Before updating installation guidance, verify that the requested version's root and platform POMs and binaries resolve from Maven Central. Workflow success, a tag, or a GitHub release does not establish public availability. Keep the reserved tag and inspect the existing deployment; do not redispatch a release to compensate for propagation delay.
 
 ### Release documentation
 
-Before dispatching a stable release, review the changelog, platform limitations, and relevant sample output. After confirming publication, update the dependency examples in `README.md`, `docs/getting-started.md`, and `docs/llms.txt`; update development/release labels across the catalog and guides, move completed changelog entries into the versioned section, and advance the local development version when appropriate. Run the documentation checks and merge that documentation PR to publish the refreshed site. Until publication is verified, keep the current published `0.1.3` and development `0.1.4` labels.
+Before dispatching a stable release, review the changelog, platform limitations, and relevant sample output. After confirming publication, update the dependency examples in `README.md`, `docs/getting-started.md`, and `docs/llms.txt`; update development/release labels across the catalog and guides, move completed changelog entries into the versioned section, and advance the local development version when appropriate. Run the documentation checks and merge that documentation PR to publish the refreshed site. Until publication is verified, retain the last confirmed published version in consumer instructions and label newer APIs as unreleased.
 
 The Maven description and keywords in `shaderx/build.gradle.kts` should continue to reflect the same scope as the repository and guides. They take effect with the next artifact publication.
 

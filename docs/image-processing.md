@@ -9,11 +9,11 @@ description: Process image bytes with ShaderX on Skia platforms, handle failures
 
 ## Check platform support first
 
-The Skia implementation supports individual runtime effects and native blur. It rejects `CompositeEffect`. Android's current implementation returns `ProcessingError` because its software bitmap canvas cannot draw the hardware `RenderNode`; this API is not a working Android image-export path. On `main` / 0.1.4 development, it rejects the operation before decoding input, inspecting the effect, compiling shaders, or allocating destination bitmaps. Invalid image bytes therefore receive the same platform-limitation error. Use the [Compose modifier](compose.md) for on-screen Android effects.
+The Skia implementation supports individual runtime effects and native blur. It rejects `CompositeEffect`. Android's implementation returns `ProcessingError`: software bitmap export cannot draw a hardware `RenderNode`. In 0.1.4, it rejects the operation before decoding input, inspecting the effect, compiling shaders, or allocating destination bitmaps. Invalid image bytes therefore receive the same platform-limitation error. Use the [Compose modifier](compose.md) for on-screen Android effects.
 
 ## Process an image with explicit cleanup
 
-This example uses public APIs available in 0.1.3 and `main`. Run it on a supported Skia target, and handle the result at the call site:
+This example uses public APIs available in 0.1.3 and 0.1.4. Run it on a supported Skia target, and handle the result at the call site:
 
 ```kotlin
 import com.debanshu.shaderlab.shaderx.effect.impl.SepiaEffect
@@ -37,7 +37,7 @@ Use `onSuccess` to save the returned bytes and `onFailure` to display or log the
 
 For a batch, keep one factory and processor for the batch, process images sequentially, and close the factory afterward. For background processing, create a dedicated factory inside the worker and close it there; do not pass a Compose UI factory to a background export. A Skia factory is not thread-safe. Shared access requires external serialization of every factory, processor, and session operation, including cache eviction and disposal.
 
-On `main` / 0.1.4 development, the Skia processor closes each call's decoded image, shader builder, image filter, surface, paint, snapshot, and encoded-data wrappers on both success and failure. Compiled effects remain in the factory's bounded cache for reuse. This reduces delayed native-memory cleanup during batches; encoding and rasterization still run synchronously on the calling thread.
+In 0.1.4, the Skia processor closes each call's decoded image, shader builder, image filter, surface, paint, snapshot, and encoded-data wrappers on both success and failure. Compiled effects remain in the factory's bounded cache for reuse. This reduces delayed native-memory cleanup during batches; encoding and rasterization still run synchronously on the calling thread.
 
 ## Dimensions and output
 

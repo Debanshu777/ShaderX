@@ -1,13 +1,15 @@
 ---
 title: Shader effect catalog and Kotlin parameters
-description: Explore ShaderX grayscale, sepia, blur, pixelation, gradients, wave distortion, and development audio effects, with Kotlin constructors and release availability.
+description: Explore ShaderX grayscale, sepia, blur, pixelation, gradients, wave distortion, and audio effects, with Kotlin constructors and release availability.
 ---
 
 # Built-in shader effects
 
 Import effects from `com.debanshu.shaderlab.shaderx.effect.impl`. Pass an effect to `Modifier.shaderEffect` as shown in the [quickstart](getting-started.md).
 
-## Published in 0.1.3
+<a id="published-in-013"></a>
+
+## Available since 0.1.3
 
 | Effect | Example | Parameters / purpose |
 | --- | --- | --- |
@@ -19,15 +21,17 @@ Import effects from `com.debanshu.shaderlab.shaderx.effect.impl`. Pass an effect
 | Chromatic aberration | `ChromaticAberrationEffect(offset = 5f)` | `offset`: 0–20 pixels; separate color channels |
 | Invert | `InvertEffect()` | Invert RGB while preserving alpha |
 | Native blur | `NativeBlurEffect(radius = 10f)` | `radius`: 0–50 pixels; platform blur |
-| Wave | `WaveEffect(amplitude = 10f, frequency = 5f)` | `amplitude`: 0–50 pixels; `frequency`: 1–20; `animate` and `time` |
+| Wave | `WaveEffect(amplitude = 10f, frequency = 5f)` | `amplitude`: 0–50 pixels; `frequency`: 1–20 radians per normalized axis; `animate` and `time` |
 
 These are the declared parameter ranges used by ShaderX's parameter API. Constructors and `copy` calls do not uniformly clamp values; keep directly supplied values in range. Use `withParameter` or `withTypedParameter` for validated updates to built-in effects.
 
-Wave exists in 0.1.3, but the automatic session-based animation described in the [Compose guide](compose.md#animated-effects-in-development) requires `main` / 0.1.4 development. Do not assume the animation behavior of `main` is present in 0.1.3.
+Wave exists in 0.1.3; the automatic session-based animation described in the [Compose guide](compose.md#animated-effects) is available in 0.1.4. Its `frequency` is angular: `2π` represents one cycle across a normalized axis, so the cycle count is `frequency / (2π)`.
 
-## Added on main / 0.1.4 development
+<a id="added-on-main-014-development"></a>
 
-These classes are not available in the published 0.1.3 artifact:
+## Added in 0.1.4
+
+These six effects are included in 0.1.4 and are unavailable in 0.1.3:
 
 | Effect | Example | Purpose |
 | --- | --- | --- |
@@ -38,7 +42,7 @@ These classes are not available in the published 0.1.3 artifact:
 | Audio visualizer | `AudioVisualizerEffect(fftSize = 64f, barColorIntensity = 1f)` | Spectrum bars from an FFT texture |
 | Audio distortion | `AudioDistortionEffect(fftSize = 64f, intensity = 1f)` | Content displacement from an FFT texture |
 
-Each supports `animate` and `time`. Audio effects need spectrum data supplied by your app; they do not capture audio themselves. See [live textures](compose.md#live-textures-and-audio-in-development) and the [ShaderLab sample](samples.md#shaderlab).
+Each supports `animate` and `time`. Audio effects need spectrum data supplied by your app; they do not capture audio themselves. See [live textures](compose.md#live-textures-and-audio) and the [ShaderLab sample](samples.md#shaderlab).
 
 ## Discover and edit parameters
 
@@ -58,6 +62,6 @@ val blueGradient = GradientEffect().withTypedParameter(
 )
 ```
 
-Parameter updates return a new value. Store that value in Compose state to redraw your UI. Built-in static effects typically expose `copy`. `WaveEffect` also retains its 0.1.3 data-class API: `copy`, destructuring in `amplitude`, `frequency`, `animate`, `time` order, and concrete `WaveEffect` results from `withTime` and `withTypedParameter`. Its equality and hash code exclude `time`, including in development session animation. Other animated effects use immutable classes with parameter APIs; do not assume every effect is a data class.
+Parameter updates return a new value. Store that value in Compose state to redraw your UI. Built-in static effects typically expose `copy`. `WaveEffect` also retains its 0.1.3 data-class API: `copy`, destructuring in `amplitude`, `frequency`, `animate`, `time` order, and concrete `WaveEffect` results from `withTime` and `withTypedParameter`. Its equality and hash code exclude `time`, including in 0.1.4 session animation. Other animated effects use immutable classes with parameter APIs; do not assume every effect is a data class.
 
 For exact defaults and the full parameter definitions, browse the [effect source](https://github.com/Debanshu777/ShaderX/tree/main/shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl) or generate the [API reference](index.md#source-and-api-reference).

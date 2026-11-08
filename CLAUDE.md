@@ -37,8 +37,9 @@ JDK 21 is required (CI uses Temurin 21; `:shaderx` Android target compiles to `J
 - Install the pinned tools in a virtual environment: `python -m pip install -r requirements-docs.txt`.
 - Validate: `python scripts/check_docs.py`, `zensical build --strict`, then `python scripts/check_site.py`.
 - Preview: `zensical serve`. Publishing instructions are in `docs/maintaining.md`.
-- Published Maven Central baseline is 0.1.3; source version 0.1.4 is in development. Keep examples
-  explicit about which version they require. External custom effects implement `RuntimeShaderEffect`;
+- Published Maven Central baseline is 0.1.4. Keep examples explicit about which version they
+  require, and label APIs added after that release as unreleased. External custom effects implement
+  `RuntimeShaderEffect`;
   the abstract effect bases require internal handlers and cannot be extended from consumer modules.
 
 **Sample apps** (module paths verified against `settings.gradle.kts`)
