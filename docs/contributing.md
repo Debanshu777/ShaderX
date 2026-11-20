@@ -622,3 +622,7 @@ supported consumer descriptors, and ran the frozen Kotlin, Java, factory, Compos
 session/texture/tile-mode calls against only the 0.2.0 library jar. The unchanged historical
 0.1.3 fixture also passed again. Compose composition calls do not establish UI pixels, and
 neither result is Android/Klib binary or physical-GPU evidence.
+
+The release branch retains main's `WaveCompatibilityTest` and modifier callback/default-factory
+regressions in `ComposeShaderLifecycleTest`, alongside the frozen binary consumers. Preserve
+these source/behavior checks when resolving release merges; the binary audit is a separate gate.

@@ -180,6 +180,8 @@ These names match the previous publishing workflow. See the publishing plugin's 
   the GitHub release for the existing reserved tag and source SHA. Do not rerun publication
   merely to repair release notes.
 
+The publishing task can succeed while Central still reports `PUBLISHING`. Verify that the root and platform POMs and binaries resolve before marking publication complete. Workflow success, a tag or a GitHub release is not proof of availability; retain the reserved tag and inspect its deployment rather than redispatching during propagation delay.
+
 ### Release documentation
 
 The release commit includes its versioned changelog, installation examples, migration guide,
