@@ -52,13 +52,16 @@ nav:
       - Effect catalog: effects.md
   - Guides:
       - Compose integration: compose.md
+      - Images and backdrops: ecosystem.md
       - Custom shaders: custom-effects.md
+      - Migration and readiness: migration.md
       - Image processing: image-processing.md
       - Sample applications: samples.md
       - Troubleshooting: troubleshooting.md
   - Contribute:
       - Contributor guide: contributing.md
       - Maintainer guide: maintaining.md
+      - Stable release checklist: release-plan.md
 
 plugins:
   - search

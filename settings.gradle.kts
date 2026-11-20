@@ -17,6 +17,10 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        // Opt-in repository for validation against staged Maven artifacts.
+        providers.gradleProperty("shaderxConsumerRepository").orNull?.let { repository ->
+            maven { url = uri(repository) }
+        }
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -41,3 +45,16 @@ include(":samples:ShaderLab:iosApp")
 include(":samples:VerticalCarousel")
 include(":samples:ASCIICamera:composeApp")
 include(":samples:ASCIICamera:androidApp")
+
+// Separate compilations ensure fixtures cannot access library internals or friend paths.
+include(":validation:kmp-consumer")
+include(":validation:android-consumer")
+
+include(":validation:android-app")
+
+// Optional specialist integrations compile outside the core library and its friend tests.
+include(":validation:ecosystem-consumer")
+
+// One focused visual sampler, independent of ShaderLab.
+include(":samples:Sampler:composeApp")
+include(":samples:Sampler:androidApp")

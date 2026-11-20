@@ -1,0 +1,1654 @@
+public final class com/debanshu/shaderlab/shaderx/ShaderX {
+	public static final field $stable I
+	public static final field INSTANCE Lcom/debanshu/shaderlab/shaderx/ShaderX;
+	public final fun builtInEffects ()Ljava/util/List;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect : com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect {
+	public static final field $stable I
+	public fun buildFrameUniforms ()Ljava/util/List;
+	public fun buildUniforms (FF)Ljava/util/List;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;)Ljava/lang/Object;
+	public final fun getDefinition ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;
+	public fun getDisplayName ()Ljava/lang/String;
+	public final fun getFrameProvider ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderFrameProvider;
+	public fun getId ()Ljava/lang/String;
+	public fun getParameterValue (Ljava/lang/String;)F
+	public fun getParameters ()Ljava/util/List;
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun getTime ()F
+	public fun getTypedParameterValue (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public final fun getValues ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+	public fun hashCode ()I
+	public fun isAnimating ()Z
+	public fun withParameter (Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public final fun withPlayback (Z)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect;
+	public fun withTime (F)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect;
+	public synthetic fun withTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;
+	public fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public final fun withValue (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;Ljava/lang/Object;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect;
+	public static synthetic fun withValue$default (Lcom/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;Ljava/lang/Object;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect : com/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect {
+	public static final field $stable I
+	public fun buildUniforms (FF)Ljava/util/List;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;)Ljava/lang/Object;
+	public final fun getDefinition ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public fun getParameterValue (Ljava/lang/String;)F
+	public fun getParameters ()Ljava/util/List;
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun getTypedParameterValue (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public final fun getValues ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+	public fun hashCode ()I
+	public fun withParameter (Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public final fun withValue (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;Ljava/lang/Object;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public static synthetic fun withValue$default (Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;Ljava/lang/Object;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/Rgba8SamplerKt {
+	public static final fun rgba8Sampler (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode$Companion;Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;
+	public static synthetic fun rgba8Sampler$default (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode$Companion;Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/ShaderBackground {
+	public static final field $stable I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDefinition ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;
+	public fun hashCode ()I
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/ShaderBackgroundKt {
+	public static final fun proceduralBackground (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBackground;
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/authoring/ShaderBinding {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;ZZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDescriptor ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingDescriptor;
+	public final fun getName ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/ShaderBinding$Companion {
+	public final fun boolean (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun color (Ljava/lang/String;J)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun color (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun data (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public static synthetic fun data$default (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding$Companion;Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun float (Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun float (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun frameData (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun frameFloat (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun frameImage (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun frameNested (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun image (Ljava/lang/String;Landroidx/compose/ui/graphics/ImageBitmap;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public static synthetic fun image$default (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding$Companion;Ljava/lang/String;Landroidx/compose/ui/graphics/ImageBitmap;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun nested (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun resolution (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public static synthetic fun resolution$default (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding$Companion;Ljava/lang/String;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun time (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public static synthetic fun time$default (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding$Companion;Ljava/lang/String;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+	public final fun uniform (Lcom/debanshu/shaderlab/shaderx/uniform/Uniform;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBinding;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/ShaderBindingDescriptor {
+	public static final field $stable I
+	public final fun getConstant ()Lcom/debanshu/shaderlab/shaderx/uniform/Uniform;
+	public final fun getDataSampling ()Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;
+	public final fun getInputDescription ()Ljava/lang/String;
+	public final fun getKind ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getParameterId ()Ljava/lang/String;
+	public final fun getTileModeX ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public final fun getTileModeY ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind : java/lang/Enum {
+	public static final field BOOLEAN_PARAMETER Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field COLOR_PARAMETER Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field CONSTANT Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field DATA Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field FLOAT_PARAMETER Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field FRAME_DATA Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field FRAME_FLOAT Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field FRAME_IMAGE Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field FRAME_NESTED Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field IMAGE Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field NESTED Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field RESOLUTION Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static final field TIME Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+	public static fun values ()[Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBindingKind;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/ShaderDefinition {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderProgram;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSchema;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderProgram;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSchema;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun animatedEffect (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;ZLcom/debanshu/shaderlab/shaderx/authoring/ShaderFrameProvider;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect;
+	public static synthetic fun animatedEffect$default (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;ZLcom/debanshu/shaderlab/shaderx/authoring/ShaderFrameProvider;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect;
+	public final fun effect (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public static synthetic fun effect$default (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public final fun getDisplayName ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getProgram ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderProgram;
+	public final fun getSchema ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSchema;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/authoring/ShaderFrameProvider {
+	public abstract fun uniforms (F)Ljava/util/List;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/ShaderNode {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode$Companion;
+	public synthetic fun <init> (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBackground;FLjava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBackground ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBackground;
+	public final fun getTimeSeconds ()F
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/ShaderNode$Companion {
+	public final fun snapshot (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBackground;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;FLcom/debanshu/shaderlab/shaderx/authoring/ShaderFrameProvider;FF)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;
+	public static synthetic fun snapshot$default (Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode$Companion;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBackground;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;FLcom/debanshu/shaderlab/shaderx/authoring/ShaderFrameProvider;FFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;
+}
+
+public final class com/debanshu/shaderlab/shaderx/authoring/ShaderProgram {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBindings ()Ljava/util/List;
+	public final fun getSource ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/compose/ControlledShaderModifierKt {
+	public static final fun controlledShaderEffect-COfb3RY (Landroidx/compose/ui/Modifier;Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;Lcom/debanshu/shaderlab/shaderx/playback/ShaderPlayback;JLcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Landroidx/compose/ui/unit/IntSize;ZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+	public static final fun controlledShaderEffect-COfb3RY (Landroidx/compose/ui/Modifier;Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;Lcom/debanshu/shaderlab/shaderx/playback/ShaderPlayback;JLcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Landroidx/compose/ui/unit/IntSize;ZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+	public static final fun rememberShaderPlayback (DZDZZLandroidx/compose/runtime/Composer;II)Lcom/debanshu/shaderlab/shaderx/playback/ShaderPlayback;
+}
+
+public final class com/debanshu/shaderlab/shaderx/compose/LocalShaderFactoryKt {
+	public static final fun getLocalShaderFactory ()Landroidx/compose/runtime/ProvidableCompositionLocal;
+	public static final fun rememberShaderFactory (ILandroidx/compose/runtime/Composer;II)Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;
+}
+
+public final class com/debanshu/shaderlab/shaderx/compose/ShaderBackgroundModifierKt {
+	public static final fun shaderBackground (Landroidx/compose/ui/Modifier;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBackground;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;Lcom/debanshu/shaderlab/shaderx/playback/ShaderPlayback;JLcom/debanshu/shaderlab/shaderx/authoring/ShaderFrameProvider;Landroidx/compose/ui/graphics/Brush;Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+}
+
+public final class com/debanshu/shaderlab/shaderx/compose/ShaderModifierKt {
+	public static final fun rememberRenderEffect (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;FFLcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/graphics/RenderEffect;
+	public static final fun rememberRenderEffectResult (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;FFLcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Landroidx/compose/runtime/Composer;II)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public static final fun rememberShaderEffect (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Landroidx/compose/runtime/Composer;I)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public static final fun shaderEffect-OTbkHQo (Landroidx/compose/ui/Modifier;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Landroidx/compose/ui/unit/IntSize;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+	public static final fun shaderEffect-PaVRBUA (Landroidx/compose/ui/Modifier;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Landroidx/compose/ui/unit/IntSize;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+	public static final fun shaderEffectWithResult-OTbkHQo (Landroidx/compose/ui/Modifier;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Landroidx/compose/ui/unit/IntSize;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+	public static final fun shaderEffectWithResult-PaVRBUA (Landroidx/compose/ui/Modifier;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Landroidx/compose/ui/unit/IntSize;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/Modifier;
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect : com/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect, com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun buildFrameUniforms ()Ljava/util/List;
+	protected abstract fun copyWithTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public final fun equals (Ljava/lang/Object;)Z
+	public final fun hashCode ()I
+	protected abstract fun structuralEquals (Ljava/lang/Object;)Z
+	protected abstract fun structuralHashCode ()I
+	public fun withTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;
+	public fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/effect/AbstractNativeEffect : com/debanshu/shaderlab/shaderx/effect/NativeEffect {
+	public static final field $stable I
+	public fun <init> ()V
+	public final fun getParameterValue (Ljava/lang/String;)F
+	public final fun getParameters ()Ljava/util/List;
+	public final fun getTypedParameterValue (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun withParameter (Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AbstractNativeEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/NativeEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect : com/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect {
+	public static final field $stable I
+	public fun <init> ()V
+	public final fun getParameterValue (Ljava/lang/String;)F
+	public final fun getParameters ()Ljava/util/List;
+	public final fun getTypedParameterValue (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun withParameter (Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect : com/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect {
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect$Companion;
+	public static final field TIME_UNIFORM_NAME Ljava/lang/String;
+	public fun buildFrameUniforms ()Ljava/util/List;
+	public abstract fun getTime ()F
+	public abstract fun isAnimating ()Z
+	public abstract fun withTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;
+	public abstract fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect$Companion {
+	public static final field TIME_UNIFORM_NAME Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect$DefaultImpls {
+	public static fun buildFrameUniforms (Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;)Ljava/util/List;
+	public static fun getParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;Ljava/lang/String;)F
+	public static fun getTypedParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public static fun withParameter (Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/effect/BlurEffect : com/debanshu/shaderlab/shaderx/effect/NativeEffect {
+	public abstract fun getRadius ()F
+	public abstract fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/BlurEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/BlurEffect$DefaultImpls {
+	public static fun getParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/BlurEffect;Ljava/lang/String;)F
+	public static fun getTypedParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/BlurEffect;Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public static fun withParameter (Lcom/debanshu/shaderlab/shaderx/effect/BlurEffect;Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/CompositeEffect : com/debanshu/shaderlab/shaderx/effect/ShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect$Companion;
+	public static final field DELIMITER C
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;Ljava/util/List;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (I)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public fun getDisplayName ()Ljava/lang/String;
+	public final fun getEffects ()Ljava/util/List;
+	public fun getId ()Ljava/lang/String;
+	public fun getParameterValue (Ljava/lang/String;)F
+	public fun getParameters ()Ljava/util/List;
+	public final fun getSize ()I
+	public fun getTypedParameterValue (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun hashCode ()I
+	public final fun plus (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;
+	public fun toString ()Ljava/lang/String;
+	public fun withParameter (Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/CompositeEffect$Companion {
+	public final fun of (Ljava/util/List;)Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;
+	public final fun of ([Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/CompositeEffectKt {
+	public static final fun plus (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/effect/NativeEffect : com/debanshu/shaderlab/shaderx/effect/ShaderEffect {
+	public abstract fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/NativeEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/NativeEffect$DefaultImpls {
+	public static fun getParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/NativeEffect;Ljava/lang/String;)F
+	public static fun getTypedParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/NativeEffect;Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public static fun withParameter (Lcom/debanshu/shaderlab/shaderx/effect/NativeEffect;Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect : com/debanshu/shaderlab/shaderx/effect/ShaderEffect {
+	public abstract fun buildUniforms (FF)Ljava/util/List;
+	public abstract fun getShaderSource ()Ljava/lang/String;
+	public abstract fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect$DefaultImpls {
+	public static fun getParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;Ljava/lang/String;)F
+	public static fun getTypedParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public static fun withParameter (Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/effect/ShaderEffect {
+	public abstract fun getDisplayName ()Ljava/lang/String;
+	public abstract fun getId ()Ljava/lang/String;
+	public fun getParameterValue (Ljava/lang/String;)F
+	public abstract fun getParameters ()Ljava/util/List;
+	public fun getTypedParameterValue (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun withParameter (Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public abstract fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/ShaderEffect$DefaultImpls {
+	public static fun getParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Ljava/lang/String;)F
+	public static fun getTypedParameterValue (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public static fun withParameter (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/ShaderEffectExtensionsKt {
+	public static final fun withColorParameter (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Ljava/lang/String;J)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public static final fun withColorParameter-mxwnekA (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Ljava/lang/String;J)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/AnimatedGradientEffect : com/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/AnimatedGradientEffect$Companion;
+	public static final field DEFAULT_END_COLOR J
+	public static final field DEFAULT_START_COLOR J
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_ANIMATE Ljava/lang/String;
+	public static final field PARAM_END_COLOR Ljava/lang/String;
+	public static final field PARAM_SPEED Ljava/lang/String;
+	public static final field PARAM_START_COLOR Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (JJFZF)V
+	public synthetic fun <init> (JJFZFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public synthetic fun copyWithTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public final fun getAnimate ()Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public final fun getEndColor ()J
+	public fun getId ()Ljava/lang/String;
+	public fun getShaderSource ()Ljava/lang/String;
+	public final fun getSpeed ()F
+	public final fun getStartColor ()J
+	public fun getTime ()F
+	public fun isAnimating ()Z
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/AnimatedGradientEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/AudioDistortionEffect : com/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/AudioDistortionEffect$Companion;
+	public static final field DEFAULT_FFT_SIZE F
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_ANIMATE Ljava/lang/String;
+	public static final field PARAM_FFT_SIZE Ljava/lang/String;
+	public static final field PARAM_INTENSITY Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (Landroidx/compose/ui/graphics/ImageBitmap;FFZFLkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Landroidx/compose/ui/graphics/ImageBitmap;FFZFLkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildFrameUniforms ()Ljava/util/List;
+	public fun buildUniforms (FF)Ljava/util/List;
+	public synthetic fun copyWithTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public final fun getAnimate ()Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public final fun getFftData ()Landroidx/compose/ui/graphics/ImageBitmap;
+	public final fun getFftSize ()F
+	public fun getId ()Ljava/lang/String;
+	public final fun getIntensity ()F
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun getTime ()F
+	public fun isAnimating ()Z
+	public final fun withFftData (Landroidx/compose/ui/graphics/ImageBitmap;)Lcom/debanshu/shaderlab/shaderx/effect/impl/AudioDistortionEffect;
+	public final fun withFftDataSource (Lkotlin/jvm/functions/Function0;)Lcom/debanshu/shaderlab/shaderx/effect/impl/AudioDistortionEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/AudioDistortionEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/AudioVisualizerEffect : com/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/AudioVisualizerEffect$Companion;
+	public static final field DEFAULT_FFT_SIZE F
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_ANIMATE Ljava/lang/String;
+	public static final field PARAM_BAR_COLOR_INTENSITY Ljava/lang/String;
+	public static final field PARAM_FFT_SIZE Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (Landroidx/compose/ui/graphics/ImageBitmap;FFZFLkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Landroidx/compose/ui/graphics/ImageBitmap;FFZFLkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildFrameUniforms ()Ljava/util/List;
+	public fun buildUniforms (FF)Ljava/util/List;
+	public synthetic fun copyWithTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public final fun getAnimate ()Z
+	public final fun getBarColorIntensity ()F
+	public fun getDisplayName ()Ljava/lang/String;
+	public final fun getFftData ()Landroidx/compose/ui/graphics/ImageBitmap;
+	public final fun getFftSize ()F
+	public fun getId ()Ljava/lang/String;
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun getTime ()F
+	public fun isAnimating ()Z
+	public final fun withFftData (Landroidx/compose/ui/graphics/ImageBitmap;)Lcom/debanshu/shaderlab/shaderx/effect/impl/AudioVisualizerEffect;
+	public final fun withFftDataSource (Lkotlin/jvm/functions/Function0;)Lcom/debanshu/shaderlab/shaderx/effect/impl/AudioVisualizerEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/AudioVisualizerEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/ChromaticAberrationEffect : com/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/ChromaticAberrationEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_OFFSET Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (F)V
+	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/debanshu/shaderlab/shaderx/effect/impl/ChromaticAberrationEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/ChromaticAberrationEffect;FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/impl/ChromaticAberrationEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public final fun getOffset ()F
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/ChromaticAberrationEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/ColorMatrix {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/ColorMatrix$Companion;
+	public fun <init> ([F)V
+	public final fun effect ()Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCoefficients ()[F
+	public fun hashCode ()I
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/ColorMatrix$Companion {
+	public final fun identity ()Lcom/debanshu/shaderlab/shaderx/effect/impl/ColorMatrix;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/EffectCollection {
+	public static final field $stable I
+	public static final field INSTANCE Lcom/debanshu/shaderlab/shaderx/effect/impl/EffectCollection;
+	public final fun adjustColor (FFF)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public static synthetic fun adjustColor$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/EffectCollection;FFFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public final fun dither (FFF)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public static synthetic fun dither$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/EffectCollection;FFFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public final fun dots (FF)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public static synthetic fun dots$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/EffectCollection;FFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect;
+	public final fun getColorAdjustment ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;
+	public final fun getColorMatrix ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;
+	public final fun getHalftone ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;
+	public final fun getOrderedDither ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderDefinition;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/GradientEffect : com/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/GradientEffect$Companion;
+	public static final field DEFAULT_COLOR_1 J
+	public static final field DEFAULT_COLOR_2 J
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_COLOR_1 Ljava/lang/String;
+	public static final field PARAM_COLOR_2 Ljava/lang/String;
+	public static final field PARAM_INTENSITY Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (JJF)V
+	public synthetic fun <init> (JJFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun component3 ()F
+	public final fun copy (JJF)Lcom/debanshu/shaderlab/shaderx/effect/impl/GradientEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/GradientEffect;JJFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/impl/GradientEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColor1 ()J
+	public final fun getColor2 ()J
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public final fun getIntensity ()F
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun withColor1 (J)Lcom/debanshu/shaderlab/shaderx/effect/impl/GradientEffect;
+	public final fun withColor1-8_81llA (J)Lcom/debanshu/shaderlab/shaderx/effect/impl/GradientEffect;
+	public final fun withColor2 (J)Lcom/debanshu/shaderlab/shaderx/effect/impl/GradientEffect;
+	public final fun withColor2-8_81llA (J)Lcom/debanshu/shaderlab/shaderx/effect/impl/GradientEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/GradientEffect$Companion {
+	public final fun getCOLOR_1 ()Lcom/debanshu/shaderlab/shaderx/parameter/ColorParameterDefinition;
+	public final fun getCOLOR_2 ()Lcom/debanshu/shaderlab/shaderx/parameter/ColorParameterDefinition;
+	public final fun getINTENSITY ()Lcom/debanshu/shaderlab/shaderx/parameter/FloatParameterDefinition;
+	public final fun getSCHEMA ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSchema;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/GrayscaleEffect : com/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/GrayscaleEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_INTENSITY Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (F)V
+	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/debanshu/shaderlab/shaderx/effect/impl/GrayscaleEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/GrayscaleEffect;FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/impl/GrayscaleEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public final fun getIntensity ()F
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/GrayscaleEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/InvertEffect : com/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/InvertEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/Unit;)V
+	public synthetic fun <init> (Lkotlin/Unit;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public final fun copy (Lkotlin/Unit;)Lcom/debanshu/shaderlab/shaderx/effect/impl/InvertEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/InvertEffect;Lkotlin/Unit;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/impl/InvertEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/InvertEffect$Companion {
+	public final fun getDefault ()Lcom/debanshu/shaderlab/shaderx/effect/impl/InvertEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/NativeBlurEffect : com/debanshu/shaderlab/shaderx/effect/AbstractNativeEffect, com/debanshu/shaderlab/shaderx/effect/BlurEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/NativeBlurEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_RADIUS Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (F)V
+	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/debanshu/shaderlab/shaderx/effect/impl/NativeBlurEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/NativeBlurEffect;FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/impl/NativeBlurEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public fun getRadius ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public synthetic fun withParameter (Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public fun withParameter (Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/effect/impl/NativeBlurEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AbstractNativeEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/BlurEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/NativeEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/impl/NativeBlurEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/NativeBlurEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/PixelateEffect : com/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/PixelateEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_PIXEL_SIZE Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (F)V
+	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/debanshu/shaderlab/shaderx/effect/impl/PixelateEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/PixelateEffect;FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/impl/PixelateEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public final fun getPixelSize ()F
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/PixelateEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/PlasmaEffect : com/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/PlasmaEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_ANIMATE Ljava/lang/String;
+	public static final field PARAM_COLOR_INTENSITY Ljava/lang/String;
+	public static final field PARAM_SCALE Ljava/lang/String;
+	public static final field PARAM_SPEED Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (FFFZF)V
+	public synthetic fun <init> (FFFZFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public synthetic fun copyWithTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public final fun getAnimate ()Z
+	public final fun getColorIntensity ()F
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public final fun getScale ()F
+	public fun getShaderSource ()Ljava/lang/String;
+	public final fun getSpeed ()F
+	public fun getTime ()F
+	public fun isAnimating ()Z
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/PlasmaEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/RippleEffect : com/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/RippleEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_AMPLITUDE Ljava/lang/String;
+	public static final field PARAM_ANIMATE Ljava/lang/String;
+	public static final field PARAM_DECAY Ljava/lang/String;
+	public static final field PARAM_FREQUENCY Ljava/lang/String;
+	public static final field PARAM_SPEED Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (FFFFZF)V
+	public synthetic fun <init> (FFFFZFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public synthetic fun copyWithTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public final fun getAmplitude ()F
+	public final fun getAnimate ()Z
+	public final fun getDecay ()F
+	public fun getDisplayName ()Ljava/lang/String;
+	public final fun getFrequency ()F
+	public fun getId ()Ljava/lang/String;
+	public fun getShaderSource ()Ljava/lang/String;
+	public final fun getSpeed ()F
+	public fun getTime ()F
+	public fun isAnimating ()Z
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/RippleEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/SepiaEffect : com/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/SepiaEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_INTENSITY Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (F)V
+	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/debanshu/shaderlab/shaderx/effect/impl/SepiaEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/SepiaEffect;FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/impl/SepiaEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public final fun getIntensity ()F
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/SepiaEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/VignetteEffect : com/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/VignetteEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_INTENSITY Ljava/lang/String;
+	public static final field PARAM_RADIUS Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (FF)V
+	public synthetic fun <init> (FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lcom/debanshu/shaderlab/shaderx/effect/impl/VignetteEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/VignetteEffect;FFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/impl/VignetteEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public final fun getIntensity ()F
+	public final fun getRadius ()F
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/VignetteEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/VortexEffect : com/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/VortexEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_ANIMATE Ljava/lang/String;
+	public static final field PARAM_RADIUS Ljava/lang/String;
+	public static final field PARAM_SPEED Ljava/lang/String;
+	public static final field PARAM_STRENGTH Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (FFFZF)V
+	public synthetic fun <init> (FFFZFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public synthetic fun copyWithTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public final fun getAnimate ()Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public final fun getRadius ()F
+	public fun getShaderSource ()Ljava/lang/String;
+	public final fun getSpeed ()F
+	public final fun getStrength ()F
+	public fun getTime ()F
+	public fun isAnimating ()Z
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/VortexEffect$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/WaveEffect : com/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/effect/impl/WaveEffect$Companion;
+	public static final field ID Ljava/lang/String;
+	public static final field PARAM_AMPLITUDE Ljava/lang/String;
+	public static final field PARAM_ANIMATE Ljava/lang/String;
+	public static final field PARAM_FREQUENCY Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (FFZF)V
+	public synthetic fun <init> (FFZFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildUniforms (FF)Ljava/util/List;
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()Z
+	public final fun component4 ()F
+	public final fun copy (FFZF)Lcom/debanshu/shaderlab/shaderx/effect/impl/WaveEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/effect/impl/WaveEffect;FFZFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/effect/impl/WaveEffect;
+	public synthetic fun copyWithTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public final fun getAmplitude ()F
+	public final fun getAnimate ()Z
+	public fun getDisplayName ()Ljava/lang/String;
+	public final fun getFrequency ()F
+	public fun getId ()Ljava/lang/String;
+	public fun getShaderSource ()Ljava/lang/String;
+	public fun getTime ()F
+	public fun isAnimating ()Z
+	public fun toString ()Ljava/lang/String;
+	public synthetic fun withTime (F)Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;
+	public fun withTime (F)Lcom/debanshu/shaderlab/shaderx/effect/impl/WaveEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AbstractRuntimeShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;
+	public synthetic fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public fun withTypedParameter (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/impl/WaveEffect;
+}
+
+public final class com/debanshu/shaderlab/shaderx/effect/impl/WaveEffect$Companion {
+	public final fun getAMPLITUDE ()Lcom/debanshu/shaderlab/shaderx/parameter/FloatParameterDefinition;
+	public final fun getANIMATE ()Lcom/debanshu/shaderlab/shaderx/parameter/BooleanParameterDefinition;
+	public final fun getFREQUENCY ()Lcom/debanshu/shaderlab/shaderx/parameter/FloatParameterDefinition;
+	public final fun getSCHEMA ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSchema;
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/factory/BaseShaderFactory : com/debanshu/shaderlab/shaderx/factory/ShaderFactory {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun chainEffects (Landroidx/compose/ui/graphics/RenderEffect;Landroidx/compose/ui/graphics/RenderEffect;)Landroidx/compose/ui/graphics/RenderEffect;
+	public fun createAnimatedSession (Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;FF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	protected fun createCompositeEffect (Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;FF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	protected abstract fun createNativeEffect (Lcom/debanshu/shaderlab/shaderx/effect/NativeEffect;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public fun createRenderEffect (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;FF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	protected abstract fun createRuntimeShaderEffect (Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;FF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	protected fun getSupportsChaining ()Z
+	protected fun platformNotSupportedError ()Lcom/debanshu/shaderlab/shaderx/result/ShaderError;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ImageExportKt {
+	public static final fun exportImage (Lcom/debanshu/shaderlab/shaderx/factory/ImageProcessor;[BLcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Lcom/debanshu/shaderlab/shaderx/factory/ImageExportOptions;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public static final fun exportImage ([BLcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Lcom/debanshu/shaderlab/shaderx/factory/ImageExportOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun queryImageExportSupport (Lcom/debanshu/shaderlab/shaderx/factory/ImageProcessor;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ImageExportOptions {
+	public static final field $stable I
+	public fun <init> (IILjava/lang/Float;Ljava/lang/Float;)V
+	public synthetic fun <init> (IILjava/lang/Float;Ljava/lang/Float;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/lang/Float;
+	public final fun component4 ()Ljava/lang/Float;
+	public final fun copy (IILjava/lang/Float;Ljava/lang/Float;)Lcom/debanshu/shaderlab/shaderx/factory/ImageExportOptions;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/factory/ImageExportOptions;IILjava/lang/Float;Ljava/lang/Float;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/factory/ImageExportOptions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCoordinateHeight ()Ljava/lang/Float;
+	public final fun getCoordinateWidth ()Ljava/lang/Float;
+	public final fun getPixelHeight ()I
+	public final fun getPixelWidth ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/factory/ImageExportProvider {
+	public abstract fun exportImage ([BLcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Lcom/debanshu/shaderlab/shaderx/factory/ImageExportOptions;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public abstract fun queryImageExportSupport (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/factory/ImageProcessor {
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/factory/ImageProcessor$Companion;
+	public abstract fun process ([BLcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;FF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public static synthetic fun process$default (Lcom/debanshu/shaderlab/shaderx/factory/ImageProcessor;[BLcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;FFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ImageProcessor$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ImageProcessor$DefaultImpls {
+	public static synthetic fun process$default (Lcom/debanshu/shaderlab/shaderx/factory/ImageProcessor;[BLcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;FFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderCapabilitiesKt {
+	public static final fun queryBackgroundSupport (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBackground;Ljava/util/Set;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;
+	public static synthetic fun queryBackgroundSupport$default (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderBackground;Ljava/util/Set;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;
+	public static final fun querySupport (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lcom/debanshu/shaderlab/shaderx/factory/ShaderOperation;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Ljava/util/Set;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;
+	public static synthetic fun querySupport$default (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lcom/debanshu/shaderlab/shaderx/factory/ShaderOperation;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Ljava/util/Set;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/factory/ShaderCapabilityProvider {
+	public abstract fun querySupport (Lcom/debanshu/shaderlab/shaderx/factory/ShaderOperation;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;Ljava/util/Set;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/factory/ShaderFactory : java/lang/AutoCloseable {
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory$Companion;
+	public abstract fun clearCache ()V
+	public abstract fun close ()V
+	public fun createAnimatedSession (Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;FF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public abstract fun createRenderEffect (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;FF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public abstract fun getCacheSize ()I
+	public abstract fun isSupported ()Z
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderFactory$Companion {
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderFactory$DefaultImpls {
+	public static fun createAnimatedSession (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;FF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderFactory_jvmKt {
+	public static final fun create (Lcom/debanshu/shaderlab/shaderx/factory/ImageProcessor$Companion;Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;)Lcom/debanshu/shaderlab/shaderx/factory/ImageProcessor;
+	public static final fun create (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory$Companion;I)Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;
+	public static synthetic fun create$default (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory$Companion;IILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderFallbackKt {
+	public static final fun createRenderEffectWithFallback (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;FFLcom/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderRenderOutcome;
+	public static synthetic fun createRenderEffectWithFallback$default (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;FFLcom/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderRenderOutcome;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy {
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy$Fail : com/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy {
+	public static final field $stable I
+	public static final field INSTANCE Lcom/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy$Fail;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy$PreserveContent : com/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy {
+	public static final field $stable I
+	public static final field INSTANCE Lcom/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy$PreserveContent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy$Substitute : com/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy {
+	public static final field $stable I
+	public fun <init> (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)V
+	public final fun component1 ()Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public final fun copy (Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy$Substitute;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy$Substitute;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderFallbackPolicy$Substitute;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEffect ()Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderInput : java/lang/Enum {
+	public static final field IMAGE_TEXTURE Lcom/debanshu/shaderlab/shaderx/factory/ShaderInput;
+	public static final field NESTED_SHADER Lcom/debanshu/shaderlab/shaderx/factory/ShaderInput;
+	public static final field RAW_DATA_TEXTURE Lcom/debanshu/shaderlab/shaderx/factory/ShaderInput;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderInput;
+	public static fun values ()[Lcom/debanshu/shaderlab/shaderx/factory/ShaderInput;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderOperation : java/lang/Enum {
+	public static final field ANIMATED_SESSION Lcom/debanshu/shaderlab/shaderx/factory/ShaderOperation;
+	public static final field BACKGROUND_RENDER Lcom/debanshu/shaderlab/shaderx/factory/ShaderOperation;
+	public static final field CONTENT_RENDER Lcom/debanshu/shaderlab/shaderx/factory/ShaderOperation;
+	public static final field IMAGE_EXPORT Lcom/debanshu/shaderlab/shaderx/factory/ShaderOperation;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderOperation;
+	public static fun values ()[Lcom/debanshu/shaderlab/shaderx/factory/ShaderOperation;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/factory/ShaderPipelineProvider {
+	public abstract fun createPipelineSession (Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;FFF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/factory/ShaderPipelineSession : java/lang/AutoCloseable {
+	public abstract fun close ()V
+	public abstract fun getCurrentRenderEffect ()Landroidx/compose/ui/graphics/RenderEffect;
+	public abstract fun refresh (Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;FFF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderPipelineSessionKt {
+	public static final fun createPipelineSession (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;FFF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public static synthetic fun createPipelineSession$default (Lcom/debanshu/shaderlab/shaderx/factory/ShaderFactory;Lcom/debanshu/shaderlab/shaderx/effect/CompositeEffect;FFFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderRenderOutcome {
+	public static final field $stable I
+	public fun <init> (Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;ZLcom/debanshu/shaderlab/shaderx/result/ShaderError;)V
+	public synthetic fun <init> (Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;ZLcom/debanshu/shaderlab/shaderx/result/ShaderError;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public final fun component2 ()Z
+	public final fun component3 ()Lcom/debanshu/shaderlab/shaderx/result/ShaderError;
+	public final fun copy (Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;ZLcom/debanshu/shaderlab/shaderx/result/ShaderError;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderRenderOutcome;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/factory/ShaderRenderOutcome;Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;ZLcom/debanshu/shaderlab/shaderx/result/ShaderError;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderRenderOutcome;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCause ()Lcom/debanshu/shaderlab/shaderx/result/ShaderError;
+	public final fun getFallbackUsed ()Z
+	public final fun getResult ()Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/factory/ShaderSession : java/lang/AutoCloseable {
+	public abstract fun close ()V
+	public abstract fun getCurrentRenderEffect ()Landroidx/compose/ui/graphics/RenderEffect;
+	public abstract fun refresh (Lcom/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect;FF)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderSupport {
+	public static final field $stable I
+	public fun <init> (Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;
+	public final fun component2 ()Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;Ljava/lang/String;Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupport;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getMinimumRequirement ()Ljava/lang/String;
+	public final fun getReason ()Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public final fun getStatus ()Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderSupportReason : java/lang/Enum {
+	public static final field ANDROID_API_31_REQUIRED Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field ANDROID_API_33_REQUIRED Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field ANDROID_EXPORT_UNAVAILABLE Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field ANIMATED_EFFECT_REQUIRED Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field BACKGROUND_UNAVAILABLE Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field CAPABILITIES_NOT_PROVIDED Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field CHAINING_UNAVAILABLE Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field COMPOSITE_ANIMATION_UNAVAILABLE Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field COMPOSITE_EXPORT_UNAVAILABLE Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field EMPTY_COMPOSITE Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field NATIVE_EFFECT_UNAVAILABLE Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field NESTED_SHADER_UNAVAILABLE Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static final field RAW_DATA_UNAVAILABLE Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+	public static fun values ()[Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportReason;
+}
+
+public final class com/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus : java/lang/Enum {
+	public static final field SUPPORTED Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;
+	public static final field UNKNOWN Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;
+	public static final field UNSUPPORTED Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;
+	public static fun values ()[Lcom/debanshu/shaderlab/shaderx/factory/ShaderSupportStatus;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/BooleanParameterDefinition : com/debanshu/shaderlab/shaderx/parameter/ParameterDefinition {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ZLcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ZLcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ColorParameter : com/debanshu/shaderlab/shaderx/parameter/ParameterSpec {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;J)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()J
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;J)Lcom/debanshu/shaderlab/shaderx/parameter/ColorParameter;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/parameter/ColorParameter;Ljava/lang/String;Ljava/lang/String;JILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/ColorParameter;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDefaultAlpha ()F
+	public final fun getDefaultBlue ()F
+	public final fun getDefaultColor ()J
+	public final fun getDefaultGreen ()F
+	public final fun getDefaultRed ()F
+	public fun getDefaultValue ()F
+	public fun getHasRange ()Z
+	public fun getId ()Ljava/lang/String;
+	public fun getLabel ()Ljava/lang/String;
+	public fun getRange ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public fun getTypedDefaultValue ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public fun validateValue (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ColorParameter;
+	public synthetic fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSpec;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ColorParameterDefinition : com/debanshu/shaderlab/shaderx/parameter/ParameterDefinition {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;JLcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;JLcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/FloatParameter : com/debanshu/shaderlab/shaderx/parameter/ParameterSpec {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/ClosedFloatingPointRange;FI)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/ClosedFloatingPointRange;FIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public final fun component4 ()F
+	public final fun component5 ()I
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/ClosedFloatingPointRange;FI)Lcom/debanshu/shaderlab/shaderx/parameter/FloatParameter;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/parameter/FloatParameter;Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/ClosedFloatingPointRange;FIILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/FloatParameter;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDecimalPlaces ()I
+	public fun getDefaultValue ()F
+	public fun getHasRange ()Z
+	public fun getId ()Ljava/lang/String;
+	public fun getLabel ()Ljava/lang/String;
+	public fun getRange ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public fun getTypedDefaultValue ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public fun validateValue (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/FloatParameter;
+	public synthetic fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSpec;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/FloatParameterDefinition : com/debanshu/shaderlab/shaderx/parameter/ParameterDefinition {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;FLkotlin/ranges/ClosedFloatingPointRange;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;Ljava/lang/String;Ljava/lang/Float;I)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;FLkotlin/ranges/ClosedFloatingPointRange;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;Ljava/lang/String;Ljava/lang/Float;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDecimalPlaces ()I
+	public final fun getRange ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public final fun getStep ()Ljava/lang/Float;
+	public final fun getUnit ()Ljava/lang/String;
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/parameter/ParameterDefinition {
+	public static final field $stable I
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKind;Ljava/lang/Object;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDefaultValue ()Ljava/lang/Object;
+	public final fun getKey ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;
+	public final fun getMetadata ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterEffectAdaptersKt {
+	public static final fun applyTo (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;
+	public static final fun valuesFrom (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSchema;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterFormatter {
+	public static final field $stable I
+	public static final field INSTANCE Lcom/debanshu/shaderlab/shaderx/parameter/ParameterFormatter;
+	public final fun format (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSpec;F)Ljava/lang/String;
+	public final fun formatColor (J)Ljava/lang/String;
+	public final fun formatFloat (FI)Ljava/lang/String;
+	public final fun formatTyped (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSpec;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterKey {
+	public static final field $stable I
+	public final fun getId ()Ljava/lang/String;
+	public final fun getKind ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKind;
+	public final fun getOwnerId ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterKind : java/lang/Enum {
+	public static final field BOOLEAN Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKind;
+	public static final field COLOR Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKind;
+	public static final field FLOAT Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKind;
+	public static fun values ()[Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKind;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterMetadata {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterMetadata;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getLabel ()Ljava/lang/String;
+	public final fun getOrder ()I
+	public final fun getSemanticRole ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy : java/lang/Enum {
+	public static final field CLAMP Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;
+	public static final field REJECT Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;
+	public static fun values ()[Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterSchema {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSchema$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun defaults ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+	public final fun definition (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterDefinition;
+	public final fun getDefinitions ()Ljava/util/List;
+	public final fun getOwnerId ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterSchema$Companion {
+	public final fun fromLegacy (Ljava/lang/String;Ljava/util/List;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSchema;
+}
+
+public abstract interface class com/debanshu/shaderlab/shaderx/parameter/ParameterSpec {
+	public abstract fun getDefaultValue ()F
+	public fun getHasRange ()Z
+	public abstract fun getId ()Ljava/lang/String;
+	public abstract fun getLabel ()Ljava/lang/String;
+	public abstract fun getRange ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public abstract fun getTypedDefaultValue ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public abstract fun validateValue (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public abstract fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSpec;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterSpec$DefaultImpls {
+	public static fun getHasRange (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSpec;)Z
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/parameter/ParameterValue {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$Companion;
+	public final fun toFloat ()F
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterValue$BooleanValue : com/debanshu/shaderlab/shaderx/parameter/ParameterValue {
+	public static final field $stable I
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$BooleanValue;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$BooleanValue;ZILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$BooleanValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEnabled ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterValue$ColorValue : com/debanshu/shaderlab/shaderx/parameter/ParameterValue {
+	public static final field $stable I
+	public fun <init> (J)V
+	public final fun component1 ()J
+	public final fun copy (J)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$ColorValue;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$ColorValue;JILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$ColorValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColor ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterValue$Companion {
+	public final fun fromBoolean (Z)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public final fun fromColor (J)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public final fun fromFloat (F)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterValue$FloatValue : com/debanshu/shaderlab/shaderx/parameter/ParameterValue {
+	public static final field $stable I
+	public fun <init> (F)V
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$FloatValue;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$FloatValue;FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue$FloatValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ParameterValues {
+	public static final field $stable I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;)Ljava/lang/Object;
+	public final fun getSchema ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSchema;
+	public fun hashCode ()I
+	public final fun reset ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+	public final fun reset (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+	public final fun snapshot ()Ljava/util/Map;
+	public final fun value (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public final fun withValue (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;Ljava/lang/Object;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+	public final fun withValue (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+	public static synthetic fun withValue$default (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterKey;Ljava/lang/Object;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+	public static synthetic fun withValue$default (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterRangePolicy;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValues;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/PercentageParameter : com/debanshu/shaderlab/shaderx/parameter/ParameterSpec {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;F)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()F
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;F)Lcom/debanshu/shaderlab/shaderx/parameter/PercentageParameter;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/parameter/PercentageParameter;Ljava/lang/String;Ljava/lang/String;FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/PercentageParameter;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDefaultValue ()F
+	public fun getHasRange ()Z
+	public fun getId ()Ljava/lang/String;
+	public fun getLabel ()Ljava/lang/String;
+	public fun getRange ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public fun getTypedDefaultValue ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public fun validateValue (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public synthetic fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSpec;
+	public fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/PercentageParameter;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/PixelParameter : com/debanshu/shaderlab/shaderx/parameter/ParameterSpec {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/ClosedFloatingPointRange;F)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public final fun component4 ()F
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/ClosedFloatingPointRange;F)Lcom/debanshu/shaderlab/shaderx/parameter/PixelParameter;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/parameter/PixelParameter;Ljava/lang/String;Ljava/lang/String;Lkotlin/ranges/ClosedFloatingPointRange;FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/PixelParameter;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDefaultValue ()F
+	public fun getHasRange ()Z
+	public fun getId ()Ljava/lang/String;
+	public fun getLabel ()Ljava/lang/String;
+	public fun getRange ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public fun getTypedDefaultValue ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public fun validateValue (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public synthetic fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSpec;
+	public fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/PixelParameter;
+}
+
+public final class com/debanshu/shaderlab/shaderx/parameter/ToggleParameter : com/debanshu/shaderlab/shaderx/parameter/ParameterSpec {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Z)Lcom/debanshu/shaderlab/shaderx/parameter/ToggleParameter;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/parameter/ToggleParameter;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/parameter/ToggleParameter;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDefaultValue ()F
+	public fun getHasRange ()Z
+	public fun getId ()Ljava/lang/String;
+	public fun getLabel ()Ljava/lang/String;
+	public fun getRange ()Lkotlin/ranges/ClosedFloatingPointRange;
+	public fun getTypedDefaultValue ()Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public fun hashCode ()I
+	public final fun isEnabledByDefault ()Z
+	public fun toString ()Ljava/lang/String;
+	public fun validateValue (Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;
+	public synthetic fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ParameterSpec;
+	public fun withId (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/parameter/ToggleParameter;
+}
+
+public final class com/debanshu/shaderlab/shaderx/playback/ShaderPlayback {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (DZD)V
+	public synthetic fun <init> (DZDILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getPositionSeconds ()D
+	public final fun getSpeed ()D
+	public final fun isAdvancing ()Z
+	public final fun isPlaying ()Z
+	public final fun seekTo (D)V
+	public final fun setPlaying (Z)V
+	public final fun setSpeed (D)V
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/result/ShaderError {
+	public static final field $stable I
+	public abstract fun getMessage ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/result/ShaderError$CompilationError : com/debanshu/shaderlab/shaderx/result/ShaderError {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$CompilationError;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/result/ShaderError$CompilationError;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$CompilationError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getMessage ()Ljava/lang/String;
+	public final fun getShaderSource ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/result/ShaderError$PlatformNotSupported : com/debanshu/shaderlab/shaderx/result/ShaderError {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$PlatformNotSupported;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/result/ShaderError$PlatformNotSupported;Ljava/lang/String;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$PlatformNotSupported;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/result/ShaderError$ProcessingError : com/debanshu/shaderlab/shaderx/result/ShaderError {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Throwable;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Throwable;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$ProcessingError;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/result/ShaderError$ProcessingError;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$ProcessingError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCause ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/result/ShaderError$Unknown : com/debanshu/shaderlab/shaderx/result/ShaderError {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Throwable;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Throwable;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$Unknown;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/result/ShaderError$Unknown;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$Unknown;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCause ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/result/ShaderError$UnsupportedEffect : com/debanshu/shaderlab/shaderx/result/ShaderError {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$UnsupportedEffect;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/result/ShaderError$UnsupportedEffect;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderError$UnsupportedEffect;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEffectId ()Ljava/lang/String;
+	public fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/result/ShaderException : java/lang/Exception {
+	public static final field $stable I
+	public fun <init> (Lcom/debanshu/shaderlab/shaderx/result/ShaderError;)V
+	public final fun getError ()Lcom/debanshu/shaderlab/shaderx/result/ShaderError;
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/result/ShaderResult {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/result/ShaderResult$Companion;
+	public final fun flatMap (Lkotlin/jvm/functions/Function1;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public final fun fold (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public final fun getOrElse (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public final fun getOrNull ()Ljava/lang/Object;
+	public final fun getOrThrow ()Ljava/lang/Object;
+	public final fun map (Lkotlin/jvm/functions/Function1;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public final fun onFailure (Lkotlin/jvm/functions/Function1;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public final fun onSuccess (Lkotlin/jvm/functions/Function1;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public final fun recover (Lkotlin/jvm/functions/Function1;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+}
+
+public final class com/debanshu/shaderlab/shaderx/result/ShaderResult$Companion {
+	public final fun failure (Lcom/debanshu/shaderlab/shaderx/result/ShaderError;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public final fun runCatching (Lkotlin/jvm/functions/Function0;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+	public final fun success (Ljava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult;
+}
+
+public final class com/debanshu/shaderlab/shaderx/result/ShaderResult$Failure : com/debanshu/shaderlab/shaderx/result/ShaderResult {
+	public static final field $stable I
+	public fun <init> (Lcom/debanshu/shaderlab/shaderx/result/ShaderError;)V
+	public final fun component1 ()Lcom/debanshu/shaderlab/shaderx/result/ShaderError;
+	public final fun copy (Lcom/debanshu/shaderlab/shaderx/result/ShaderError;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult$Failure;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/result/ShaderResult$Failure;Lcom/debanshu/shaderlab/shaderx/result/ShaderError;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult$Failure;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getError ()Lcom/debanshu/shaderlab/shaderx/result/ShaderError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/result/ShaderResult$Success : com/debanshu/shaderlab/shaderx/result/ShaderResult {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult$Success;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/result/ShaderResult$Success;Ljava/lang/Object;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/result/ShaderResult$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/ColorUniform : com/debanshu/shaderlab/shaderx/uniform/Uniform {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/uniform/ColorUniform$Companion;
+	public fun <init> (Ljava/lang/String;FFFF)V
+	public synthetic fun <init> (Ljava/lang/String;FFFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;J)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()F
+	public final fun copy (Ljava/lang/String;FFFF)Lcom/debanshu/shaderlab/shaderx/uniform/ColorUniform;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/uniform/ColorUniform;Ljava/lang/String;FFFFILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/uniform/ColorUniform;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlpha ()F
+	public final fun getBlue ()F
+	public final fun getGreen ()F
+	public fun getName ()Ljava/lang/String;
+	public final fun getRed ()F
+	public fun hashCode ()I
+	public final fun toFloatArray ()[F
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/ColorUniform$Companion {
+	public final fun fromColor-4WTKRHQ (Ljava/lang/String;J)Lcom/debanshu/shaderlab/shaderx/uniform/ColorUniform;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/DataSampling : java/lang/Enum {
+	public static final field LINEAR Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;
+	public static final field NEAREST Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;
+	public static fun values ()[Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/DataUniform : com/debanshu/shaderlab/shaderx/uniform/Uniform {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;)V
+	public synthetic fun <init> (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;
+	public final fun component3 ()Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;
+	public final fun component4 ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public final fun component5 ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public final fun copy (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;)Lcom/debanshu/shaderlab/shaderx/uniform/DataUniform;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/uniform/DataUniform;Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/uniform/DataUniform;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getData ()Lcom/debanshu/shaderlab/shaderx/uniform/Rgba8Data;
+	public fun getName ()Ljava/lang/String;
+	public final fun getSampling ()Lcom/debanshu/shaderlab/shaderx/uniform/DataSampling;
+	public final fun getTileModeX ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public final fun getTileModeY ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/FloatUniform : com/debanshu/shaderlab/shaderx/uniform/Uniform {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;F)V
+	public fun <init> (Ljava/lang/String;FF)V
+	public fun <init> (Ljava/lang/String;FFF)V
+	public fun <init> (Ljava/lang/String;FFFF)V
+	public fun <init> (Ljava/lang/String;[F)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()[F
+	public final fun copy (Ljava/lang/String;[F)Lcom/debanshu/shaderlab/shaderx/uniform/FloatUniform;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/uniform/FloatUniform;Ljava/lang/String;[FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/uniform/FloatUniform;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getName ()Ljava/lang/String;
+	public final fun getValues ()[F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/IntUniform : com/debanshu/shaderlab/shaderx/uniform/Uniform {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;I)V
+	public fun <init> (Ljava/lang/String;II)V
+	public fun <init> (Ljava/lang/String;III)V
+	public fun <init> (Ljava/lang/String;IIII)V
+	public fun <init> (Ljava/lang/String;[I)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()[I
+	public final fun copy (Ljava/lang/String;[I)Lcom/debanshu/shaderlab/shaderx/uniform/IntUniform;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/uniform/IntUniform;Ljava/lang/String;[IILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/uniform/IntUniform;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getName ()Ljava/lang/String;
+	public final fun getValues ()[I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/MatrixUniform : com/debanshu/shaderlab/shaderx/uniform/Uniform {
+	public static final field $stable I
+	public static final field Companion Lcom/debanshu/shaderlab/shaderx/uniform/MatrixUniform$Companion;
+	public fun <init> (Ljava/lang/String;[F)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()[F
+	public final fun copy (Ljava/lang/String;[F)Lcom/debanshu/shaderlab/shaderx/uniform/MatrixUniform;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/uniform/MatrixUniform;Ljava/lang/String;[FILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/uniform/MatrixUniform;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getName ()Ljava/lang/String;
+	public final fun getValues ()[F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/MatrixUniform$Companion {
+	public final fun identity2x2 (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/uniform/MatrixUniform;
+	public final fun identity3x3 (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/uniform/MatrixUniform;
+	public final fun identity4x4 (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/uniform/MatrixUniform;
+	public final fun rowMajor (Ljava/lang/String;[F)Lcom/debanshu/shaderlab/shaderx/uniform/MatrixUniform;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/NestedUniform : com/debanshu/shaderlab/shaderx/uniform/Uniform {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;
+	public final fun copy (Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;)Lcom/debanshu/shaderlab/shaderx/uniform/NestedUniform;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/uniform/NestedUniform;Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/uniform/NestedUniform;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInput ()Lcom/debanshu/shaderlab/shaderx/authoring/ShaderNode;
+	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/Rgba8Data {
+	public static final field $stable I
+	public fun <init> (II[B)V
+	public final fun bytes ()[B
+	public final fun getHeight ()I
+	public final fun getWidth ()I
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/ShaderTileMode : java/lang/Enum {
+	public static final field CLAMP Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public static final field MIRROR Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public static final field REPEAT Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public static fun values ()[Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+}
+
+public final class com/debanshu/shaderlab/shaderx/uniform/TextureUniform : com/debanshu/shaderlab/shaderx/uniform/Uniform {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Landroidx/compose/ui/graphics/ImageBitmap;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;)V
+	public synthetic fun <init> (Ljava/lang/String;Landroidx/compose/ui/graphics/ImageBitmap;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Landroidx/compose/ui/graphics/ImageBitmap;
+	public final fun component3 ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public final fun component4 ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public final fun copy (Ljava/lang/String;Landroidx/compose/ui/graphics/ImageBitmap;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;)Lcom/debanshu/shaderlab/shaderx/uniform/TextureUniform;
+	public static synthetic fun copy$default (Lcom/debanshu/shaderlab/shaderx/uniform/TextureUniform;Ljava/lang/String;Landroidx/compose/ui/graphics/ImageBitmap;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;ILjava/lang/Object;)Lcom/debanshu/shaderlab/shaderx/uniform/TextureUniform;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImage ()Landroidx/compose/ui/graphics/ImageBitmap;
+	public fun getName ()Ljava/lang/String;
+	public final fun getTileModeX ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public final fun getTileModeY ()Lcom/debanshu/shaderlab/shaderx/uniform/ShaderTileMode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class com/debanshu/shaderlab/shaderx/uniform/Uniform {
+	public static final field $stable I
+	public abstract fun getName ()Ljava/lang/String;
+}
+

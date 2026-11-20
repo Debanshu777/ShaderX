@@ -1,7 +1,6 @@
 package com.debanshu.shaderlab.shaderx.factory
 
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
-import com.debanshu.shaderlab.shaderx.result.ShaderError
 import com.debanshu.shaderlab.shaderx.result.ShaderResult
 
 /**
@@ -17,11 +16,8 @@ internal class AndroidImageProcessor : ImageProcessor {
         height: Float,
     ): ShaderResult<ByteArray> =
         ShaderResult.failure(
-            ShaderError.ProcessingError(
-                "RenderNode-based image processing requires a hardware-accelerated canvas. " +
-                    "Software bitmap export is unsupported on Android. Use the Compose modifier " +
-                    "for on-screen effects or export on a supported Skia platform.",
-            ),
+            builtInSupport(33, ShaderOperation.IMAGE_EXPORT, null)
+                .asError(ShaderOperation.IMAGE_EXPORT, null),
         )
 }
 

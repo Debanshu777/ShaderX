@@ -1,0 +1,417 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX09",
+  "status": "Focused development collection implemented and validated; physical GPU and explicit deferred gates remain",
+  "branch": "codex/developer-experience-research",
+  "availability": {
+    "published": "0.1.3 unchanged",
+    "source": "0.1.4 development"
+  },
+  "toolchain": {
+    "java": "21.0.10 /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
+    "gradle": "9.6.0",
+    "agp": "9.4.1",
+    "kotlin": "2.3.21",
+    "compose": "1.10.3",
+    "skiko": "0.9.37.4"
+  },
+  "contracts": {
+    "definitions": [
+      "color_adjustment",
+      "color_matrix",
+      "ordered_dither",
+      "halftone"
+    ],
+    "sdk_helpers": "adjustColor(brightness,contrast,saturation), dither(amount,cellSize,levels), dots(amount,cellSize), all delegated to strict ParameterValues; compiled in external consumer",
+    "schema": "One rich declaration per effect used unchanged for bindings, controls, preset codec and complete Kotlin export; no legacy reconstruction or new mandatory interface",
+    "matrix": "20 finite coefficients [-8,8], four straight RGBA output rows x(R,G,B,A,normalized bias), copied arrays, value equality/hash including signed zero distinction; clamp straight output and premultiply transformed alpha",
+    "color": "destination working components, no transfer/gamut conversion; contrast around .5 then brightness then Rec709-weight saturation and clamp; alpha preserved except matrix",
+    "neutral": "0 brightness,1 contrast,1 saturation; identity matrix; amount0 artistic. Direct sampled return;2/255 premultiplied RGBA tolerance",
+    "discrete": "levels stored exact float, shader floor(levels+.5), half-up positive ties; metadata steps never quantize",
+    "sizes": "physical pixels; Bayer entry1..64, halftone cell2..64; fractional cells supported with explicit black/white halftone endpoint guards",
+    "presets": [
+      "color-punch-v1: .05,1.2,1.25",
+      "matrix-red-blue-v1: swap R/B",
+      "dither-print-v1: amount1,levels4,cellSize2",
+      "halftone-news-v1: amount1,cellSize8"
+    ],
+    "workflow": "Try named presets directly under selected effect heading; shared pipeline Color\u2192four-tone print starter; actual generated preset Kotlin compiled separately; no duplicated workbench editor"
+  },
+  "provenance": {
+    "all_four": "Original ShaderX implementations under repository Apache2.0; standard math Bayer/Rec709/affine matrix; no shader code copied/adapted from Paper/gallery/GPUImage",
+    "flower": "Existing Paper-rendered README brand artwork preserved"
+  },
+  "results": {
+    "library_jvm": {
+      "tests": 581,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "shaderx/build/test-results/jvmTest/*.xml"
+    },
+    "library_wasm": {
+      "tests": 488,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "shaderx/build/test-results/wasmJsBrowserTest/*.xml"
+    },
+    "library_ios_simulator": {
+      "tests": 488,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "shaderx/build/test-results/iosSimulatorArm64Test/*.xml"
+    },
+    "sample_jvm": {
+      "tests": 47,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "samples/ShaderLab/composeApp/build/test-results/jvmTest/*.xml"
+    },
+    "sample_wasm": {
+      "tests": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "samples/ShaderLab/composeApp/build/test-results/wasmJsBrowserTest/*.xml"
+    },
+    "consumer_jvm": {
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "validation/kmp-consumer/build/test-results/jvmTest/*.xml"
+    }
+  },
+  "android": {
+    "assemble": "passed",
+    "read_only_adb": "0 authorized,0 offline devices; no serial output, reset/restart/pairing",
+    "actual_new_agsl_pixels": "PASSED on task-owned small_phone API36 ARM64 emulator, software graphics.3 tests,0 failures/errors/skips; explicit private transport selection. Owned emulator stopped afterward.",
+    "emulator": {
+      "avd": "small_phone, established by SX12",
+      "api": 36,
+      "graphics": "software ANGLE SwiftShader/llvmpipe per task-owned SX12 setup",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report": "shaderx/build/outputs/androidTest-results/connected/androidMain/",
+      "stopped": "Verified terminated: stop command exited successfully; subsequent read-only ADB inventory confirmed the task-owned emulator transport was absent. Raw stop log retained privately.",
+      "outcome": "passed: actual AGSL compilation and HWUI pixel readback on software graphics; not physical GPU evidence"
+    },
+    "physical_attempt": {
+      "outcome": "failed: No connected devices!",
+      "pixels_validated": false,
+      "scope": "Physical Pixel unavailable; earlier physical evidence does not validate these new sources."
+    }
+  },
+  "abi": {
+    "removed_existing_jvm_members": 0,
+    "new_blocks": [
+      "ColorMatrix",
+      "ColorMatrix$Companion",
+      "EffectCollection"
+    ],
+    "checkKotlinAbi": "passed",
+    "limits": "JVM additive source/classfile check only; precompiled linkage and Android/Klib ABI remain SX15"
+  },
+  "diagnostic": {
+    "scope": "JVM Skia CPU raster,256x256,reused compiled filter,warmup3,5 rounds of10 draws+snapshot+bitmap readback; ns per operation, native output caches may be reused; no shader-execution/GPU/frame-rate/memory claim",
+    "rounds_ns": {
+      "adjusted": [
+        25012,
+        22408,
+        51129,
+        37950,
+        32187
+      ],
+      "dither": [
+        31741,
+        27870,
+        32958,
+        28250,
+        28116
+      ],
+      "halftone": [
+        36858,
+        27916,
+        34600,
+        21341,
+        21854
+      ]
+    }
+  },
+  "docs": {
+    "requirements_install": "passed in .venv-docs",
+    "check_docs": "passed27guides30Markdown",
+    "unittest": "passed24",
+    "zensical_strict": "passed",
+    "check_site": "passed27indexable+production playground",
+    "production_package": "Packaged 11 playground files (15,536,398 bytes) at /Users/debanshud/Documents/Personal/ShaderX/site/playground"
+  },
+  "visual": {
+    "comparison": "docs/assets/effects/sx09-collection.png actual original+adjustment+dither+halftone raster outputs; original procedural input, no third-party media",
+    "settings": "adjustment .05/1.2/1.25; dither amount1 levels3 cell2; halftone amount1 cell6",
+    "inspected": "actual before/after shapes, stripe details, colored ordered pattern and dark/light dot areas; browser production halftone desktop/mobile390x844 and guide desktop1280x900/mobile390x844",
+    "screenshots": [
+      "/tmp/sx09-playground-desktop.png",
+      "/tmp/sx09-playground-mobile.png",
+      "/tmp/sx09-docs-desktop.png",
+      "/tmp/sx09-docs-mobile.png"
+    ]
+  },
+  "initial_corrections": [
+    "Sandbox Gradle cache lock required authorized escalation",
+    "First Wasm runner disconnected after30s no message; isolated repeated final runner passed",
+    "Fractional halftone cell vertex black pinholes corrected with explicit gray0/1 guards; actual raster endpoints2.5/3.5/8/63.5px",
+    "Named presets moved above controls for neutral-default discoverability",
+    "Preset UI callback changed from same-ID-ignoring selection to existing preset load; exact actual amount1 and pixel changes confirmed desktop/mobile",
+    "Added named-argument adjustColor/dither/dots helpers and external consumer example; shared strict schemas stay source of truth"
+  ],
+  "remaining_gates": [
+    "Physical Pixel9 GPU coverage: no connected device; actual new AGSL/HWUI software-emulator checks passed",
+    "Physical iOS GPU, wider Android API/hardware and wide-gamut destination quality",
+    "GPU timing/throughput/native memory stabilization; repeated cached-filter diagnostic can reuse native output caches",
+    "Exposure/gamma/LUT/grain/bloom/video/transitions deferred",
+    "Area-calibrated or antialiased print simulation not supplied",
+    "New source-to-workbench starter import deferred rather than lose unit/role metadata in bounded draft form",
+    "Already-compiled binary linkage/Android-Klib ABI SX15"
+  ],
+  "review_patch": "/tmp/sx09-review.patch",
+  "files_changed": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/assets/effects/sx09-collection.png",
+    "docs/contributing.md",
+    "docs/custom-effects.md",
+    "docs/effects.md",
+    "docs/platforms.md",
+    "docs/roadmap/09-effect-collection.md",
+    "docs/samples.md",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/CollectionPresets.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/PipelinePanel.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderControls.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderLabContent.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/CollectionPresetTest.kt",
+    "samples/ShaderLab/composeApp/src/jvmTest/kotlin/com/debanshu/shaderlab/GeneratedSourceProducerTest.kt",
+    "shaderx/api/jvm/shaderx.api",
+    "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/EffectCollectionDeviceTest.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/ShaderX.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl/EffectCollection.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/EffectCollectionTest.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/EffectsTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/EffectCollectionVisualTest.kt",
+    "shaderx/src/skiaTest/kotlin/com/debanshu/shaderlab/shaderx/EffectCollectionRasterTest.kt",
+    "validation/evidence/sx09-effect-collection.json",
+    "validation/kmp-consumer/src/developmentTest/kotlin/CollectionCallerTest.kt",
+    "validation/kmp-consumer/src/developmentTest/kotlin/GeneratedCollectionConsumerTest.kt"
+  ],
+  "logs": [
+    "/tmp/sx09-device-api.log",
+    "/tmp/sx09-device-emulator.log",
+    "/tmp/sx09-doc-build.log",
+    "/tmp/sx09-doc-final.log",
+    "/tmp/sx09-doc-install.log",
+    "/tmp/sx09-doc-tests.log",
+    "/tmp/sx09-emulator-start.log",
+    "/tmp/sx09-emulator-stop.log",
+    "/tmp/sx09-endpoint-validation.log",
+    "/tmp/sx09-ergonomics-validation.log",
+    "/tmp/sx09-final-consumers.log",
+    "/tmp/sx09-final-extra.log",
+    "/tmp/sx09-final-platforms.log",
+    "/tmp/sx09-full-validation.log",
+    "/tmp/sx09-initial-tests.log",
+    "/tmp/sx09-native-validation.log",
+    "/tmp/sx09-package.log",
+    "/tmp/sx09-preview-server.log",
+    "/tmp/sx09-site-check.log"
+  ],
+  "commands": [
+    {
+      "log": "/tmp/sx09-device-api.log",
+      "tasks": "Calculating task graph as no cached configuration is available for tasks: :shaderx:connectedAndroidDeviceTest :shaderx:updateKotlinAbi",
+      "outcome": "FAILED"
+    },
+    {
+      "log": "/tmp/sx09-device-emulator.log",
+      "tasks": "See log task output",
+      "outcome": "PASSED"
+    },
+    {
+      "log": "/tmp/sx09-doc-build.log",
+      "tasks": "See log task output",
+      "outcome": "see log"
+    },
+    {
+      "log": "/tmp/sx09-doc-final.log",
+      "tasks": "See log task output",
+      "outcome": "see log"
+    },
+    {
+      "log": "/tmp/sx09-doc-install.log",
+      "tasks": "See log task output",
+      "outcome": "see log"
+    },
+    {
+      "log": "/tmp/sx09-doc-tests.log",
+      "tasks": "See log task output",
+      "outcome": "see log"
+    },
+    {
+      "log": "/tmp/sx09-emulator-start.log",
+      "tasks": "See log task output",
+      "outcome": "see log"
+    },
+    {
+      "log": "/tmp/sx09-emulator-stop.log",
+      "tasks": "See log task output",
+      "outcome": "see log"
+    },
+    {
+      "log": "/tmp/sx09-endpoint-validation.log",
+      "tasks": "Calculating task graph as no cached configuration is available for tasks: :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin :shaderx:assembleAndroidDeviceTest :shaderx:checkKotlinAbi",
+      "outcome": "PASSED"
+    },
+    {
+      "log": "/tmp/sx09-ergonomics-validation.log",
+      "tasks": "Calculating task graph as no cached configuration is available for tasks: :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:updateKotlinAbi :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin",
+      "outcome": "PASSED"
+    },
+    {
+      "log": "/tmp/sx09-final-consumers.log",
+      "tasks": "Calculating task graph as no cached configuration is available for tasks: :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin",
+      "outcome": "PASSED"
+    },
+    {
+      "log": "/tmp/sx09-final-extra.log",
+      "tasks": "Calculating task graph as no cached configuration is available for tasks: :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain",
+      "outcome": "PASSED"
+    },
+    {
+      "log": "/tmp/sx09-final-platforms.log",
+      "tasks": "Calculating task graph as no cached configuration is available for tasks: :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :samples:ShaderLab:composeApp:wasmJsBrowserTest :shaderx:updateKotlinAbi",
+      "outcome": "PASSED"
+    },
+    {
+      "log": "/tmp/sx09-full-validation.log",
+      "tasks": "Calculating task graph as no cached configuration is available for tasks: :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :shaderx:assembleAndroidDeviceTest",
+      "outcome": "FAILED"
+    },
+    {
+      "log": "/tmp/sx09-initial-tests.log",
+      "tasks": "Calculating task graph as no cached configuration is available for tasks: :shaderx:jvmTest :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin",
+      "outcome": "PASSED"
+    },
+    {
+      "log": "/tmp/sx09-native-validation.log",
+      "tasks": "Calculating task graph as no cached configuration is available for tasks: :shaderx:jvmTest :shaderx:iosSimulatorArm64Test :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :shaderx:assembleAndroidDeviceTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution",
+      "outcome": "PASSED"
+    },
+    {
+      "log": "/tmp/sx09-package.log",
+      "tasks": "See log task output",
+      "outcome": "see log"
+    },
+    {
+      "log": "/tmp/sx09-preview-server.log",
+      "tasks": "See log task output",
+      "outcome": "see log"
+    },
+    {
+      "log": "/tmp/sx09-site-check.log",
+      "tasks": "See log task output",
+      "outcome": "see log"
+    }
+  ],
+  "integrity": {
+    "readme_media_preserved": true,
+    "original_toolchain_preserved": true,
+    "jvm_abi_removed_members": 0,
+    "isolated_patch_apply_check": "passed against exact reconstructed SX08 accepted file contents",
+    "all_previous_accepted_file_bytes_restored_for_baseline": true,
+    "changed_file_count": 26
+  },
+  "command_environment": "All Gradle JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home; Android transport selected through private ANDROID_SERIAL file. No shared ADB restart/reset/pairing.",
+  "final_commands": {
+    "environment": {
+      "JAVA_HOME": "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
+      "ANDROID_SERIAL": "<authorized task-owned emulator transport; select privately>",
+      "working_directory": "/Users/debanshud/Documents/Personal/ShaderX",
+      "note": "Use JDK21. Start only the established task-owned API36 small_phone emulator; preserve other devices and shared ADB. The actual run selected its transport explicitly without exposing it here."
+    },
+    "checks": [
+      {
+        "command": "./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:updateKotlinAbi :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin",
+        "outcome": "PASS",
+        "log": "/tmp/sx09-ergonomics-validation.log",
+        "note": "updateKotlinAbi captured the reviewed additive baseline; ordinary repeat verification uses checkKotlinAbi below."
+      },
+      {
+        "command": "./gradlew :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain",
+        "outcome": "PASS",
+        "log": "/tmp/sx09-final-extra.log",
+        "note": "Includes final same-definition preset replacement regression and consumer target compiles."
+      },
+      {
+        "command": "android emulator start small_phone --headless",
+        "outcome": "PASS",
+        "log": "/tmp/sx09-emulator-start.log",
+        "note": "Existing task-owned API36 software-graphics AVD; no new AVD or pairing changes."
+      },
+      {
+        "command": "ANDROID_SERIAL=\"${SHADERX_OWNED_EMULATOR_SERIAL}\" ./gradlew :shaderx:connectedAndroidDeviceTest -Pandroid.testInstrumentationRunnerArguments.class=com.debanshu.shaderlab.shaderx.EffectCollectionDeviceTest",
+        "outcome": "PASS: 3 tests, 0 failures, 0 errors, 0 skipped",
+        "log": "/tmp/sx09-device-emulator.log",
+        "note": "SHADERX_OWNED_EMULATOR_SERIAL is an environment placeholder for the private authorized transport. Actual AGSL compiler/HWUI software-emulator pixel evidence; physical GPU remains unverified."
+      },
+      {
+        "command": "android emulator stop small_phone",
+        "outcome": "PASS: command exited successfully; read-only ADB inventory subsequently verified owned transport absent",
+        "log": "/tmp/sx09-emulator-stop.log",
+        "note": "Only the task-owned instance was stopped; raw transport-bearing log retained privately."
+      },
+      {
+        "command": ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+        "outcome": "PASS",
+        "log": "/tmp/sx09-doc-install.log"
+      },
+      {
+        "command": ".venv-docs/bin/python scripts/check_docs.py",
+        "outcome": "PASS: 27 guides, 30 Markdown files",
+        "log": "/tmp/sx09-doc-final.log"
+      },
+      {
+        "command": ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+        "outcome": "PASS: 24 tests",
+        "log": "/tmp/sx09-doc-final.log"
+      },
+      {
+        "command": ".venv-docs/bin/zensical build --strict",
+        "outcome": "PASS",
+        "log": "/tmp/sx09-doc-build.log"
+      },
+      {
+        "command": ".venv-docs/bin/python scripts/package_playground.py",
+        "outcome": "PASS: fresh production Wasm bundle packaged",
+        "log": "/tmp/sx09-package.log"
+      },
+      {
+        "command": ".venv-docs/bin/python scripts/check_site.py",
+        "outcome": "PASS: 27 indexable pages and packaged playground",
+        "log": "/tmp/sx09-site-check.log"
+      },
+      {
+        "command": "git diff --check",
+        "outcome": "PASS"
+      },
+      {
+        "command": "git -C /tmp/sx09-patch-check apply --check /tmp/sx09-review.patch",
+        "outcome": "PASS: isolated exact accepted SX08 baseline"
+      }
+    ],
+    "history": "Earlier auto-collected commands/log references are retained as execution history, including the initial disconnected Wasm runner and failed unavailable-physical-device attempt. They do not replace these explicit final outcomes."
+  }
+}

@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.debanshu.shaderlab.shaderx.compose.shaderEffect
+import com.debanshu.shaderlab.shaderx.authoring.ShaderDefinition
+import com.debanshu.shaderlab.shaderx.authoring.ShaderProgram
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
@@ -179,6 +181,63 @@ class ComposeShaderPixelTest {
             scene.close()
             assertEquals(factory.createdSessions, factory.closedSessions)
             factory.close()
+        }
+    }
+
+    @Test
+    fun generatedSourceAndFactoryReplacement_repaintComposeAndDisposeEveryOwnedSession() {
+        fun definition(output: String) = ShaderDefinition(
+            id = "generated_same_id",
+            displayName = "Generated replacement",
+            program = ShaderProgram("""
+                uniform shader content;
+                half4 main(float2 p) { return $output * content.eval(p).a; }
+            """.trimIndent()),
+        )
+        val red = definition("half4(1.0, 0.0, 0.0, 1.0)").animatedEffect(isAnimating = false)
+        val blue = definition("half4(0.0, 0.0, 1.0, 1.0)").animatedEffect(isAnimating = false)
+        assertEquals(red.id, blue.id, "Source identity must not be reduced to the display ID")
+        val first = TrackingFactory()
+        val second = TrackingFactory()
+        val factory = mutableStateOf<ShaderFactory>(first)
+        val effect = mutableStateOf<ShaderEffect?>(red)
+        val scene = ImageComposeScene(32, 32) {
+            Box(Modifier.size(32.dp).shaderEffect(effect.value, factory.value, IntSize(32, 32)).background(ComposeColor.White))
+        }
+        try {
+            assertEquals(Color.RED, pixel(scene, 16))
+            assertEquals(1, first.createdSessions)
+            assertEquals(0, first.closedSessions)
+
+            effect.value = blue
+            assertEquals(Color.BLUE, pixel(scene, 32), "A new source with the same ID must replace the rendered program")
+            assertEquals(2, first.createdSessions)
+            assertEquals(1, first.closedSessions, "Source replacement must dispose the old native session")
+
+            factory.value = second
+            assertEquals(Color.BLUE, pixel(scene, 48), "Factory replacement must retain the current definition's pixels")
+            assertEquals(2, first.closedSessions, "Leaving the original factory must dispose its last session")
+            assertEquals(1, second.createdSessions)
+            assertEquals(0, second.closedSessions)
+            // Factories remain caller-owned. Releasing the original factory must not invalidate
+            // the replacement factory's independent native session or its real Compose pixels.
+            first.close()
+            assertEquals(Color.BLUE, pixel(scene, 64))
+
+            effect.value = red
+            assertEquals(Color.RED, pixel(scene, 80))
+            assertEquals(2, second.createdSessions)
+            assertEquals(1, second.closedSessions)
+
+            effect.value = null
+            assertEquals(Color.WHITE, pixel(scene, 96))
+            assertEquals(second.createdSessions, second.closedSessions)
+        } finally {
+            scene.close()
+            assertEquals(first.createdSessions, first.closedSessions)
+            assertEquals(second.createdSessions, second.closedSessions)
+            first.close()
+            second.close()
         }
     }
 

@@ -1,0 +1,721 @@
+{
+  "recorded": "2026-11-20",
+  "roadmap": "SX11",
+  "status": "Bounded implementation complete; listed future/hardware/toolchain gates remain",
+  "branch": "codex/developer-experience-research",
+  "decisions": {
+    "runtime_minSdk": 31,
+    "native_blur_and_blur_chains": "API31+; API31 software pixels/startup/shrink proven; API32 device not executed",
+    "runtime_shaders_inputs_backgrounds_sessions": "API33+; independent RequiresApi33/DoNotInline helpers, no RuntimeShader signatures in API31 factory or entry helpers",
+    "consumer_minCompileSdk": 35,
+    "android_classfile_major": 61,
+    "contributor_JDK": 21,
+    "resolved_transitive_minAGP": "8.6.0 per AndroidX metadata, independent minimum plugin build NOT established",
+    "tested_repository_AGP": "9.4.1",
+    "tested_repository_Gradle": "9.6",
+    "published": "0.1.3 unchanged: minSdk33/Java21, legacy consumer modes retain those floors",
+    "development": "0.1.4, not released"
+  },
+  "contracts": {
+    "isSupported": "Some on-screen rendering exists (native blur from API31); query the exact operation/effect, not this Boolean for AGSL support",
+    "unsupported": "API31/32 runtime/background/input/session metadata ANDROID_API_33_REQUIRED maps to existing PlatformNotSupported; below31 metadata ANDROID_API_31_REQUIRED; Android export remains ANDROID_EXPORT_UNAVAILABLE / ProcessingError before decode",
+    "fallback": "PreserveContent successful null with original cause; Substitute attempts exactly one complete replacement. Mixed chains fail before source getters/providers/native radius reads",
+    "ABI": "Only added ANDROID_API_31_REQUIRED field; enum appended to preserve old ordinals. All previous JVM declarations retained. No mandatory interface member or constructor change",
+    "scope": "No manifest overrideLibrary, GL backend, CPU emulator, dependency upgrade, publish or release"
+  },
+  "artifact": {
+    "path": "shaderx/build/outputs/aar/shaderx.aar",
+    "sha256": "d53c52755fd14b4f97dcf4331d014f98578c6ab2a25abf6e5dfdaa9e4d900866",
+    "minSdk": 31,
+    "metadata": {
+      "aarFormatVersion": "1.0",
+      "aarMetadataVersion": "1.0",
+      "minCompileSdk": "35",
+      "minCompileSdkExtension": "0",
+      "minAndroidGradlePluginVersion": "1.0.0",
+      "coreLibraryDesugaringEnabled": "false"
+    },
+    "classfile_majors": {
+      "61": 196
+    }
+  },
+  "dependency_audit": {
+    "scope": "Read-only cached actual artifacts; parent must pair with actual resolved Gradle graph. No builds run. No runtime-floor claim established.",
+    "artifacts": [
+      {
+        "coordinate": "androidx.compose.ui:ui-graphics-android:1.10.5",
+        "path": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.ui/ui-graphics-android/1.10.5/827f97f73fdd4acd4e3c8ca99b71158b458f058b/ui-graphics.aar",
+        "sha256": "e42cfe175036fbdbdfa851feb24cb1ffce39ea6e3bf2acebfa160453e71c3afb",
+        "AndroidManifest.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"androidx.compose.ui.graphics\" >\n\n    <uses-sdk android:minSdkVersion=\"23\" />\n\n</manifest>",
+        "META-INF/com/android/build/gradle/aar-metadata.properties": "aarFormatVersion=1.0\naarMetadataVersion=1.0\nminCompileSdk=35\nminCompileSdkExtension=0\nminAndroidGradlePluginVersion=8.6.0\ncoreLibraryDesugaringEnabled=false\n",
+        "classfile_majors": {
+          "52": 314
+        }
+      },
+      {
+        "coordinate": "org.jetbrains.compose.ui:ui-graphics:1.10.3",
+        "path": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics/1.10.3/b5053abc54655ba133519104474c0f44e69b62b6/ui-graphics-1.10.3.jar",
+        "sha256": "17d42a50b1cedd3bcedf7b5de796583edf73fd29cdc20795c5e580db1f7f6e0c",
+        "classfile_majors": {}
+      },
+      {
+        "coordinate": "androidx.compose.ui:ui-android:1.10.5",
+        "path": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.ui/ui-android/1.10.5/8770090c6fa9ce0e9b1f4e6b8757b804488bc7ba/ui.aar",
+        "sha256": "6bc88fc41214aa2eb4a7b980dea2e55e002abdc4cd448ade52b3fd150a9299ea",
+        "AndroidManifest.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"androidx.compose.ui\" >\n\n    <uses-sdk android:minSdkVersion=\"23\" />\n\n</manifest>",
+        "META-INF/com/android/build/gradle/aar-metadata.properties": "aarFormatVersion=1.0\naarMetadataVersion=1.0\nminCompileSdk=35\nminCompileSdkExtension=0\nminAndroidGradlePluginVersion=8.6.0\ncoreLibraryDesugaringEnabled=false\n",
+        "classfile_majors": {
+          "52": 1674
+        }
+      },
+      {
+        "coordinate": "androidx.compose.foundation:foundation-android:1.10.5",
+        "path": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.foundation/foundation-android/1.10.5/4e6a84bb99241c3f6146028c69916334535c8846/foundation.aar",
+        "sha256": "7fd9f592d9b2e37fd7bbd3b07b35fe3869ce0391603f651e6bfc1caf6d13a693",
+        "AndroidManifest.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"androidx.compose.foundation\" >\n\n    <uses-sdk android:minSdkVersion=\"23\" />\n\n</manifest>",
+        "META-INF/com/android/build/gradle/aar-metadata.properties": "aarFormatVersion=1.0\naarMetadataVersion=1.0\nminCompileSdk=35\nminCompileSdkExtension=0\nminAndroidGradlePluginVersion=8.6.0\ncoreLibraryDesugaringEnabled=false\n",
+        "classfile_majors": {
+          "52": 1814
+        }
+      },
+      {
+        "coordinate": "androidx.compose.runtime:runtime-android:1.10.5",
+        "path": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-android/1.10.5/fd5897c409c463d890dfdc361b8db2d164f53859/runtime.aar",
+        "sha256": "fd57586cf86d8b89f070d05cf5f0a2afcd15dd57411e767decc9e6b929764d43",
+        "AndroidManifest.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"androidx.compose.runtime\" >\n\n    <uses-sdk android:minSdkVersion=\"23\" />\n\n</manifest>",
+        "META-INF/com/android/build/gradle/aar-metadata.properties": "aarFormatVersion=1.0\naarMetadataVersion=1.0\nminCompileSdk=34\nminCompileSdkExtension=0\nminAndroidGradlePluginVersion=8.1.1\ncoreLibraryDesugaringEnabled=false\n",
+        "classfile_majors": {
+          "52": 622
+        }
+      }
+    ],
+    "mapping": "Cached Gradle descriptor.bin org.jetbrains.compose.ui:ui-graphics:1.10.3 Android API/runtime variants depend on androidx.compose.ui:ui-graphics:1.10.5; its metadata jar has no JVM classes.",
+    "existing_shaderx": "Existing androidMain classes.jar:193 major65(Java21),1major52; manifest minSdk33; metadata minCompileSdk37, minAGP1.0.0 default.",
+    "recommendation": "Runtime23 is a dependency candidate only; runtime31 is smaller native-blur candidate. Neither is proven without guarded class isolation and actual old-runtime startup/fallback/pixel tests including shrinking. Java17 Android output is a justified bounded candidate separate from JDK21 contributors; prove consumer compilation and shrink. All inspected Compose Android classes only require Java8. Existing ShaderX compileSdk37 metadata currently prevents compile35 consumer; lowering output bytecode alone does not lower compileSdk or AGP requirements.",
+    "sources": [
+      "https://developer.android.com/reference/android/graphics/RenderEffect#createBlurEffect(float,float,android.graphics.Shader.TileMode)",
+      "https://developer.android.com/reference/android/graphics/RuntimeShader",
+      "https://developer.android.com/build/jdks",
+      "https://developer.android.com/build/releases/agp-8-6-0-release-notes"
+    ],
+    "source_findings": [
+      "Native RenderEffect blur and chains added API31, RuntimeShader and RenderEffect.createRuntimeShaderEffect API33.",
+      "Android docs distinguish build JDK, Java source/target compatibility and Kotlin jvmTarget; JVM does not run Android devices.",
+      "AGP8.6 official maximum supported API35 and minimum JDK17; metadata minimum is not proof whole ShaderX consumer supports old AGP."
+    ],
+    "classloading": "Compose1.10.5 sources use RenderEffectVerificationHelper @RequiresApi31. ShaderX AndroidShaderFactory directly holds RuntimeShader cache and methods; companion create unconditionally constructs it. Separate ShaderBackgroundSnapshot.android.kt directly constructs RuntimeShader. Any lower-floor guard must include background/data/nested/session helpers, and R8 may alter boundaries: actual old-runtime shrunk launch required."
+  },
+  "resolved_dependency_command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:dependencies --configuration androidRuntimeClasspath",
+  "resolved_dependency_graph": "Calculating task graph as no cached configuration is available for tasks: :shaderx:dependencies --configuration androidRuntimeClasspath\nType-safe project accessors is an incubating feature.\n\n> Configure project :validation:kmp-consumer\nWARNING: The 'commonTest' source directory exists, but android host tests are not enabled. To enable android host tests, add `withHostTest {}` to your android target configuration in the Gradle build file.\nAdd android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.\n\n> Configure project :samples:ASCIICamera:composeApp\nw: \u001b[33m\u001b[1m\u26a0\ufe0f Unused Kotlin Source Sets\u001b[0m\u001b[0m\nThe Kotlin source set commonTest was configured but not added to any Kotlin compilation.\n\u001b[32m\u001b[1mSolution:\u001b[0m\u001b[0m\n\u001b[32m\u001b[3mYou can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.\u001b[0m\u001b[0m\n\u001b[36mSee \u001b[0m\u001b[34mhttps://kotl.in/connecting-source-sets\u001b[0m\u001b[36m\u001b[0m\n\n\n> Configure project :samples:ShaderLab:audiolib\nWARNING: The 'commonTest' source directory exists, but android host tests are not enabled. To enable android host tests, add `withHostTest {}` to your android target configuration in the Gradle build file.\nAdd android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.\n\n> Configure project :samples:ShaderLab:composeApp\nWARNING: The 'commonTest' source directory exists, but android host tests are not enabled. To enable android host tests, add `withHostTest {}` to your android target configuration in the Gradle build file.\nAdd android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.\n\n> Configure project :samples:ShaderLab:imagelib\nWARNING: The 'commonTest' source directory exists, but android host tests are not enabled. To enable android host tests, add `withHostTest {}` to your android target configuration in the Gradle build file.\nAdd android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.\n\n> Task :shaderx:dependencies\n\n------------------------------------------------------------\nProject ':shaderx'\n------------------------------------------------------------\n\nandroidRuntimeClasspath - Runtime classpath of 'android/main'.\n+--- org.jetbrains.compose.runtime:runtime:1.10.3\n|    \\--- androidx.compose.runtime:runtime:1.10.5\n|         \\--- androidx.compose.runtime:runtime-android:1.10.5\n|              +--- androidx.annotation:annotation-experimental:1.4.1\n|              |    \\--- org.jetbrains.kotlin:kotlin-stdlib:1.7.10 -> 2.3.21\n|              |         \\--- org.jetbrains:annotations:13.0 -> 23.0.0\n|              +--- androidx.collection:collection:1.5.0\n|              |    \\--- androidx.collection:collection-jvm:1.5.0\n|              |         +--- androidx.annotation:annotation:1.9.1\n|              |         |    \\--- androidx.annotation:annotation-jvm:1.9.1\n|              |         |         \\--- org.jetbrains.kotlin:kotlin-stdlib:1.9.24 -> 2.3.21 (*)\n|              |         +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|              |         +--- org.jetbrains.kotlin:kotlin-stdlib:1.9.24 -> 2.3.21 (c)\n|              |         \\--- androidx.collection:collection-ktx:1.5.0 (c)\n|              +--- androidx.compose.runtime:runtime-annotation:1.10.5\n|              |    \\--- androidx.compose.runtime:runtime-annotation-android:1.10.5\n|              |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|              |         +--- androidx.compose.runtime:runtime:1.10.5 (c)\n|              |         +--- androidx.compose.runtime:runtime-retain:1.10.5 (c)\n|              |         \\--- androidx.compose.runtime:runtime-saveable:1.10.5 (c)\n|              +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|              +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0\n|              |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0\n|              |    |    \\--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0\n|              |    |         +--- org.jetbrains:annotations:23.0.0\n|              |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.9.0\n|              |    |         |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0 (c)\n|              |    |         |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0 (c)\n|              |    |         |    \\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0 (c)\n|              |    |         \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.0 -> 2.3.21 (*)\n|              |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.9.0 (*)\n|              |    \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.0 -> 2.3.21 (*)\n|              +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0 (*)\n|              +--- androidx.compose.runtime:runtime-annotation:1.10.5 (c)\n|              +--- androidx.compose.runtime:runtime-retain:1.10.5 (c)\n|              +--- androidx.compose.runtime:runtime-saveable:1.10.5 (c)\n|              \\--- org.jetbrains.compose.runtime:runtime:1.9.0 -> 1.10.3 (c)\n+--- org.jetbrains.compose.foundation:foundation:1.10.3\n|    +--- androidx.compose.foundation:foundation:1.10.5\n|    |    \\--- androidx.compose.foundation:foundation-android:1.10.5\n|    |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         +--- androidx.annotation:annotation-experimental:1.4.1 (*)\n|    |         +--- androidx.collection:collection:1.5.0 (*)\n|    |         +--- androidx.compose.animation:animation:1.10.5\n|    |         |    \\--- androidx.compose.animation:animation-android:1.10.5\n|    |         |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         +--- androidx.annotation:annotation-experimental:1.4.1 (*)\n|    |         |         +--- androidx.collection:collection:1.5.0 (*)\n|    |         |         +--- androidx.compose.animation:animation-core:1.10.5\n|    |         |         |    \\--- androidx.compose.animation:animation-core-android:1.10.5\n|    |         |         |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         +--- androidx.collection:collection:1.5.0 (*)\n|    |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         +--- androidx.compose.ui:ui:1.10.5\n|    |         |         |         |    \\--- androidx.compose.ui:ui-android:1.10.5\n|    |         |         |         |         +--- androidx.activity:activity-ktx:1.7.0\n|    |         |         |         |         |    +--- androidx.activity:activity:1.7.0\n|    |         |         |         |         |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |    +--- androidx.collection:collection:1.0.0 -> 1.5.0 (*)\n|    |         |         |         |         |    |    +--- androidx.core:core:1.8.0 -> 1.16.0\n|    |         |         |         |         |    |    |    +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |    +--- androidx.annotation:annotation-experimental:1.4.1 (*)\n|    |         |         |         |         |    |    |    +--- androidx.collection:collection:1.4.2 -> 1.5.0 (*)\n|    |         |         |         |         |    |    |    +--- androidx.concurrent:concurrent-futures:1.0.0 -> 1.1.0\n|    |         |         |         |         |    |    |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |    |    \\--- com.google.guava:listenablefuture:1.0\n|    |         |         |         |         |    |    |    +--- androidx.core:core-viewtree:1.0.0\n|    |         |         |         |         |    |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.3.21 (c)\n|    |         |         |         |         |    |    |    +--- androidx.interpolator:interpolator:1.0.0\n|    |         |         |         |         |    |    |    |    \\--- androidx.annotation:annotation:1.0.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |    +--- androidx.lifecycle:lifecycle-runtime:2.6.2 -> 2.9.4\n|    |         |         |         |         |    |    |    |    \\--- androidx.lifecycle:lifecycle-runtime-android:2.9.4\n|    |         |         |         |         |    |    |    |         +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |    |    |    |         +--- androidx.arch.core:core-common:2.2.0\n|    |         |         |         |         |    |    |    |         |    \\--- androidx.annotation:annotation:1.1.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |    |         +--- androidx.arch.core:core-runtime:2.2.0\n|    |         |         |         |         |    |    |    |         |    +--- androidx.annotation:annotation:1.1.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |    |         |    \\--- androidx.arch.core:core-common:2.2.0 (*)\n|    |         |         |         |         |    |    |    |         +--- androidx.core:core-viewtree:1.0.0 (*)\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-common:2.9.4\n|    |         |         |         |         |    |    |    |         |    \\--- androidx.lifecycle:lifecycle-common-jvm:2.9.4\n|    |         |         |         |         |    |    |    |         |         +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |    |    |    |         |         +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    |    |         |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |    |    |         |         +--- org.jspecify:jspecify:1.0.0\n|    |         |         |         |         |    |    |    |         |         +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         |         +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         |         +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         |         +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         |         +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         |         +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |    |    |         |         +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         |         +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         |         +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         |         \\--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         +--- androidx.profileinstaller:profileinstaller:1.4.0\n|    |         |         |         |         |    |    |    |         |    +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |    |         |    +--- androidx.concurrent:concurrent-futures:1.1.0 (*)\n|    |         |         |         |         |    |    |    |         |    +--- androidx.startup:startup-runtime:1.1.1\n|    |         |         |         |         |    |    |    |         |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |    |         |    |    \\--- androidx.tracing:tracing:1.0.0 -> 1.2.0\n|    |         |         |         |         |    |    |    |         |    |         \\--- androidx.annotation:annotation:1.2.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |    |         |    \\--- com.google.guava:listenablefuture:1.0\n|    |         |         |         |         |    |    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |    |    |         +--- org.jspecify:jspecify:1.0.0\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |    |    |    |         \\--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |    +--- androidx.tracing:tracing:1.2.0 (*)\n|    |         |         |         |         |    |    |    +--- androidx.versionedparcelable:versionedparcelable:1.1.1\n|    |         |         |         |         |    |    |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |    |    \\--- androidx.collection:collection:1.0.0 -> 1.5.0 (*)\n|    |         |         |         |         |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    |    +--- org.jspecify:jspecify:1.0.0\n|    |         |         |         |         |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.3.21 (c)\n|    |         |         |         |         |    |    |    \\--- androidx.core:core-ktx:1.16.0 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-runtime:2.6.1 -> 2.9.4 (*)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.6.1 -> 2.9.4\n|    |         |         |         |         |    |    |    \\--- androidx.lifecycle:lifecycle-viewmodel-android:2.9.4\n|    |         |         |         |         |    |    |         +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |    |    |         +--- androidx.core:core-viewtree:1.0.0 (*)\n|    |         |         |         |         |    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |    |    |         \\--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1 -> 2.9.4\n|    |         |         |         |         |    |    |    \\--- androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.9.4\n|    |         |         |         |         |    |    |         +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |    |    |         +--- androidx.core:core-ktx:1.2.0 -> 1.16.0\n|    |         |         |         |         |    |    |         |    +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |         |    +--- androidx.core:core:1.16.0 (*)\n|    |         |         |         |         |    |    |         |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    |         |    +--- androidx.core:core:1.16.0 (c)\n|    |         |         |         |         |    |    |         |    \\--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.3.21 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-common:2.9.4 (*)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4\n|    |         |         |         |         |    |    |         |    +--- androidx.arch.core:core-common:2.2.0 (*)\n|    |         |         |         |         |    |    |         |    +--- androidx.arch.core:core-runtime:2.2.0 (*)\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-common:2.9.4 (*)\n|    |         |         |         |         |    |    |         |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    |         |    +--- org.jspecify:jspecify:1.0.0\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |    |    |         |    +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |    |         |    +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |    |    |         |    \\--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (*)\n|    |         |         |         |         |    |    |         +--- androidx.savedstate:savedstate:1.3.1 -> 1.3.3\n|    |         |         |         |         |    |    |         |    \\--- androidx.savedstate:savedstate-android:1.3.3\n|    |         |         |         |         |    |    |         |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |    |    |         |         +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |    |    |         |         +--- androidx.core:core-ktx:1.13.1 -> 1.16.0 (*)\n|    |         |         |         |         |    |    |         |         +--- androidx.core:core-viewtree:1.0.0 (*)\n|    |         |         |         |         |    |    |         |         +--- androidx.lifecycle:lifecycle-common:2.9.2 -> 2.9.4 (*)\n|    |         |         |         |         |    |    |         |         +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    |         |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |    |         |         +--- org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3\n|    |         |         |         |         |    |    |         |         |    \\--- org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.3\n|    |         |         |         |         |    |    |         |         |         +--- org.jetbrains.kotlinx:kotlinx-serialization-bom:1.7.3\n|    |         |         |         |         |    |    |         |         |         |    +--- org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.3 (c)\n|    |         |         |         |         |    |    |         |         |         |    \\--- org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3 (c)\n|    |         |         |         |         |    |    |         |         |         \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.20 -> 2.3.21 (*)\n|    |         |         |         |         |    |    |         |         +--- androidx.savedstate:savedstate-compose:1.3.3 (c)\n|    |         |         |         |         |    |    |         |         +--- androidx.savedstate:savedstate-ktx:1.3.3 (c)\n|    |         |         |         |         |    |    |         |         \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |    |         +--- org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3 (*)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |    |    |         +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |    |    |         \\--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    +--- androidx.profileinstaller:profileinstaller:1.3.0 -> 1.4.0 (*)\n|    |         |         |         |         |    |    +--- androidx.savedstate:savedstate:1.2.1 -> 1.3.3 (*)\n|    |         |         |         |         |    |    +--- androidx.tracing:tracing:1.0.0 -> 1.2.0 (*)\n|    |         |         |         |         |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.10 -> 2.3.21 (*)\n|    |         |         |         |         |    |    \\--- androidx.activity:activity-ktx:1.7.0 (c)\n|    |         |         |         |         |    +--- androidx.core:core-ktx:1.1.0 -> 1.16.0 (*)\n|    |         |         |         |         |    +--- androidx.lifecycle:lifecycle-runtime-ktx:2.6.1 -> 2.9.4\n|    |         |         |         |         |    |    \\--- androidx.lifecycle:lifecycle-runtime-ktx-android:2.9.4\n|    |         |         |         |         |    |         +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (*)\n|    |         |         |         |         |    |         +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |    |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |         +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |    |         \\--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |    +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1 -> 2.9.4\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (*)\n|    |         |         |         |         |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |    |    \\--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |    +--- androidx.savedstate:savedstate-ktx:1.2.1 -> 1.3.3\n|    |         |         |         |         |    |    +--- androidx.savedstate:savedstate:1.3.3 (*)\n|    |         |         |         |         |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |    +--- androidx.savedstate:savedstate:1.3.3 (c)\n|    |         |         |         |         |    |    +--- androidx.savedstate:savedstate-compose:1.3.3 (c)\n|    |         |         |         |         |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.10 -> 2.3.21 (*)\n|    |         |         |         |         |    \\--- androidx.activity:activity:1.7.0 (c)\n|    |         |         |         |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         +--- androidx.annotation:annotation-experimental:1.4.1 (*)\n|    |         |         |         |         +--- androidx.autofill:autofill:1.0.0\n|    |         |         |         |         |    \\--- androidx.core:core:1.1.0 -> 1.16.0 (*)\n|    |         |         |         |         +--- androidx.collection:collection:1.4.2 -> 1.5.0 (*)\n|    |         |         |         |         +--- androidx.collection:collection:1.5.0 (*)\n|    |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         |         +--- androidx.compose.runtime:runtime-retain:1.10.5\n|    |         |         |         |         |    \\--- androidx.compose.runtime:runtime-retain-android:1.10.5\n|    |         |         |         |         |         +--- androidx.collection:collection:1.5.0 (*)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         |         |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0 (*)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime-annotation:1.10.5 (c)\n|    |         |         |         |         |         \\--- androidx.compose.runtime:runtime-saveable:1.10.5 (c)\n|    |         |         |         |         +--- androidx.compose.runtime:runtime-saveable:1.10.5\n|    |         |         |         |         |    \\--- androidx.compose.runtime:runtime-saveable-android:1.10.5\n|    |         |         |         |         |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |         +--- androidx.collection:collection:1.5.0 (*)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         |         |         +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4\n|    |         |         |         |         |         |    \\--- androidx.lifecycle:lifecycle-runtime-compose-android:2.9.4\n|    |         |         |         |         |         |         +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.9.0 -> 1.10.5 (*)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (*)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (*)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |         |         +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |         |         \\--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |         +--- androidx.savedstate:savedstate-compose:1.3.2 -> 1.3.3\n|    |         |         |         |         |         |    \\--- androidx.savedstate:savedstate-compose-android:1.3.3\n|    |         |         |         |         |         |         +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.9.0 -> 1.10.5 (*)\n|    |         |         |         |         |         |         +--- androidx.core:core-ktx:1.13.1 -> 1.16.0 (*)\n|    |         |         |         |         |         |         +--- androidx.savedstate:savedstate:1.3.3 (*)\n|    |         |         |         |         |         |         +--- androidx.savedstate:savedstate:1.3.3 (c)\n|    |         |         |         |         |         |         \\--- androidx.savedstate:savedstate-ktx:1.3.3 (c)\n|    |         |         |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime-annotation:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime-retain:1.10.5 (c)\n|    |         |         |         |         |         \\--- org.jetbrains.compose.runtime:runtime-saveable:1.9.2 -> 1.10.3 (c)\n|    |         |         |         |         +--- androidx.compose.ui:ui-geometry:1.10.5\n|    |         |         |         |         |    \\--- androidx.compose.ui:ui-geometry-android:1.10.5\n|    |         |         |         |         |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-util:1.10.5\n|    |         |         |         |         |         |    \\--- androidx.compose.ui:ui-util-android:1.10.5\n|    |         |         |         |         |         |         +--- androidx.annotation:annotation-experimental:1.4.1 (*)\n|    |         |         |         |         |         |         +--- androidx.collection:collection:1.4.3 -> 1.5.0 (*)\n|    |         |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui:1.10.5 (c)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui-geometry:1.10.5 (c)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui-graphics:1.10.5 (c)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui-text:1.10.5 (c)\n|    |         |         |         |         |         |         \\--- androidx.compose.ui:ui-unit:1.10.5 (c)\n|    |         |         |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-graphics:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-text:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-unit:1.10.5 (c)\n|    |         |         |         |         |         \\--- androidx.compose.ui:ui-util:1.10.5 (c)\n|    |         |         |         |         +--- androidx.compose.ui:ui-graphics:1.10.5\n|    |         |         |         |         |    \\--- androidx.compose.ui:ui-graphics-android:1.10.5\n|    |         |         |         |         |         +--- androidx.annotation:annotation:1.7.0 -> 1.9.1 (*)\n|    |         |         |         |         |         +--- androidx.annotation:annotation-experimental:1.4.1 (*)\n|    |         |         |         |         |         +--- androidx.collection:collection:1.4.2 -> 1.5.0 (*)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-unit:1.10.5\n|    |         |         |         |         |         |    \\--- androidx.compose.ui:ui-unit-android:1.10.5\n|    |         |         |         |         |         |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |         |         +--- androidx.annotation:annotation-experimental:1.4.1 (*)\n|    |         |         |         |         |         |         +--- androidx.collection:collection:1.4.2 -> 1.5.0 (*)\n|    |         |         |         |         |         |         +--- androidx.collection:collection-ktx:1.4.2 -> 1.5.0\n|    |         |         |         |         |         |         |    +--- androidx.collection:collection:1.5.0 (*)\n|    |         |         |         |         |         |         |    \\--- androidx.collection:collection:1.5.0 (c)\n|    |         |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui-geometry:1.10.5 (*)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui-util:1.10.5 (*)\n|    |         |         |         |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui:1.10.5 (c)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui-geometry:1.10.5 (c)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui-graphics:1.10.5 (c)\n|    |         |         |         |         |         |         +--- androidx.compose.ui:ui-text:1.10.5 (c)\n|    |         |         |         |         |         |         \\--- androidx.compose.ui:ui-util:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-util:1.10.5 (*)\n|    |         |         |         |         |         +--- androidx.core:core:1.12.0 -> 1.16.0 (*)\n|    |         |         |         |         |         +--- androidx.graphics:graphics-path:1.0.1\n|    |         |         |         |         |         |    +--- androidx.core:core:1.12.0 -> 1.16.0 (*)\n|    |         |         |         |         |         |    \\--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.3.21 (*)\n|    |         |         |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-geometry:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-text:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-unit:1.10.5 (c)\n|    |         |         |         |         |         \\--- androidx.compose.ui:ui-util:1.10.5 (c)\n|    |         |         |         |         +--- androidx.compose.ui:ui-text:1.10.5\n|    |         |         |         |         |    \\--- androidx.compose.ui:ui-text-android:1.10.5\n|    |         |         |         |         |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |         +--- androidx.annotation:annotation-experimental:1.4.1 (*)\n|    |         |         |         |         |         +--- androidx.collection:collection:1.5.0 (*)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         |         |         +--- androidx.compose.runtime:runtime-saveable:1.10.5 (*)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-graphics:1.10.5 (*)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-unit:1.10.5 (*)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-util:1.10.5 (*)\n|    |         |         |         |         |         +--- androidx.core:core:1.7.0 -> 1.16.0 (*)\n|    |         |         |         |         |         +--- androidx.emoji2:emoji2:1.4.0\n|    |         |         |         |         |         |    +--- androidx.annotation:annotation:1.2.0 -> 1.9.1 (*)\n|    |         |         |         |         |         |    +--- androidx.collection:collection:1.1.0 -> 1.5.0 (*)\n|    |         |         |         |         |         |    +--- androidx.core:core:1.3.0 -> 1.16.0 (*)\n|    |         |         |         |         |         |    +--- androidx.lifecycle:lifecycle-process:2.4.1 -> 2.9.4\n|    |         |         |         |         |         |    |    +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (*)\n|    |         |         |         |         |         |    |    +--- androidx.startup:startup-runtime:1.1.1 (*)\n|    |         |         |         |         |         |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |         |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |         |    |    +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |         |    |    \\--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |         |    \\--- androidx.startup:startup-runtime:1.0.0 -> 1.1.1 (*)\n|    |         |         |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         |         |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0 (*)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-geometry:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-graphics:1.10.5 (c)\n|    |         |         |         |         |         +--- androidx.compose.ui:ui-unit:1.10.5 (c)\n|    |         |         |         |         |         \\--- androidx.compose.ui:ui-util:1.10.5 (c)\n|    |         |         |         |         +--- androidx.compose.ui:ui-unit:1.10.5 (*)\n|    |         |         |         |         +--- androidx.compose.ui:ui-util:1.10.5 (*)\n|    |         |         |         |         +--- androidx.core:core:1.16.0 (*)\n|    |         |         |         |         +--- androidx.customview:customview-poolingcontainer:1.0.0\n|    |         |         |         |         |    +--- androidx.core:core-ktx:1.5.0 -> 1.16.0 (*)\n|    |         |         |         |         |    \\--- org.jetbrains.kotlin:kotlin-stdlib:1.6.21 -> 2.3.21 (*)\n|    |         |         |         |         +--- androidx.emoji2:emoji2:1.2.0 -> 1.4.0 (*)\n|    |         |         |         |         +--- androidx.lifecycle:lifecycle-runtime-compose:2.8.7 -> 2.9.4 (*)\n|    |         |         |         |         +--- androidx.lifecycle:lifecycle-viewmodel:2.9.2 -> 2.9.4 (*)\n|    |         |         |         |         +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.2 -> 2.9.4 (*)\n|    |         |         |         |         +--- androidx.profileinstaller:profileinstaller:1.4.0 (*)\n|    |         |         |         |         +--- androidx.savedstate:savedstate-compose:1.3.0 -> 1.3.3 (*)\n|    |         |         |         |         +--- androidx.savedstate:savedstate-ktx:1.3.1 -> 1.3.3 (*)\n|    |         |         |         |         +--- androidx.transition:transition:1.6.0\n|    |         |         |         |         |    +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |    +--- androidx.collection:collection:1.4.2 -> 1.5.0 (*)\n|    |         |         |         |         |    +--- androidx.core:core:1.16.0 (*)\n|    |         |         |         |         |    +--- androidx.dynamicanimation:dynamicanimation:1.0.0\n|    |         |         |         |         |    |    +--- androidx.core:core:1.0.0 -> 1.16.0 (*)\n|    |         |         |         |         |    |    +--- androidx.collection:collection:1.0.0 -> 1.5.0 (*)\n|    |         |         |         |         |    |    \\--- androidx.legacy:legacy-support-core-utils:1.0.0\n|    |         |         |         |         |    |         +--- androidx.annotation:annotation:1.0.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |         +--- androidx.core:core:1.0.0 -> 1.16.0 (*)\n|    |         |         |         |         |    |         +--- androidx.documentfile:documentfile:1.0.0\n|    |         |         |         |         |    |         |    \\--- androidx.annotation:annotation:1.0.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |         +--- androidx.loader:loader:1.0.0\n|    |         |         |         |         |    |         |    +--- androidx.annotation:annotation:1.0.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |         |    +--- androidx.core:core:1.0.0 -> 1.16.0 (*)\n|    |         |         |         |         |    |         |    +--- androidx.lifecycle:lifecycle-livedata:2.0.0 -> 2.9.4\n|    |         |         |         |         |    |         |    |    +--- androidx.arch.core:core-common:2.2.0 (*)\n|    |         |         |         |         |    |         |    |    +--- androidx.arch.core:core-runtime:2.2.0 (*)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (*)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (*)\n|    |         |         |         |         |    |         |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-livedata:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |         |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |         |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    |         |    |    +--- org.jspecify:jspecify:1.0.0\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-common:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-process:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-runtime-ktx:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (c)\n|    |         |         |         |         |    |         |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    |         |    \\--- androidx.lifecycle:lifecycle-viewmodel:2.0.0 -> 2.9.4 (*)\n|    |         |         |         |         |    |         +--- androidx.localbroadcastmanager:localbroadcastmanager:1.0.0\n|    |         |         |         |         |    |         |    \\--- androidx.annotation:annotation:1.0.0 -> 1.9.1 (*)\n|    |         |         |         |         |    |         \\--- androidx.print:print:1.0.0\n|    |         |         |         |         |    |              \\--- androidx.annotation:annotation:1.0.0 -> 1.9.1 (*)\n|    |         |         |         |         |    \\--- org.jspecify:jspecify:1.0.0\n|    |         |         |         |         +--- androidx.window:window:1.5.0\n|    |         |         |         |         |    +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         |         |    +--- androidx.collection:collection:1.4.2 -> 1.5.0 (*)\n|    |         |         |         |         |    +--- androidx.core:core:1.8.0 -> 1.16.0 (*)\n|    |         |         |         |         |    +--- androidx.window:window-core:1.5.0\n|    |         |         |         |         |    |    \\--- androidx.window:window-core-android:1.5.0\n|    |         |         |         |         |    |         +--- androidx.annotation:annotation:1.9.1 (*)\n|    |         |         |         |         |    |         +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    |         +--- androidx.window:window:1.5.0 (c)\n|    |         |         |         |         |    |         \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |         |         |         |         |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1 -> 1.9.0 (*)\n|    |         |         |         |         |    +--- org.jspecify:jspecify:1.0.0\n|    |         |         |         |         |    +--- androidx.window:window-core:1.5.0 (c)\n|    |         |         |         |         |    \\--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (c)\n|    |         |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0 (*)\n|    |         |         |         |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0 (*)\n|    |         |         |         |         +--- org.jspecify:jspecify:1.0.0\n|    |         |         |         |         +--- androidx.compose.ui:ui-geometry:1.10.5 (c)\n|    |         |         |         |         +--- androidx.compose.ui:ui-graphics:1.10.5 (c)\n|    |         |         |         |         +--- androidx.compose.ui:ui-text:1.10.5 (c)\n|    |         |         |         |         +--- androidx.compose.ui:ui-unit:1.10.5 (c)\n|    |         |         |         |         +--- androidx.compose.ui:ui-util:1.10.5 (c)\n|    |         |         |         |         \\--- androidx.compose.foundation:foundation:1.7.0 -> 1.10.5 (c)\n|    |         |         |         +--- androidx.compose.ui:ui-graphics:1.10.5 (*)\n|    |         |         |         +--- androidx.compose.ui:ui-unit:1.10.5 (*)\n|    |         |         |         +--- androidx.compose.ui:ui-util:1.10.5 (*)\n|    |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0 (*)\n|    |         |         |         \\--- androidx.compose.animation:animation:1.10.5 (c)\n|    |         |         +--- androidx.compose.foundation:foundation-layout:1.10.5\n|    |         |         |    \\--- androidx.compose.foundation:foundation-layout-android:1.10.5\n|    |         |         |         +--- androidx.annotation:annotation:1.8.1 -> 1.9.1 (*)\n|    |         |         |         +--- androidx.annotation:annotation-experimental:1.4.1 (*)\n|    |         |         |         +--- androidx.collection:collection:1.5.0 (*)\n|    |         |         |         +--- androidx.compose.animation:animation-core:1.2.1 -> 1.10.5 (*)\n|    |         |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         |         +--- androidx.compose.ui:ui:1.10.5 (*)\n|    |         |         |         +--- androidx.compose.ui:ui-unit:1.10.5 (*)\n|    |         |         |         +--- androidx.compose.ui:ui-util:1.10.5 (*)\n|    |         |         |         +--- androidx.core:core:1.16.0 (*)\n|    |         |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         |         \\--- androidx.compose.foundation:foundation:1.10.5 (c)\n|    |         |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         |         +--- androidx.compose.ui:ui:1.10.5 (*)\n|    |         |         +--- androidx.compose.ui:ui-geometry:1.10.5 (*)\n|    |         |         +--- androidx.compose.ui:ui-graphics:1.10.5 (*)\n|    |         |         +--- androidx.compose.ui:ui-util:1.10.5 (*)\n|    |         |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         |         \\--- androidx.compose.animation:animation-core:1.10.5 (c)\n|    |         +--- androidx.compose.foundation:foundation-layout:1.10.5 (*)\n|    |         +--- androidx.compose.runtime:runtime:1.10.5 (*)\n|    |         +--- androidx.compose.ui:ui:1.10.5 (*)\n|    |         +--- androidx.compose.ui:ui-text:1.10.5 (*)\n|    |         +--- androidx.compose.ui:ui-util:1.10.5 (*)\n|    |         +--- androidx.core:core:1.13.1 -> 1.16.0 (*)\n|    |         +--- androidx.emoji2:emoji2:1.3.0 -> 1.4.0 (*)\n|    |         +--- org.jetbrains.kotlin:kotlin-stdlib:2.0.21 -> 2.3.21 (*)\n|    |         \\--- androidx.compose.foundation:foundation-layout:1.10.5 (c)\n|    +--- org.jetbrains.compose.animation:animation:1.10.3\n|    |    +--- androidx.compose.animation:animation:1.10.5 (*)\n|    |    +--- org.jetbrains.compose.animation:animation-core:1.10.3\n|    |    |    +--- androidx.compose.animation:animation-core:1.10.5 (*)\n|    |    |    +--- org.jetbrains.compose.annotation-internal:annotation:1.10.3\n|    |    |    |    \\--- androidx.annotation:annotation:1.9.1 (*)\n|    |    |    +--- org.jetbrains.compose.collection-internal:collection:1.10.3\n|    |    |    |    \\--- androidx.collection:collection:1.5.0 (*)\n|    |    |    +--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    |    |    +--- org.jetbrains.compose.ui:ui:1.10.3\n|    |    |    |    +--- androidx.compose.runtime:runtime-retain:1.10.5 (*)\n|    |    |    |    +--- androidx.compose.ui:ui:1.10.5 (*)\n|    |    |    |    +--- org.jetbrains.androidx.lifecycle:lifecycle-common:2.9.6\n|    |    |    |    |    \\--- androidx.lifecycle:lifecycle-common:2.9.4 (*)\n|    |    |    |    +--- org.jetbrains.androidx.lifecycle:lifecycle-runtime:2.9.6\n|    |    |    |    |    +--- androidx.lifecycle:lifecycle-runtime:2.9.4 (*)\n|    |    |    |    |    \\--- org.jetbrains.androidx.lifecycle:lifecycle-common:2.9.6 (*)\n|    |    |    |    +--- org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.9.6\n|    |    |    |    |    +--- androidx.lifecycle:lifecycle-runtime-compose:2.9.4 (*)\n|    |    |    |    |    +--- org.jetbrains.androidx.lifecycle:lifecycle-common:2.9.6 (*)\n|    |    |    |    |    +--- org.jetbrains.androidx.lifecycle:lifecycle-runtime:2.9.6 (*)\n|    |    |    |    |    \\--- org.jetbrains.compose.runtime:runtime:1.9.3 -> 1.10.3 (*)\n|    |    |    |    +--- org.jetbrains.androidx.lifecycle:lifecycle-viewmodel:2.9.6\n|    |    |    |    |    \\--- androidx.lifecycle:lifecycle-viewmodel:2.9.4 (*)\n|    |    |    |    +--- org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.6\n|    |    |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.4 (*)\n|    |    |    |    |    +--- org.jetbrains.androidx.lifecycle:lifecycle-viewmodel:2.9.6 (*)\n|    |    |    |    |    \\--- org.jetbrains.androidx.savedstate:savedstate:1.3.6\n|    |    |    |    |         \\--- androidx.savedstate:savedstate:1.3.3 (*)\n|    |    |    |    +--- org.jetbrains.compose.annotation-internal:annotation:1.10.3 (*)\n|    |    |    |    +--- org.jetbrains.compose.collection-internal:collection:1.10.3 (*)\n|    |    |    |    +--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    |    |    |    +--- org.jetbrains.compose.runtime:runtime-saveable:1.10.3\n|    |    |    |    |    +--- androidx.compose.runtime:runtime-saveable:1.10.5 (*)\n|    |    |    |    |    +--- org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.9.6 (*)\n|    |    |    |    |    +--- org.jetbrains.androidx.savedstate:savedstate-compose:1.3.6\n|    |    |    |    |    |    +--- androidx.savedstate:savedstate-compose:1.3.3 (*)\n|    |    |    |    |    |    +--- org.jetbrains.androidx.savedstate:savedstate:1.3.6 (*)\n|    |    |    |    |    |    \\--- org.jetbrains.compose.runtime:runtime:1.9.3 -> 1.10.3 (*)\n|    |    |    |    |    \\--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    |    |    |    +--- org.jetbrains.compose.ui:ui-geometry:1.10.3\n|    |    |    |    |    +--- androidx.compose.ui:ui-geometry:1.10.5 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.ui:ui-util:1.10.3\n|    |    |    |    |    |    +--- androidx.compose.ui:ui-util:1.10.5 (*)\n|    |    |    |    |    |    +--- org.jetbrains.compose.collection-internal:collection:1.10.3 (*)\n|    |    |    |    |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |    |    |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |    |    |    +--- org.jetbrains.compose.ui:ui-graphics:1.10.3\n|    |    |    |    |    +--- androidx.compose.ui:ui-graphics:1.10.5 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.annotation-internal:annotation:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.collection-internal:collection:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.ui:ui-geometry:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.ui:ui-unit:1.10.3\n|    |    |    |    |    |    +--- androidx.compose.ui:ui-unit:1.10.5 (*)\n|    |    |    |    |    |    +--- org.jetbrains.compose.annotation-internal:annotation:1.10.3 (*)\n|    |    |    |    |    |    +--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    |    |    |    |    |    +--- org.jetbrains.compose.ui:ui-geometry:1.10.3 (*)\n|    |    |    |    |    |    +--- org.jetbrains.compose.ui:ui-util:1.10.3 (*)\n|    |    |    |    |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.ui:ui-util:1.10.3 (*)\n|    |    |    |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |    |    |    +--- org.jetbrains.compose.ui:ui-text:1.10.3\n|    |    |    |    |    +--- androidx.compose.ui:ui-text:1.10.5 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.annotation-internal:annotation:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.collection-internal:collection:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.runtime:runtime-saveable:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.ui:ui-geometry:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.ui:ui-graphics:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.ui:ui-unit:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.compose.ui:ui-util:1.10.3 (*)\n|    |    |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |    |    |    |    \\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0 -> 1.9.0 (*)\n|    |    |    |    +--- org.jetbrains.compose.ui:ui-unit:1.10.3 (*)\n|    |    |    |    +--- org.jetbrains.compose.ui:ui-util:1.10.3 (*)\n|    |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |    |    |    \\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0 -> 1.9.0 (*)\n|    |    |    +--- org.jetbrains.compose.ui:ui-unit:1.10.3 (*)\n|    |    |    +--- org.jetbrains.compose.ui:ui-util:1.10.3 (*)\n|    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |    |    \\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0 -> 1.9.0 (*)\n|    |    +--- org.jetbrains.compose.collection-internal:collection:1.10.3 (*)\n|    |    +--- org.jetbrains.compose.foundation:foundation-layout:1.10.3\n|    |    |    +--- androidx.compose.foundation:foundation-layout:1.10.5 (*)\n|    |    |    +--- org.jetbrains.compose.annotation-internal:annotation:1.10.3 (*)\n|    |    |    +--- org.jetbrains.compose.collection-internal:collection:1.10.3 (*)\n|    |    |    +--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    |    |    +--- org.jetbrains.compose.ui:ui:1.10.3 (*)\n|    |    |    +--- org.jetbrains.compose.ui:ui-util:1.10.3 (*)\n|    |    |    \\--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    |    +--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    |    +--- org.jetbrains.compose.ui:ui:1.10.3 (*)\n|    |    +--- org.jetbrains.compose.ui:ui-geometry:1.10.3 (*)\n|    |    +--- org.jetbrains.compose.ui:ui-util:1.10.3 (*)\n|    |    \\--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n|    +--- org.jetbrains.compose.annotation-internal:annotation:1.10.3 (*)\n|    +--- org.jetbrains.compose.collection-internal:collection:1.10.3 (*)\n|    +--- org.jetbrains.compose.foundation:foundation-layout:1.10.3 (*)\n|    +--- org.jetbrains.compose.runtime:runtime:1.10.3 (*)\n|    +--- org.jetbrains.compose.ui:ui:1.10.3 (*)\n|    +--- org.jetbrains.compose.ui:ui-text:1.10.3 (*)\n|    +--- org.jetbrains.compose.ui:ui-util:1.10.3 (*)\n|    \\--- org.jetbrains.kotlin:kotlin-stdlib -> 2.3.21 (*)\n+--- org.jetbrains.compose.ui:ui:1.10.3 (*)\n\\--- org.jetbrains.kotlin:kotlin-stdlib:2.3.21 (*)\n\n(c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.\n(*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.\n\nA web-based, searchable dependency report is available by adding the --scan option.\n\n[Incubating] Problems report is available at: file:///Users/debanshud/Documents/Personal/ShaderX/build/reports/problems/problems-report.html\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 10.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/9.6.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n\nBUILD SUCCESSFUL in 789ms\n1 actionable task: 1 executed\nConfiguration cache entry stored.\n",
+  "results": {
+    "shaderx:jvmTest": {
+      "tests": 604,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": 56
+    },
+    "shaderx:wasmJsBrowserTest": {
+      "tests": 510,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": 38
+    },
+    "shaderx:iosSimulatorArm64Test": {
+      "tests": 510,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": 38
+    },
+    "samples/ShaderLab/composeApp:jvmTest": {
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": 14
+    },
+    "samples/ShaderLab/composeApp:wasmJsBrowserTest": {
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": 12
+    },
+    "validation/kmp-consumer:jvmTest": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": 11
+    }
+  },
+  "android": {
+    "api31": {
+      "started": 3,
+      "passed": 3,
+      "failed": 0,
+      "assumption_skipped": 0,
+      "log": "/private/tmp/sx11-api31-instrument.log",
+      "coverage": "HWUI control/blur/blurchain pixels, ordered native radius reads, retained filters after cache clear, repeated close; mixed graph source/uniform/frame/native counters zero; raw/nested/background declarations and guarded query/render preflight; default factory startup and explicit preservation/substitution",
+      "runtime": {
+        "status": "ready_for_actual_shaderx_old_runtime_probe",
+        "runtime": {
+          "api": 31,
+          "serial": "emulator-5560",
+          "private_adb_socket": "tcp:localhost:5039",
+          "private_adb_port": 5039,
+          "emulator_pid": 852,
+          "private_adb_pid": 862,
+          "emulator_exec_session": 10034,
+          "avd": "sx11_api31",
+          "avd_home": "/private/tmp/sx11-avd",
+          "sdk_root": "/private/tmp/sx11-sdk",
+          "fingerprint": "Android/sdk_phone64_arm64/emulator64_arm64:12/SE1A.220621.001/8752307:userdebug/test-keys",
+          "renderer": "swiftshader_indirect",
+          "size": "480x800",
+          "boot_completed": "1"
+        },
+        "commands": [
+          {
+            "command": "android --sdk=/private/tmp/sx11-sdk sdk install --ignore-outdated-xmls system-images/android-31/default/arm64-v8a",
+            "outcome": "exit0; image installed into task root",
+            "log": "/private/tmp/sx11-api31-install.log"
+          },
+          {
+            "command": "ANDROID_HOME=/private/tmp/sx11-sdk ANDROID_SDK_ROOT=/private/tmp/sx11-sdk ANDROID_USER_HOME=/private/tmp/sx11-android-user ANDROID_AVD_HOME=/private/tmp/sx11-avd JAVA_HOME=<JDK21> /private/tmp/sx11-sdk/cmdline-tools/latest/bin/avdmanager create avd --name sx11_api31 --package system-images;android-31;default;arm64-v8a --path /private/tmp/sx11-avd/sx11_api31.avd --device pixel_5",
+            "outcome": "exit0 after copying cmdline-tools to private root; symlink inferred shared SDK and rejected candidate package",
+            "log": "/private/tmp/sx11-api31-create.log"
+          },
+          {
+            "command": "ADB_SERVER_SOCKET=tcp:localhost:5039 ANDROID_ADB_SERVER_PORT=5039 adb start-server",
+            "outcome": "started privatePID862; verified5039/5560/5561free before startup; sandbox sockets blocked first attempt, authorized escalation succeeded"
+          },
+          {
+            "command": "ANDROID_HOME=/private/tmp/sx11-sdk ANDROID_SDK_ROOT=/private/tmp/sx11-sdk ANDROID_USER_HOME=/private/tmp/sx11-android-user ANDROID_AVD_HOME=/private/tmp/sx11-avd ADB_SERVER_SOCKET=tcp:localhost:5039 ANDROID_ADB_SERVER_PORT=5039 emulator -avd sx11_api31 -ports 5560,5561 -no-window -no-snapshot -no-boot-anim -no-audio -gpu swiftshader_indirect",
+            "outcome": "runningPID852; boot completed1",
+            "log": "/private/tmp/sx11-api31-emulator.log"
+          }
+        ],
+        "screenshots": [
+          {
+            "path": "/private/tmp/sx11-api31-boot.png",
+            "observed": "visually inspected normal480x800launcher; establishes emulator startup only, no ShaderX rendering"
+          }
+        ],
+        "discipline": "Only task-owned roots mutated. No shared ADB reset/restart/pairing or shared AVD mutation. Explicit serial required: private server discovers both emulator-5554 and5560. Parent owns cleanup after probe; emulator/private ADB deliberately left running."
+      }
+    },
+    "api36": {
+      "started": 29,
+      "passed": 27,
+      "failed": 0,
+      "assumption_skipped": 2,
+      "skip_reason": "Two adoption cases intentionally limited to API31/32; verified raw instrumentation status -4 twice",
+      "log": "/private/tmp/sx11-api36-instrument.log",
+      "backend": "Task-owned small_phone API36.1/SDK_INT36 software emulator; emulator evidence, not physical GPU"
+    },
+    "consumer_startup": "Debug and R8 optimized release installed/launched/resumed on API31 and API36; visible blurred checkerboards inspected. No sample dependency, manifest overrides or custom keep rules. Release uses debug signing for local fixture only",
+    "device_commands": [
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "install",
+          "-r",
+          "shaderx/build/outputs/apk/androidTest/shaderx-androidTest.apk"
+        ],
+        "exit": 0,
+        "stdout": "Performing Streamed Install\nSuccess\n",
+        "stderr": ""
+      },
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "shell",
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "class",
+          "com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest",
+          "io.github.debanshu.shaderx.test/androidx.test.runner.AndroidJUnitRunner"
+        ],
+        "exit": 0,
+        "stdout": "INSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=\ncom.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest:\nINSTRUMENTATION_STATUS: test=api31PreflightDoesNotReadRuntimeSourcesProvidersOrPartialNativeValues\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=api31PreflightDoesNotReadRuntimeSourcesProvidersOrPartialNativeValues\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=2\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=api31RejectsWholeRuntimeGraphAndPreservesOrSubstitutesExplicitly\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=2\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=api31RejectsWholeRuntimeGraphAndPreservesOrSubstitutesExplicitly\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=3\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=nativeBlurAndChainsHaveVisiblePixelsAndIndependentLifetime\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=3\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=3\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=nativeBlurAndChainsHaveVisiblePixelsAndIndependentLifetime\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_RESULT: stream=\n\nTime: 0.087\n\nOK (3 tests)\n\n\nINSTRUMENTATION_CODE: -1\n",
+        "stderr": ""
+      },
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "install",
+          "-r",
+          "validation/android-app/build/outputs/apk/debug/android-app-debug.apk"
+        ],
+        "exit": 0,
+        "stdout": "Performing Streamed Install\nSuccess\n",
+        "stderr": ""
+      },
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "shell",
+          "am",
+          "force-stop",
+          "io.github.debanshu.shaderx.validation.app"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "shell",
+          "am",
+          "start",
+          "-W",
+          "-n",
+          "io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity"
+        ],
+        "exit": 0,
+        "stdout": "Starting: Intent { cmp=io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity }\nStatus: ok\nLaunchState: COLD\nActivity: io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity\nTotalTime: 159\nWaitTime: 160\nComplete\n",
+        "stderr": ""
+      },
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "shell",
+          "dumpsys",
+          "activity",
+          "activities"
+        ],
+        "exit": 0,
+        "stdout": "Full stdout retained in /private/tmp/sx11-api31-<debug|release>-activity.txt; AdoptionActivity verified resumed",
+        "stderr": ""
+      },
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "install",
+          "-r",
+          "validation/android-app/build/outputs/apk/release/android-app-release.apk"
+        ],
+        "exit": 0,
+        "stdout": "Performing Streamed Install\nSuccess\n",
+        "stderr": ""
+      },
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "shell",
+          "am",
+          "force-stop",
+          "io.github.debanshu.shaderx.validation.app"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "shell",
+          "am",
+          "start",
+          "-W",
+          "-n",
+          "io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity"
+        ],
+        "exit": 0,
+        "stdout": "Starting: Intent { cmp=io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity }\nStatus: ok\nLaunchState: COLD\nActivity: io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity\nTotalTime: 96\nWaitTime: 98\nComplete\n",
+        "stderr": ""
+      },
+      {
+        "api": 31,
+        "port": 5039,
+        "serial": "emulator-5560",
+        "args": [
+          "shell",
+          "dumpsys",
+          "activity",
+          "activities"
+        ],
+        "exit": 0,
+        "stdout": "Full stdout retained in /private/tmp/sx11-api31-<debug|release>-activity.txt; AdoptionActivity verified resumed",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "install",
+          "-r",
+          "shaderx/build/outputs/apk/androidTest/shaderx-androidTest.apk"
+        ],
+        "exit": 0,
+        "stdout": "Performing Streamed Install\nSuccess\n",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "shell",
+          "am",
+          "instrument",
+          "-w",
+          "-r",
+          "-e",
+          "class",
+          "com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest,com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest,com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest,com.debanshu.shaderlab.shaderx.BackgroundDeviceTest,com.debanshu.shaderlab.shaderx.EffectCollectionDeviceTest,com.debanshu.shaderlab.shaderx.ShaderInputsDeviceTest",
+          "io.github.debanshu.shaderx.test/androidx.test.runner.AndroidJUnitRunner"
+        ],
+        "exit": 0,
+        "stdout": "INSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\ncom.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest:\nINSTRUMENTATION_STATUS: test=api31PreflightDoesNotReadRuntimeSourcesProvidersOrPartialNativeValues\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=1\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stack=org.junit.AssumptionViolatedException: got: <false>, expected: is <true>\n\tat org.junit.Assume.assumeThat(Assume.java:106)\n\tat org.junit.Assume.assumeTrue(Assume.java:50)\n\tat com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest.api31PreflightDoesNotReadRuntimeSourcesProvidersOrPartialNativeValues(AndroidAdoptionDeviceTest.kt:42)\n\nINSTRUMENTATION_STATUS: stream=\ncom.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest:\nINSTRUMENTATION_STATUS: test=api31PreflightDoesNotReadRuntimeSourcesProvidersOrPartialNativeValues\nINSTRUMENTATION_STATUS_CODE: -4\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=2\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=api31RejectsWholeRuntimeGraphAndPreservesOrSubstitutesExplicitly\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=2\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stack=org.junit.AssumptionViolatedException: got: <false>, expected: is <true>\n\tat org.junit.Assume.assumeThat(Assume.java:106)\n\tat org.junit.Assume.assumeTrue(Assume.java:50)\n\tat com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest.api31RejectsWholeRuntimeGraphAndPreservesOrSubstitutesExplicitly(AndroidAdoptionDeviceTest.kt:79)\n\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=api31RejectsWholeRuntimeGraphAndPreservesOrSubstitutesExplicitly\nINSTRUMENTATION_STATUS_CODE: -4\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=3\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=nativeBlurAndChainsHaveVisiblePixelsAndIndependentLifetime\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidAdoptionDeviceTest\nINSTRUMENTATION_STATUS: current=3\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=nativeBlurAndChainsHaveVisiblePixelsAndIndependentLifetime\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=4\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\ncom.debanshu.shaderlab.shaderx.AndroidShaderPixelTest:\nINSTRUMENTATION_STATUS: test=staticColorChildrenSameSourceRemainIndependentWhenLaterLiveProviderFails\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=4\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=staticColorChildrenSameSourceRemainIndependentWhenLaterLiveProviderFails\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=5\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=texturesResizeErrorsAndRepeatedDisposal_keepRenderingValid\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=5\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=texturesResizeErrorsAndRepeatedDisposal_keepRenderingValid\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=6\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=pipelineStructuralColorsResizeAndFailedReplacement_preserveSuccessfulWholeSnapshot\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=6\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=pipelineStructuralColorsResizeAndFailedReplacement_preserveSuccessfulWholeSnapshot\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=7\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=builtInsAndChains_renderExpectedPixels\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=7\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=builtInsAndChains_renderExpectedPixels\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=8\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=cachedSourceAndAnimatedInstances_keepUniformsIndependent\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=8\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=cachedSourceAndAnimatedInstances_keepUniformsIndependent\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=9\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=portablePipeline_noncommutativeOrderAndSharedClock_renderHardwarePixels\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=9\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=portablePipeline_noncommutativeOrderAndSharedClock_renderHardwarePixels\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=10\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=layoutColor_translucentValuesAndRepeatedUpdates_renderUnpremultipliedInput\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=10\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=layoutColor_translucentValuesAndRepeatedUpdates_renderUnpremultipliedInput\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=11\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=strictPilotEditsMatchLegacyPixelsWithoutChangingAlphaOrTime\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=11\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=strictPilotEditsMatchLegacyPixelsWithoutChangingAlphaOrTime\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=12\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=hardwareReadbackControl_rendersSolidInput\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=12\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=hardwareReadbackControl_rendersSolidInput\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=13\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=capabilitiesAndExplicitFallback_agreeWithHardwareRendering\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest\nINSTRUMENTATION_STATUS: current=13\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=capabilitiesAndExplicitFallback_agreeWithHardwareRendering\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest\nINSTRUMENTATION_STATUS: current=14\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\ncom.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest:\nINSTRUMENTATION_STATUS: test=generatedColorsAndSessionsRemainIndependentAcrossReplacementAndDisposal\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest\nINSTRUMENTATION_STATUS: current=14\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=generatedColorsAndSessionsRemainIndependentAcrossReplacementAndDisposal\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest\nINSTRUMENTATION_STATUS: current=15\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=controlledTimelineAndLiveSnapshotsSurviveStructuralAndFactoryReplacement\nINSTRUMENTATION_STATUS_CODE: 1\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest\nINSTRUMENTATION_STATUS: current=15\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=.\nINSTRUMENTATION_STATUS: test=controlledTimelineAndLiveSnapshotsSurviveStructuralAndFactoryReplacement\nINSTRUMENTATION_STATUS_CODE: 0\nINSTRUMENTATION_STATUS: class=com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest\nINSTRUMENTATION_STATUS: current=16\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\nINSTRUMENTATION_STATUS: numtests=29\nINSTRUMENTATION_STATUS: stream=\nINSTRUMENTATION_STATUS: test=layoutColorTransformsSrgbIntoLinearSrgbAndDisplayP3WithTrans\n[full raw instrumentation in /private/tmp/sx11-api36-instrument.log]",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "install",
+          "-r",
+          "validation/android-app/build/outputs/apk/debug/android-app-debug.apk"
+        ],
+        "exit": 0,
+        "stdout": "Performing Streamed Install\nSuccess\n",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "shell",
+          "am",
+          "force-stop",
+          "io.github.debanshu.shaderx.validation.app"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "shell",
+          "am",
+          "start",
+          "-W",
+          "-n",
+          "io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity"
+        ],
+        "exit": 0,
+        "stdout": "Starting: Intent { cmp=io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity }\nStatus: ok\nLaunchState: COLD\nActivity: io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity\nTotalTime: 274\nWaitTime: 275\nComplete\n",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "shell",
+          "dumpsys",
+          "activity",
+          "activities"
+        ],
+        "exit": 0,
+        "stdout": "Full stdout retained in /private/tmp/sx11-api36-<debug|release>-activity.txt; AdoptionActivity verified resumed",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "install",
+          "-r",
+          "validation/android-app/build/outputs/apk/release/android-app-release.apk"
+        ],
+        "exit": 0,
+        "stdout": "Performing Streamed Install\nSuccess\n",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "shell",
+          "am",
+          "force-stop",
+          "io.github.debanshu.shaderx.validation.app"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "shell",
+          "am",
+          "start",
+          "-W",
+          "-n",
+          "io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity"
+        ],
+        "exit": 0,
+        "stdout": "Starting: Intent { cmp=io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity }\nStatus: ok\nLaunchState: COLD\nActivity: io.github.debanshu.shaderx.validation.app/io.github.debanshu.shaderx.validation.AdoptionActivity\nTotalTime: 94\nWaitTime: 96\nComplete\n",
+        "stderr": ""
+      },
+      {
+        "api": 36,
+        "port": 5038,
+        "serial": "127.0.0.1:5555",
+        "args": [
+          "shell",
+          "dumpsys",
+          "activity",
+          "activities"
+        ],
+        "exit": 0,
+        "stdout": "Full stdout retained in /private/tmp/sx11-api36-<debug|release>-activity.txt; AdoptionActivity verified resumed",
+        "stderr": ""
+      }
+    ],
+    "screenshots": [
+      "/private/tmp/sx11-api31-debug.png",
+      "/private/tmp/sx11-api31-release.png",
+      "/private/tmp/sx11-api36-debug.png",
+      "/private/tmp/sx11-api36-release.png"
+    ]
+  },
+  "commands": [
+    {
+      "log": "/private/tmp/sx11-android-build.log",
+      "command": "Calculating task graph as no cached configuration is available for tasks: :shaderx:assemble :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease :validation:kmp-consumer:compileAndroidMain :validation:android-app:assembleDebug :validation:android-app:assembleRelease",
+      "outcome": "BUILD FAILED in 47s"
+    },
+    {
+      "log": "/private/tmp/sx11-candidate-build.log",
+      "command": "Calculating task graph as no cached configuration is available for tasks: :shaderx:assemble :shaderx:jvmTest :shaderx:assembleAndroidDeviceTest :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease :validation:kmp-consumer:compileAndroidMain :validation:android-app:assembleDebug :validation:android-app:assembleRelease",
+      "outcome": "BUILD FAILED in 16s"
+    },
+    {
+      "log": "/private/tmp/sx11-candidate-build2.log",
+      "command": "225 actionable tasks: 44 executed, 181 up-to-date",
+      "outcome": "BUILD FAILED in 1m 21s"
+    },
+    {
+      "log": "/private/tmp/sx11-candidate-final-build.log",
+      "command": "Calculating task graph as no cached configuration is available for tasks: :shaderx:bundleAndroidMainAar :shaderx:jvmTest :shaderx:assembleAndroidDeviceTest :shaderx:updateKotlinAbi :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease :validation:kmp-consumer:compileAndroidMain :validation:android-app:assembleDebug :validation:android-app:assembleRelease",
+      "outcome": "BUILD SUCCESSFUL in 12s"
+    },
+    {
+      "log": "/private/tmp/sx11-final-validation.log",
+      "command": "Calculating task graph as no cached configuration is available for tasks: :shaderx:bundleAndroidMainAar :shaderx:assembleAndroidDeviceTest :validation:android-app:assembleDebug :validation:android-app:assembleRelease :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:compileKotlinIosArm64 :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease",
+      "outcome": "BUILD FAILED in 8s"
+    },
+    {
+      "log": "/private/tmp/sx11-final-validation2.log",
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:bundleAndroidMainAar :shaderx:assembleAndroidDeviceTest :validation:android-app:assembleDebug :validation:android-app:assembleRelease :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:compileKotlinIosArm64 :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease",
+      "outcome": "BUILD SUCCESSFUL in 46s"
+    },
+    {
+      "log": "/private/tmp/sx11-consumer-final.log",
+      "command": "Calculating task graph as no cached configuration is available for tasks: :shaderx:bundleAndroidMainAar :shaderx:assembleAndroidDeviceTest :shaderx:checkKotlinAbi :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease :validation:kmp-consumer:compileAndroidMain :validation:android-app:assembleDebug :validation:android-app:assembleRelease",
+      "outcome": "BUILD SUCCESSFUL in 4s"
+    },
+    {
+      "log": "/private/tmp/sx11-legacy-consumers.log",
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew -PshaderxConsumerLegacy=true -PshaderxConsumerVersion=0.1.3 :validation:android-consumer:assembleDebug :validation:kmp-consumer:compileAndroidMain",
+      "outcome": "BUILD SUCCESSFUL in 2s"
+    },
+    {
+      "log": "/private/tmp/sx11-check-final.log",
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:check :shaderx:bundleAndroidMainAar :shaderx:assembleAndroidDeviceTest :validation:android-app:assembleDebug :validation:android-app:assembleRelease :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease :validation:kmp-consumer:compileAndroidMain",
+      "outcome": "BUILD SUCCESSFUL in 5s"
+    },
+    {
+      "log": "/private/tmp/sx11-artifact-final-build.log",
+      "command": "Calculating task graph as no cached configuration is available for tasks: :shaderx:bundleAndroidMainAar :shaderx:checkKotlinAbi",
+      "outcome": "BUILD SUCCESSFUL in 3s"
+    },
+    {
+      "command": ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+      "log": "/private/tmp/sx11-doc-install.log",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_docs.py",
+      "log": "/private/tmp/sx11-doc-check.log",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+      "log": "/private/tmp/sx11-doc-tests.log",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/zensical build --strict",
+      "log": "/private/tmp/sx11-doc-build.log",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/package_playground.py",
+      "log": "/private/tmp/sx11-package.log",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_site.py",
+      "log": "/private/tmp/sx11-site-check.log",
+      "outcome": "PASS"
+    },
+    {
+      "command": "python3 scripts/check_android_artifact.py shaderx/build/outputs/aar/shaderx.aar",
+      "outcome": "PASS; minSdk31/minCompileSdk35/all196classfilesmajor61",
+      "log": "/private/tmp/sx11-artifact.json"
+    }
+  ],
+  "artifact_negative_checks": "Mutated minSdk33, minCompileSdk37 and Java21 class in libs/probe.jar each rejected with exit1; real packaged AAR accepted. Temporary /private/tmp/sx11-invalid-*.aar fixtures.",
+  "documentation": {
+    "python_tests": 24,
+    "guides": 27,
+    "markdown_files": 30,
+    "indexable_pages": 27,
+    "production_playground": "Fresh production Wasm distribution packaged:11files/15552752bytes",
+    "preview": "Actual IAB desktop1280x720 and mobile390x844 Android requirements rendered and visually inspected; mobile table fits viewport; viewport reset and tab closed"
+  },
+  "cleanup": {
+    "api31": {
+      "cleanup_status": "passed",
+      "checked_at_utc": "2026-11-19T18:42:09.940049+00:00",
+      "ownership_verified_before_cleanup": {
+        "emulator_pid": 852,
+        "emulator_command": "qemu-system-aarch64-headless -avd sx11_api31 -ports 5560,5561 -no-window -no-snapshot -no-boot-anim -no-audio -gpu swiftshader_indirect",
+        "avd_name_from_explicit_serial": "sx11_api31",
+        "private_adb_pid": 862,
+        "private_adb_command": "adb -L tcp:localhost:5039 fork-server server --reply-fd 4"
+      },
+      "commands": [
+        {
+          "command": "ADB_SERVER_SOCKET=tcp:localhost:5039 ANDROID_ADB_SERVER_PORT=5039 adb -s emulator-5560 emu kill",
+          "exit_code": 0,
+          "output": "OK: killing emulator, bye bye; OK"
+        },
+        {
+          "command": "ADB_SERVER_SOCKET=tcp:localhost:5039 ANDROID_ADB_SERVER_PORT=5039 adb kill-server",
+          "exit_code": 0
+        }
+      ],
+      "process_checks": {
+        "852": "",
+        "862": ""
+      },
+      "listener_checks": {
+        "5039": "",
+        "5560": "",
+        "5561": ""
+      },
+      "preserved_on_disk": {
+        "/private/tmp/sx11-sdk": true,
+        "/private/tmp/sx11-avd/sx11_api31.avd": true
+      },
+      "parent5038_listener_read_only_check": "",
+      "discipline": "Only task-owned API31 emulator and ADB5039 server stopped. No default shared ADB commands; no5038 mutation; private SDK/AVD retained."
+    },
+    "api36": "Stopped only task-owned small_phone using private5038 android emulator stop small_phone; then killed only private5038 server. Log /private/tmp/sx11-api36-cleanup.log",
+    "preview": "Stopped task-owned http.server8131 after verifying process command. Listener verification found no5038/5039/8131 listener. Browser tab closed/override reset",
+    "on_disk": "Task-owned private SDK and AVD retained in /private/tmp for reproduction; no running emulator/ADB process retained. Existing shared AVD/SDK/defaultADB/pairing preserved"
+  },
+  "remaining_gaps": [
+    "Physical API31/32 hardware and exact API32 runtime execution",
+    "API23\u201330 installation/startup unsupported; dependency min23 does not establish runtime support",
+    "Independent minimum-AGP8.6 build not proven; repository AGP9.4.1/Gradle9.6 tested",
+    "Precompiled legacy binary linkage and Android/Klib ABI window remain SX15",
+    "HWUI checks do not prove Compose modifier lifecycle/invalidation; final SX12 covers separately",
+    "Native resource/memory stabilization, frame budgets/performance, physical iOS GPU coverage"
+  ],
+  "investigation_corrections": [
+    "Initial android docs invocation corrected to docs search; initial sandbox CLI lock denial resolved with approved escalation",
+    "Full library assembly exposed prior common RegexOption.DOT_MATCHES_ALL unsupported metadata; replaced with portable [\\s\\S]",
+    "New fixture compile errors (interface BlurEffect constructor/import/Failure generic) corrected before successful runs",
+    "Concurrent generated-source producer plus consumer annotation extraction exposed undeclared task dependency; extraction tasks now depend on actual generator test"
+  ],
+  "integrity": {
+    "sx10_baseline_hashes_matched_before_work": true,
+    "all_existing_ABI_lines_preserved": true,
+    "user_toolchain_files_preserved": true,
+    "all_readme_images_preserved": true,
+    "readme_images": [
+      "<img src=\"docs/assets/shaderx-banner.png\" width=\"100%\" alt=\"ShaderX \u2014 GPU shader effects for Kotlin and Compose Multiplatform, illustrated by a blue halftone flower\" />",
+      "<img src=\"assets/shader_lab.gif\" width=\"320\" alt=\"Animated Android ShaderLab demo with adjustable GPU shader effects\" />",
+      "<img src=\"assets/shader_lab_web.gif\" width=\"420\" alt=\"Animated ShaderLab browser demo running Compose Multiplatform on WebAssembly\" />",
+      "<img src=\"assets/ASCIICamera.gif\" width=\"320\" alt=\"Animated CameraX preview transformed into ASCII characters with a custom ShaderX shader\" />",
+      "<img src=\"assets/vertical_carousal.gif\" width=\"320\" alt=\"Animated movie carousel applying shader effects as cards scroll\" />"
+    ],
+    "no_branch_switch_commit_merge_publish_release": true
+  },
+  "files_changed": [
+    ".github/workflows/ci.yml",
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "README.md",
+    "docs/contributing.md",
+    "docs/getting-started.md",
+    "docs/maintaining.md",
+    "docs/platforms.md",
+    "docs/roadmap/11-android-adoption.md",
+    "docs/roadmap/index.md",
+    "docs/troubleshooting.md",
+    "scripts/check_android_artifact.py",
+    "settings.gradle.kts",
+    "shaderx/api/jvm/shaderx.api",
+    "shaderx/build.gradle.kts",
+    "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/AndroidAdoptionDeviceTest.kt",
+    "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/AndroidShaderPixelTest.kt",
+    "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/AndroidNativeShaderFactory.kt",
+    "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderBackgroundSnapshot.android.kt",
+    "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderFactory.android.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/ShaderBackground.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderCapabilities.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderFactory.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderCapabilitiesTest.kt",
+    "validation/android-app/build.gradle.kts",
+    "validation/android-app/src/main/AndroidManifest.xml",
+    "validation/android-app/src/main/kotlin/io/github/debanshu/shaderx/validation/AdoptionActivity.kt",
+    "validation/android-consumer/build.gradle.kts",
+    "validation/evidence/sx11-android-adoption.json",
+    "validation/kmp-consumer/build.gradle.kts"
+  ],
+  "review_patch": "/private/tmp/sx11-review.patch",
+  "review_patch_check": "git apply --check --unsafe-paths --directory=/private/tmp/sx11-baseline /private/tmp/sx11-review.patch PASS"
+}

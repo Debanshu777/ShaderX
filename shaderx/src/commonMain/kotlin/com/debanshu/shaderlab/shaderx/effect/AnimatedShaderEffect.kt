@@ -17,8 +17,9 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
  * [androidx.compose.ui.graphics.RenderEffect] wiring, call [withTime] from your own loop or
  * use [com.debanshu.shaderlab.shaderx.compose.rememberShaderEffect].
  *
- * Implementations should extend [AbstractAnimatedShaderEffect] rather than implementing this
- * interface directly — the base class enforces the equality contract automatically.
+ * External authors can use [com.debanshu.shaderlab.shaderx.authoring.ShaderDefinition.animatedEffect]
+ * to generate dispatch and equality. This interface remains an escape hatch for manual control.
+ * [AbstractAnimatedShaderEffect] requires internal handlers and is only for library contributors.
  *
  * ## Equality contract — implementations MUST exclude [time]
  *

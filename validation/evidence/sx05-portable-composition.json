@@ -1,0 +1,246 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX05",
+  "status": "Ordered on-screen static and shared-clock snapshot pipelines implemented in development; explicit residual gates remain",
+  "branch": "codex/developer-experience-research",
+  "baseline": "/private/tmp/shaderx-sx07-accepted-files.json and /private/tmp/shaderx-sx07-accepted.api; prior roadmap/user edits retained",
+  "environment": {
+    "os": "macOS 27.0.1 aarch64",
+    "java": "Homebrew OpenJDK 21 (21.0.12.1), daemon criteria21 retained",
+    "gradle": "9.6.0",
+    "agp": "9.4.1",
+    "kotlin": "2.3.21",
+    "compose": "1.10.3",
+    "skiko": "0.9.37.4 resolved JVM, Wasm, iOS simulator"
+  },
+  "availability": {
+    "published": "0.1.3 unchanged",
+    "development": "0.1.4 only; no publish/commit/merge/deploy"
+  },
+  "public_contract": {
+    "compatibility": "Existing CompositeEffect/+ and U+001F index addresses preserved. ShaderFactory/ShaderSession signatures and sealed errors unchanged. Additive controlledShaderEffect CompositeEffect overload plus optional ShaderPipelineProvider/Session extension.",
+    "queries": "ANIMATED_SESSION for a composite means createPipelineSession, not old createAnimatedSession. Non-provider factories retain UNKNOWN and pipeline extension returns UnsupportedEffect without rendering. Structural queries do not read source/uniform/provider state or allocate native resources.",
+    "order": "Left to right; nested and identity preserve order; required child fails whole chain.",
+    "clock": "Every AnimatedShaderEffect gets same caller timestamp, ignoring child time/isAnimating. Paused unchanged controlled scene settles; explicit inputRevision refreshes live inputs. Static sample chains use shaderEffect and schedule no clock. Explicit built-in playback metadata suppresses only known playback fields; custom GPU animate Booleans remain editable.",
+    "snapshots": "Resolve runtime sources/uniforms before native creation; copy numeric arrays; image handles borrowed. Source/value/size/live replacement commits whole successful filter. Retain previous filter on failure. Source String capture explicitly precedes each child uniform provider; original source getter is never delegated at backend creation. Composite Compose nonpositive target dimensions clear filter until positive; manual invalid-size refresh fails and retains previous snapshot.",
+    "ownership": "Skia native composition/builders retain native references, temporary child wrappers close after retention. Session close drops its retained filter; returned Compose wrappers keep their native reference. No deterministic final native disposal/memory stabilization claim.",
+    "cost": "Each refresh allocates filter state. Skia compiled programs use LRU. Android non-color snapshots use source cache; structural color snapshots including static legacy children use fresh RuntimeShader and may compile each refresh.",
+    "stable_keys": "Sample-only explicit child keys1..64 alnum/_/-; pipeline1..16 children. Separate bounded ShaderLab-Pipeline1 text format (262144 bytes); per-child scalar preset/schema version; unknown/malformed/duplicate input rejects whole replacement. Scalar preset1/workbench draft formats unchanged.",
+    "export": "Actual generated Kotlin includes keys/order/backend requirements and shared clock; compiled externally on JVM/Android/Wasm/iOS simulator. Live/image pipeline generator inputs explicitly rejected. ImageProcessor composites remain unsupported, including single-child."
+  },
+  "abi": {
+    "removed_old_declarations": 0,
+    "changed_existing_block": "ControlledShaderModifierKt adds overload; every previous declaration retained",
+    "new_blocks": [
+      "ShaderPipelineProvider",
+      "ShaderPipelineSession",
+      "ShaderPipelineSessionKt"
+    ],
+    "checkKotlinAbi": "passed",
+    "limitations": "JVM additive ABI review only; old precompiled linkage and Android/Klib ABI remain SX15"
+  },
+  "commands": [
+    "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest --tests '*PortableCompositionExperimentTest'",
+    "./gradlew :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:dependencyInsight --dependency skiko --configuration jvmRuntimeClasspath",
+    "./gradlew :shaderx:jvmTest :samples:ShaderLab:composeApp:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:testAndroidHostTest :shaderx:updateKotlinAbi",
+    "./gradlew :shaderx:jvmTest :samples:ShaderLab:composeApp:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:testAndroidHostTest :shaderx:checkKotlinAbi :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:wasmJsBrowserDistribution",
+    "ANDROID_SERIAL=\"$SHADERX_PIXEL_SERIAL\" ./gradlew :shaderx:connectedAndroidDeviceTest",
+    "./gradlew :shaderx:dependencyInsight --dependency skiko --configuration jvmRuntimeClasspath",
+    "./gradlew :shaderx:dependencyInsight --dependency skiko --configuration wasmJsCompileClasspath",
+    "./gradlew :shaderx:dependencyInsight --dependency skiko --configuration iosSimulatorArm64CompileKlibraries",
+    "./gradlew :shaderx:jvmTest :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :shaderx:checkKotlinAbi",
+    "./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :samples:ShaderLab:composeApp:wasmJsBrowserTest",
+    "./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :shaderx:checkKotlinAbi",
+    ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+    ".venv-docs/bin/python scripts/check_docs.py",
+    ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+    ".venv-docs/bin/zensical build --strict",
+    ".venv-docs/bin/python scripts/package_playground.py",
+    ".venv-docs/bin/python scripts/check_site.py",
+    "git diff --check",
+    "./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:wasmJsBrowserDistribution"
+  ],
+  "command_environment": "All Gradle invocations use JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home. Connected device selection loaded privately into environment, no ADB reset/restart/pairing.",
+  "results": {
+    "library_jvm": {
+      "tests": 554,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/test-results/jvmTest/*.xml",
+      "xml_files": 46
+    },
+    "library_wasm": {
+      "tests": 469,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/test-results/wasmJsBrowserTest/*.xml",
+      "xml_files": 30
+    },
+    "library_ios_simulator": {
+      "tests": 469,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/test-results/iosSimulatorArm64Test/*.xml",
+      "xml_files": 30
+    },
+    "android_host": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/test-results/testAndroidHostTest/*.xml",
+      "xml_files": 1
+    },
+    "sample_jvm": {
+      "tests": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "samples/ShaderLab/composeApp/build/test-results/jvmTest/*.xml",
+      "xml_files": 12
+    },
+    "sample_wasm": {
+      "tests": 35,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "samples/ShaderLab/composeApp/build/test-results/wasmJsBrowserTest/*.xml",
+      "xml_files": 10
+    },
+    "external_consumer_jvm": {
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "validation/kmp-consumer/build/test-results/jvmTest/*.xml",
+      "xml_files": 7
+    },
+    "physical_pixel9": {
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/outputs/androidTest-results/connected/androidMain/*.xml",
+      "xml_files": 1
+    }
+  },
+  "physical_android": {
+    "device": "Pixel 9",
+    "os": "Android17/API37",
+    "gpu": "Mali-G715 per retained SX12 evidence; not remeasured",
+    "path": "Actual HardwareRenderer/HWUI RenderNode readback, not Compose Android pipeline lifecycle",
+    "new_tests": 3,
+    "coverage": "noncommutative order, shared/independent times, static and animated structural colors with independent same-source instances, old filter retained after later provider failure, resize/recovery"
+  },
+  "raw_experiment": "validation/evidence/sx05-static-experiment.json (raw5, extended10, final source-order12 shared tests each JVM/Wasm/iOS simulator; source ownership and dependencyInsight records)",
+  "docs": {
+    "metadata": "27 guides/30 Markdown files passed",
+    "python_unit_tests": 24,
+    "strict_build": "passed",
+    "site_check": "27 indexable pages and playground passed",
+    "production_package": {
+      "files": 12,
+      "bytes": 15493270
+    },
+    "showcase": "All flower/banner/GIF README lines identical to accepted baseline"
+  },
+  "visual_preview": {
+    "host": "Actual production Wasm/Skia served locally; IAB CUA",
+    "desktop": "1280x900",
+    "mobile": "390x844",
+    "observed": [
+      "Grayscale static pipeline and disabled Play",
+      "Added Wave; animated preview then Pause",
+      "Reordered Wave to first while child-2/child-1 identity retained",
+      "Pipeline preset generation and selectable Kotlin export",
+      "Desktop/mobile Compose guide readable"
+    ],
+    "screenshots": [
+      "/tmp/sx05-pipeline-desktop.png",
+      "/tmp/sx05-pipeline-mobile.png",
+      "/tmp/sx05-pipeline-export.png",
+      "/tmp/sx05-docs-desktop.png",
+      "/tmp/sx05-docs-mobile.png"
+    ],
+    "viewport": "temporary overrides reset"
+  },
+  "initial_corrections": [
+    "Removed invalid Compose asSkiaImageFilter import (member accessor).",
+    "Added missing sample valuesFrom imports; corrected test live definition provider fixture.",
+    "Updated old tests expecting Skia unsupported to new route; fallback still verifies bad required child.",
+    "Real Wasm/native source failure used base kotlin.Error; normalized only exact base Error at Skiko compile boundary, preserving other Error subtypes.",
+    "Corrected nonexistent Wasm dependency configuration to wasmJsCompileClasspath.",
+    "Final source-order review: capture immutable source String explicitly in freeze before each runtime child uniform provider, pass to snapshot constructor. Shared regressions cover same-child/later-provider mutation, exactly one original source read, and throwing later source failing before earlier native compilation.",
+    "Supervisor review: explicit built-in playback mappings preserve custom GPU animate Booleans; rendered zero-size target regression clears Compose filter and restores external phase on positive size."
+  ],
+  "remaining_gates": [
+    "SX13 offline composite export remains unsupported",
+    "Physical iOS GPU and broader Android hardware/API coverage",
+    "Arbitrary shader sample radii, general edge policies and unclipped host-bounds expansion beyond bounded64/96px blur+4px offset reference",
+    "Native-memory stabilization and throughput budgets, especially Android color recompilation",
+    "Android Compose pipeline layer invalidation/lifecycle beyond HWUI native rendering",
+    "Already-compiled binary linkage and Android/Klib ABI (SX15)",
+    "Pipeline image/live host-input export workflow currently rejected"
+  ],
+  "files_changed": [
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "README.md",
+    "docs/compose.md",
+    "docs/contributing.md",
+    "docs/custom-effects.md",
+    "docs/effects.md",
+    "docs/getting-started.md",
+    "docs/platforms.md",
+    "docs/roadmap/05-portable-composition.md",
+    "docs/roadmap/index.md",
+    "docs/samples.md",
+    "docs/troubleshooting.md",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/PipelineKotlinExport.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/PipelineProject.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/PipelinePanel.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderControls.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderLabContent.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderPreview.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/PipelineProjectTest.kt",
+    "samples/ShaderLab/composeApp/src/jvmTest/kotlin/com/debanshu/shaderlab/GeneratedSourceProducerTest.kt",
+    "shaderx/api/jvm/shaderx.api",
+    "shaderx/build.gradle.kts",
+    "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/AndroidShaderPixelTest.kt",
+    "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderFactory.android.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/compose/ControlledShaderModifier.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/CompositeEffect.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderCapabilities.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderPipelineSession.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderCapabilitiesTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/FactorySmokeTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/PipelinePlaybackTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderCapabilitiesRenderTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/SkiaFactoryEdgeCaseTest.kt",
+    "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/SkiaShaderFactory.kt",
+    "shaderx/src/skiaTest/kotlin/com/debanshu/shaderlab/shaderx/PortableCompositionExperimentTest.kt",
+    "validation/evidence/sx05-portable-composition.json",
+    "validation/evidence/sx05-static-experiment.json",
+    "validation/kmp-consumer/src/developmentTest/kotlin/GeneratedPipelineConsumerTest.kt"
+  ],
+  "review_diff": "/tmp/sx05-review.patch (isolated SX05 delta)",
+  "logs": [
+    "/tmp/sx05-experiment.log",
+    "/tmp/sx05-raw-targets.log",
+    "/tmp/sx05-full-validation.log",
+    "/tmp/sx05-final-export.log",
+    "/tmp/sx05-final-targets.log",
+    "/tmp/sx05-device.log",
+    "/tmp/sx05-dependency-jvm.log",
+    "/tmp/sx05-dependency-wasm.log",
+    "/tmp/sx05-dependency-ios.log",
+    "/tmp/sx05-doc-install.log",
+    "/tmp/sx05-doc-tests.log",
+    "/tmp/sx05-doc-build.log",
+    "/tmp/sx05-review-fixes.log",
+    "/tmp/sx05-source-capture.log"
+  ]
+}

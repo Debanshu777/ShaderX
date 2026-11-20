@@ -1,0 +1,114 @@
+{
+  "recorded": "2026-11-19",
+  "scope": "initial SX12 foundation, not a performance budget",
+  "environment": {
+    "os": "macOS 27.0.1",
+    "architecture": "aarch64",
+    "java": "OpenJDK 21.0.10",
+    "gradle": "9.6.0",
+    "kotlin": "2.3.21",
+    "agp": "9.4.1",
+    "compose": "1.10.3",
+    "skiko": "0.9.37.4"
+  },
+  "library_tests": {
+    "jvmTest": {
+      "tests": 477,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 34
+    },
+    "testAndroidHostTest": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 1
+    },
+    "wasmJsBrowserTest": {
+      "tests": 421,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 24
+    },
+    "iosSimulatorArm64Test": {
+      "tests": 421,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 24
+    }
+  },
+  "raster_diagnostic": {
+    "backend": "Skia CPU raster, no physical GPU",
+    "viewport": "64x64",
+    "effect": "WaveEffect defaults time=0.25; slider varies amplitude 0..19",
+    "warmup_operations": 20,
+    "rounds": 5,
+    "operations_per_round": 100,
+    "ns_per_operation": {
+      "cold-create-and-raster": [
+        115808.33,
+        103342.5,
+        107515.0,
+        100115.42,
+        94845.84
+      ],
+      "warm-create-and-raster": [
+        70989.59,
+        72453.33,
+        73577.08,
+        71296.25,
+        71804.17
+      ],
+      "session-refresh-and-raster": [
+        69275.42,
+        69167.92,
+        69011.25,
+        68992.08,
+        69497.09
+      ],
+      "slider-change-and-raster": [
+        72929.17,
+        74156.25,
+        73535.0,
+        73321.67,
+        70651.67
+      ]
+    }
+  },
+  "limitations": [
+    "No native memory stabilization, idle frame counts or GPU timing measurement",
+    "Not an already-compiled legacy consumer linkage test",
+    "Android and native/Wasm ABI dumps not established",
+    "Future authoring/playback/export interfaces not implemented"
+  ],
+  "android_device_tests": {
+    "physical": {
+      "device": "Pixel 9",
+      "os": "Android 17 API 37",
+      "gpu": "Mali-G715",
+      "renderer": "SurfaceFlinger reports Vulkan Graphite",
+      "tests": 5,
+      "failures": 0,
+      "skipped": 0,
+      "suite_seconds": 0.67,
+      "reports": "shaderx/build/validation-evidence/physical/"
+    },
+    "emulator": {
+      "device": "small_phone AVD, ARM64",
+      "os": "Android 16 API 36 (36.1 system image)",
+      "graphics": "ANGLE SwiftShader / Vulkan llvmpipe; HWUI skiagl",
+      "viewport": "720x1280 dpi320 (test targets 8..32 pixels)",
+      "tests": 5,
+      "failures": 0,
+      "skipped": 0,
+      "suite_seconds": 1.089,
+      "reports": "shaderx/build/validation-evidence/emulator/"
+    },
+    "coverage": "solid opaque no-filter control; built-ins/chains; independent factory/session uniforms; translucent layout(color) updates; texture/resize/error recovery/eviction/disposal",
+    "limitations": "sRGB correctness checks; not native memory stabilization, Compose Android lifecycle, wide-gamut destination or GPU timing"
+  }
+}

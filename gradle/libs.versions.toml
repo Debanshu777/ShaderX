@@ -1,5 +1,6 @@
 [versions]
-agp = "9.1.1"
+androidx-test-runner = "1.7.0"
+agp = "9.4.1"
 androidx-camera = "1.6.0"
 android-compileSdk = "37"
 android-minSdk = "33"
@@ -9,6 +10,7 @@ androidx-core = "1.18.0"
 androidx-lifecycle = "2.10.0"
 buildkonfig = "0.18.0"
 coil = "3.4.0"
+haze = "1.7.2"
 componentsResources = "1.10.3"
 composeHotReload = "1.1.0"
 composeMultiplatform = "1.10.3"
@@ -29,7 +31,10 @@ vanniktechMavenPublish = "0.36.0"
 dokka = "2.2.0"
 
 [libraries]
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
 foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "foundation" }
@@ -45,6 +50,7 @@ androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle
 kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinxBrowser" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }

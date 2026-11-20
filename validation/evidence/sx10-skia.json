@@ -1,0 +1,77 @@
+{
+  "roadmap": "SX10",
+  "date": "2026-11-19",
+  "scope": "Skia nested inputs and bounded procedural numerical sampler; no native raw texture support",
+  "environment": {
+    "host": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "jdk": "JetBrains21.0.10",
+    "jdk_home": "/Users/debanshud/.gradle/jdks/jetbrains_s_r_o_-21-aarch64-os_x.2/jbrsdk_jcef-21.0.10-osx-aarch64-b1163.108/Contents/Home",
+    "skiko": "0.9.37.4",
+    "resolved_jar": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt/0.9.37.4/fc7470cca1041a52b182a921205c5c224e7709ad/skiko-awt-0.9.37.4.jar",
+    "jar_sha256": "9e859aeb982623fab156ba6671c78255f7f5e1b73334f3de7932440fed6455df"
+  },
+  "research": [
+    {
+      "url": "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/Image.kt",
+      "finding": "Versioned Image exposes makeShader overloads, not a raw image shader constructor; ordinary color image shaders were not substituted."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/RuntimeShaderBuilder.kt",
+      "finding": "child(name, Shader) and makeShader allow source-free procedural children; mutable builders are scoped per occurrence."
+    },
+    {
+      "command": "JDK21/bin/javap -classpath RESOLVED_JAR org.jetbrains.skia.Image org.jetbrains.skia.RuntimeShaderBuilder",
+      "output": "/tmp/sx10-skiko-api.txt",
+      "finding": "Actual resolved JVM artifact matches versioned source; no Image raw shader API."
+    }
+  ],
+  "experiment": {
+    "initial": "Dynamic float4 uniform array indexing failed actual JVM SkSL compilation: index expression must be constant.",
+    "bounded_alternative": "Public ShaderNode.Companion.rgba8Sampler creates ordinary numerical uniform float4 arrays plus generated constant-index dispatch, at most64texels/256floats/1024uniform bytes. Not a native image/raw texture path and does not change RAW_DATA_TEXTURE support.",
+    "data": "RGBA8 UNORM per-channel byte/255, including alpha as independent data; no premultiplication/color conversion in sampler. Parent must form valid premultiplied output.",
+    "filtering": "Pixel centers(x+.5,y+.5); nearest floor(coord), bilinear four-neighbor interpolation; clamp/repeat/mirror per neighbor per axis; no mipmaps.",
+    "ownership": "Rgba8Data copies caller bytes; helper bounds before bytes() copy. Uniforms and snapshots contain no native state. Native Skia child builders/shaders close after parent retains native references; compiled RuntimeEffects use normal factory LRU.",
+    "policy": "Every actual rebind creates fresh child builder/shader and binds its uniform values; controlled playback can avoid refresh for unchanged live revision. No measured upload reduction or performance claim."
+  },
+  "validation": {
+    "command": "JAVA_HOME=/Users/debanshud/.gradle/jdks/jetbrains_s_r_o_-21-aarch64-os_x.2/jbrsdk_jcef-21.0.10-osx-aarch64-b1163.108/Contents/Home ./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:checkKotlinAbi --no-daemon",
+    "outcome": "PASS",
+    "log": "/tmp/sx10-skia-ownership-final.log",
+    "counts": {
+      "jvmTest": {
+        "tests": 604,
+        "failures": 0,
+        "skipped": 0
+      },
+      "wasmJsBrowserTest": {
+        "tests": 510,
+        "failures": 0,
+        "skipped": 0
+      },
+      "iosSimulatorArm64Test": {
+        "tests": 510,
+        "failures": 0,
+        "skipped": 0
+      }
+    },
+    "coverage": [
+      "All64RGBA texels checked, RGB consumed even when stored alpha0; alpha remapped as numerical grayscale, sRGB and linear-sRGB raster destination bytes checked.",
+      "108nearest/linear/tile/coordinate combinations compared to independent CPU equations; all9axis tiling combinations, pixel centers, negative/outside coordinates, one-texel behavior,65texel rejection and caller mutation.",
+      "Same-source sibling values and explicit frozen child times isolated; parent time does not advance child time.",
+      "Nested content/background/offline export pixels; source replacement/compiler failure; retained old filters after child wrappers/session disposal/cache eviction/factory closure; repeated disposal.",
+      "Raw top-level and late-descendant rejection before native program cache insertion; metadata-known raw/live queries and export avoid provider execution and native compilation.",
+      "Invalid child and grandchild compiler errors retain the deepest shaderSource and alias(definition id) path across content creation, session creation/refresh, background and image export. Parent compilation failure retains parent source. Child temporary wrappers remain scoped on failure.",
+      "New DataUniform/NestedUniform parent aliases fail bounded declaration preflight before compilation; diagnostics retain parent source. Production sessions capture actual native program source and do not reread mutable manual source getters on refresh or error.",
+      "Static content creation and image export capture source once before uniform providers. A provider that mutates a manual source getter cannot replace parent alias-error source or cause a diagnostic reread.",
+      "Closed manual Skia and generated definition session owners reject currentRenderEffect getters and refresh, release private current snapshot references, and tolerate repeated close. Caller-held RenderEffect outputs retain identical rendered pixels after owner close and cache/factory disposal. This is ownership correctness, not a native memory stabilization measurement."
+    ],
+    "abi": "PASS; no public API changes from diagnostic context, existing CompilationError reused"
+  },
+  "remaining_gates": [
+    "Raster JVM, actual browser Wasm and iOS simulator establish raster correctness, not physical GPU output, throughput, allocation budgets or stabilized native memory.",
+    "Native raw image inputs remain unsupported on Skia0.9.37.4; no image.makeShader equivalent claimed.",
+    "Manual ImageProcessor effects whose uniform providers need decoded default dimensions resolve after image decoding but before shader compilation/binding. Metadata-known raw definitions reject before decoding; this is not a general predecode provider guarantee.",
+    "Android AGSL/HWUI evidence is recorded separately in sx10-android.json; physical iOS GPUs remain untested.",
+    "Only new DataUniform/NestedUniform parent aliases use bounded explicit shader declaration preflight; legacy scalar/image setter validation retains resolved Skiko behavior. This is not general source reflection."
+  ]
+}

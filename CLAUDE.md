@@ -12,16 +12,16 @@ completing a task. Publishing runs only after a PR merges into `main`.
 ## Project overview
 
 **ShaderX** is a Kotlin Multiplatform library that exposes GPU shader effects through Compose
-Multiplatform `Modifier` extensions. Targets: **Android (API 33+ via AGSL)**, **iOS**, **JVM/Desktop
+Multiplatform `Modifier` extensions. Targets: **Android (API 31+ native blur; API 33+ AGSL)**, **iOS**, **JVM/Desktop
 **, and **Wasm/JS** (the last three via Skia's `RuntimeEffect`). Published to Maven Central as
-`io.github.debanshu777:shaderx`. The repo also contains demo apps under `samples/`: `ShaderLab` and
-`ASCIICamera` consume the local library via `projects.shaderx`; `VerticalCarousel` uses published
-version 0.1.3. ShaderLab also
+`io.github.debanshu777:shaderx`. The repo also contains demo apps under `samples/`: `Sampler` is a four-tab visual teaching app; `ShaderLab` and
+`ASCIICamera` consume the local library via `projects.shaderx`; `VerticalCarousel` also uses
+the local project. ShaderLab also
 includes sample-only modules `imagelib` and `audiolib` (mic capture + FFT → spectrum textures).
 
 ## Common commands
 
-JDK 21 is required (CI uses Temurin 21; `:shaderx` Android target compiles to `JVM_21`).
+JDK 21 is required (CI uses Temurin 21; `:shaderx` Android target compiles to `JVM_17`).
 
 **Library**
 
@@ -37,15 +37,17 @@ JDK 21 is required (CI uses Temurin 21; `:shaderx` Android target compiles to `J
 - Install the pinned tools in a virtual environment: `python -m pip install -r requirements-docs.txt`.
 - Validate: `python scripts/check_docs.py`, `zensical build --strict`, then `python scripts/check_site.py`.
 - Preview: `zensical serve`. Publishing instructions are in `docs/maintaining.md`.
-- Published Maven Central baseline is 0.1.4. Keep examples explicit about which version they
-  require, and label APIs added after that release as unreleased. External custom effects implement
-  `RuntimeShaderEffect`;
-  the abstract effect bases require internal handlers and cannot be extended from consumer modules.
+- The release coordinate is `shaderxVersion` in root `gradle.properties`; publication status is recorded in `docs/index.md`. Keep examples
+  explicit about which version they require. Custom effects can use `authoring.ShaderDefinition`
+  with a `ShaderProgram` and declarative bindings; editable definitions reuse `ParameterSchema`.
+  `RuntimeShaderEffect`/`AnimatedShaderEffect` remain manual escape hatches. The abstract effect
+  bases require internal handlers and cannot be extended from consumer modules.
 
 **Sample apps** (module paths verified against `settings.gradle.kts`)
 
 - Android demo: `./gradlew :samples:ShaderLab:androidApp:installDebug`
-- Desktop demo: `./gradlew :samples:ShaderLab:composeApp:run`
+- Visual sampler: `./gradlew :samples:Sampler:composeApp:run`
+- Advanced desktop playground: `./gradlew :samples:ShaderLab:composeApp:run`
 - iOS framework, then open `samples/ShaderLab/iosApp/iosApp.xcodeproj` in Xcode:
   `./gradlew :samples:ShaderLab:composeApp:linkDebugFrameworkIosSimulatorArm64`
 - ASCIICamera Android: `./gradlew :samples:ASCIICamera:androidApp:installDebug`
@@ -92,21 +94,26 @@ non-Android platform individually — put it in `skiaMain`.
 
 - `ShaderFactory : AutoCloseable` — call `close()` to release compiled GPU resources when the
   factory is no longer needed.
-- `BaseShaderFactory` (in `commonMain`) routes by effect type. Composite chaining returns
-  `ShaderError.UnsupportedEffect` on non-Android platforms — this is a documented error, not a
-  silent partial render.
+- `BaseShaderFactory` (in `commonMain`) routes by effect type. Ordered composite snapshots use native composition on Android and Skia. Required child failures
+  fail the whole chain. Optional pipeline sessions use one caller-owned clock and transactional snapshots.
 - `createAnimatedSession(effect, w, h)` → `ShaderSession` — holds instance-scoped GPU state so
-  per-frame uniforms can update without recompiling. `refresh(effect, w, h)` applies
+  legacy per-frame uniforms can update with retained compiled state. `refresh(effect, w, h)` applies
   `buildFrameUniforms()` (Android in-place; Skia reapplies) and returns a new `RenderEffect`
   wrapper. Always `close()` the session (Compose does this via `DisposableEffect`).
 - `expect fun ShaderFactory.Companion.create(maxCacheSize: Int = DEFAULT_CACHE_SIZE)` is implemented
   by:
-    - `androidMain` → `AndroidShaderFactory` (real access-order LRU `RuntimeShader` cache,
-      thread-safe).
+    - `androidMain` → guarded `AndroidShaderFactory` on API 33+ (real access-order LRU
+      `RuntimeShader` cache, thread-safe), or `AndroidNativeShaderFactory` on API 31–32
+      (native blur/blur-only chains; runtime requests fail before providers). Background creation
+      has a separate guarded API 33 helper; keep all RuntimeShader fields/signatures behind it.
     - `skiaMain` → `SkiaShaderFactory` (`RuntimeEffect` cache, closes Skia `Managed` objects on
       eviction).
 - Both factories use a real access-order `LruCache` (see `factory/LruCache.kt` expect/actual).
-  Compilation is the expensive step; updating uniforms each frame is cheap. Don't bypass the cache.
+  Cached source compilation and frame binding have different ownership. Legacy animated sessions
+  retain native state; declarative Android static color snapshots and source-free backgrounds may
+  compile fresh instance-owned shaders to preserve independent color/value state. Do not route
+  those mutable snapshots through a shared shader instance. Measure compilation, binding and
+  allocation separately; passing raster tests proves no frame-budget or allocation claim.
 
 ### Uniforms (`uniform/`)
 
@@ -132,9 +139,12 @@ only when applying `RenderEffect` manually via `graphicsLayer`.
 
 ### Composite chaining
 
-Composite effect chaining (`CompositeEffect` with >1 effects) is **only supported on Android API 33+
-**. On other platforms, `factory.createRenderEffect(composite, w, h)` returns
-`ShaderResult.Failure(ShaderError.UnsupportedEffect(...))`. Handle errors via `onFailure` or `fold`.
+ShaderX supports ordered on-screen `CompositeEffect` chains on Android API 31+ for
+blur-only children, API 33+ for runtime children, and Skia. `shaderEffect` chains are static; the additive controlled composite overload supplies one
+ShaderPlayback timestamp to every animated child. Optional ShaderPipelineProvider sessions freeze
+runtime uniforms, copy numeric arrays and replace whole filters only after success. Images remain
+borrowed. Pipeline snapshots allocate native filters; Android color children use fresh shaders while
+non-color snapshots use the existing source cache. ImageProcessor still rejects composites.
 
 ### ImageProcessor
 
@@ -176,8 +186,8 @@ Sample-only KMP module (not published with ShaderX):
    `buildFrameUniforms()` for per-frame data (`time`, textures). Declare `id`, `displayName`,
    `shaderSource`, `buildUniforms`, and `parameterHandlers`. See `GrayscaleEffect` for a minimal
    static example; `WaveEffect` / `AudioVisualizerEffect` for animated + live-texture patterns.
-2. If it's a `NativeEffect`, add a branch to `AndroidShaderFactory.createNativeEffect` **and**
-   `SkiaShaderFactory.createNativeEffect`.
+2. If it's a `NativeEffect`, review both Android factories (`AndroidShaderFactory` and
+   `AndroidNativeShaderFactory`), capabilities, **and** `SkiaShaderFactory.createNativeEffect`.
 3. To surface it in `ShaderX.builtInEffects()`, register it in `cachedBuiltInEffects` in
    `shaderx/src/commonMain/.../ShaderX.kt`.
 4. AGSL/SkSL source must declare `uniform shader content;` and a `half4 main(float2 fragCoord)`

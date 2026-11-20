@@ -91,3 +91,6 @@ compose.desktop {
         }
     }
 }
+
+// Real generator output feeds separate non-friend consumers; regenerate if outputs are removed.
+tasks.named("jvmTest") { outputs.dir(layout.buildDirectory.dir("generated-playground-consumer")) }

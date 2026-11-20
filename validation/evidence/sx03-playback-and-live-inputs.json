@@ -1,0 +1,185 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX03",
+  "status": "Additive SDK playback/revisions and defined sample seam implemented; residual backend/future gates explicit",
+  "branch": "codex/developer-experience-research",
+  "environment": {
+    "os": "macOS 27.0.1 aarch64",
+    "launcher_java": "Homebrew OpenJDK 21.0.12.1",
+    "daemon": "JDK21 per retained daemon criteria",
+    "gradle": "9.6.0",
+    "agp": "9.4.1",
+    "kotlin": "2.3.21",
+    "compose": "1.10.3",
+    "skiko": "0.9.37.4",
+    "physical_device": "Pixel 9, Android 17/API37; existing USB connection, no restart/reset/pairing change",
+    "gpu": "GPU string unavailable from focused SurfaceFlinger query; no GPU model/performance claim"
+  },
+  "availability": {
+    "published_baseline": "0.1.3 unchanged",
+    "development": "0.1.4; no release/publication"
+  },
+  "public_contract": {
+    "identity": "ShaderProgram identity, ParameterValues, native session, ShaderPlayback and Long inputRevision remain separate; accepted ShaderDefinition/ParameterSchema reused",
+    "clock": "rememberShaderPlayback owns a single frame loop; shared returned state feeds multiple modifiers. Initial values read once. Pause/seek/speed/suspension preserve last sampled phase and rebase next frame with no catch-up. Position finite signed Double, overflow saturates MAX; render conversion outside finite Float range reports error. Speed finite >=0, negative/nonfinite reject, zero settles. No automatic persistence.",
+    "lifecycle": "Host explicitly supplies active=true, reducedMotion=false, modifier visible=true defaults. Inactive/reduced freezes automatic timeline; seek/live revisions still render. Hidden skips provider refresh and retains filter; suspend shared driver when all consumers hidden. Removal cancels driver and closes owned sessions; caller factory remains caller-owned.",
+    "revision": "Retain provider; publish complete snapshot then increment inputRevision. Paused unchanged path schedules no continuous work. Validated declared finite scalar/image results reused; images borrowed without concurrent mutation, colors structural. Failure retry while paused requires changed key/revision.",
+    "sessions": "ControlledSessionOwner uses accepted transactional DefinitionShaderSession for defined value/source/size/provider changes, and transactional native replacement for legacy config/size and factory changes. Failed replacement preserves last native filter and external timeline.",
+    "legacy": "No old declarations or timing changes; shaderEffect/animate=false/frameDataKey remain. Controlled path exclusively uses supplied playback over effect time/isAnimating.",
+    "invalidation": "Retained bounded microscopic rotation; no unverified replacement introduced."
+  },
+  "commands": [
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest --console=plain",
+      "outcome": "PASS; includes final direct Compose idle assertions, provider and rejected factory recovery",
+      "log": "/tmp/sx03-final-jvm.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ANDROID_SERIAL=<existing connected device from environment> ./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:compileAndroidMain :shaderx:testAndroidHostTest :shaderx:connectedAndroidDeviceTest :shaderx:updateKotlinAbi :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:android-consumer:compileDebugKotlin :validation:kmp-consumer:compileAndroidMain :samples:ShaderLab:composeApp:wasmJsBrowserDistribution --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx03-platforms.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:checkKotlinAbi --console=plain",
+      "outcome": "PASS; separate invocation after intentional additive dump review",
+      "log": "/tmp/sx03-abi.log"
+    },
+    {
+      "command": ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_docs.py",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/zensical build --strict",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/package_playground.py",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_site.py",
+      "outcome": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "outcome": "PASS"
+    }
+  ],
+  "tests": {
+    "jvmTest": {
+      "tests": 533,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "wasmJsBrowserTest": {
+      "tests": 454,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "iosSimulatorArm64Test": {
+      "tests": 454,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "testAndroidHostTest": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "physical_device_tests": {
+    "tests": 10,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "report": "shaderx/build/reports/androidTests/connected/",
+    "coverage": "AGSL/HWUI RenderNode and FP16 HardwareBufferRenderer. New controlled owner test covers live snapshots/time, independent sessions, repeated structural colors, resize, source/factory failure and recovery, seek and disposal. Does not test Android Compose graphics layers."
+  },
+  "compose_render_evidence": {
+    "suite": "ControlledPlaybackTest",
+    "tests": 4,
+    "backend": "actual Compose ImageComposeScene and Skia raster",
+    "coverage": [
+      "paused provider calls stop; hasInvalidations false proves no frame clock awaiters or pending Compose work",
+      "same retained provider requires explicit revision; paused revision changes actual red pixels then settles",
+      "live failure preserves pixels; changed revision recovers; provider replacement retains timeline",
+      "edits/size/source/factory replacements preserve phase; failed source and rejected factory preserve pixels; seek and disposal",
+      "shared clock agrees; independent clock retains distinct phase; pause/resume, speed2/0, inactive/reduced suspension and hidden revisions"
+    ],
+    "limit": "No Android Compose-layer or physical iOS proof"
+  },
+  "visual_preview": {
+    "guide": "Chrome desktop default viewport and 390x844 mobile; controlled section readable, code scrolls within block; document width390 verified",
+    "sample": "Fresh packaged Wasm playground at 390x844 and1280x900: portrait/custom distortion, pause, amplitude edit4->22.375 changes distortion while paused",
+    "limit": "Browser is Wasm/Skia; does not establish Android/native rendering"
+  },
+  "abi": {
+    "old_blocks": 124,
+    "new_blocks": 126,
+    "removed": [],
+    "changed_old_blocks": [],
+    "added": [
+      "public final class com/debanshu/shaderlab/shaderx/compose/ControlledShaderModifierKt {",
+      "public final class com/debanshu/shaderlab/shaderx/playback/ShaderPlayback {"
+    ]
+  },
+  "preservation": {
+    "baseline": "/tmp/sx03-before snapshot exactly matches every accepted SHA256 in /private/tmp/shaderx-sx02-accepted-files.json",
+    "unchanged_accepted_files": 337,
+    "hashes": "/tmp/sx03-preserved-files.json",
+    "toolchain_and_showcase": "All accepted toolchain edits, flower banner and four GIFs unchanged"
+  },
+  "corrected_validation_findings": [
+    "Kotlin/JVM private playing setter clash renamed playingState",
+    "Device-test named schema argument fixed",
+    "Gradle9.6 forbids ABI update and check in same task graph; split invocations passed"
+  ],
+  "remaining_gates": [
+    "Android Compose graphics-layer invalidation/rotation audit; physical AGSL factory evidence alone insufficient",
+    "Physical iOS rendering and wider Android API/device coverage",
+    "Automatic host lifecycle/accessibility wiring is not supplied; explicit flags are the contract",
+    "SX05 animated pipelines, SX06 generic controls/export and SX07 workbench integration remain future-dependent",
+    "SX10 raw buffers/nested shader inputs excluded",
+    "Native memory stabilization, display frame timing and general scheduler not claimed",
+    "SX15 already-compiled linkage and Android/Klib ABI guarantees remain separate"
+  ],
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/compose.md",
+    "docs/contributing.md",
+    "docs/custom-effects.md",
+    "docs/getting-started.md",
+    "docs/roadmap/03-playback-and-live-inputs.md",
+    "docs/roadmap/index.md",
+    "docs/samples.md",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderPreview.kt",
+    "shaderx/api/jvm/shaderx.api",
+    "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/DefinedEffectDeviceTest.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/compose/ControlledShaderModifier.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/playback/ShaderPlayback.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderPlaybackTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/ControlledPlaybackTest.kt",
+    "validation/consumer-contracts/development/PlaybackConsumer.kt",
+    "validation/evidence/sx03-playback-and-live-inputs.json"
+  ],
+  "review_diff": {
+    "path": "/tmp/sx03-review.patch",
+    "baseline": "/tmp/sx03-before",
+    "verify": "patch --dry-run -p1 -d /tmp/sx03-before -i /tmp/sx03-review.patch"
+  },
+  "archived_reports": "shaderx/build/validation-evidence/sx03/ (raw local Android report contains device identifier; ignored build output, never public docs)"
+}

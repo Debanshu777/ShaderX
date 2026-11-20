@@ -1,0 +1,409 @@
+{
+  "recorded": "2026-11-20",
+  "roadmap": "SX13",
+  "status": "Bounded Skia implementation complete; Android production feasibility gate failed and remains unsupported",
+  "branch": "codex/developer-experience-research",
+  "JDK": "21 (/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home)",
+  "baseline": {
+    "accepted_files": "/private/tmp/shaderx-sx11-accepted-files.json",
+    "accepted_files_sha256": "9b2d97f014c79a3c86838568e8f4d0dc7ea8af7345c1d8f86d9809053d25fc10",
+    "accepted_ABI": "/private/tmp/shaderx-sx11-accepted.api",
+    "snapshot": "/private/tmp/sx13-baseline",
+    "removed_ABI_declarations": 0,
+    "unrelated_edits": "All initial paths snapshotted; only listed paths differ. Existing toolchain, dependency versions, sample implementation and user edits preserved."
+  },
+  "public_contract": {
+    "legacy": "ImageProcessor.process(bytes,effect,width:Float=0,height:Float=0) unchanged; source-sized PNG, uniform-only overrides; no original-byte-success fallback. Both routes preserve caller source bytes. Legacy IMAGE_EXPORT describes this route. Android remains predecode ProcessingError; composites unsupported.",
+    "new": "Optional ImageExportProvider with processor.queryImageExportSupport and processor.exportImage extensions; standalone suspend exportImage creates/uses/closes its own factory. No mandatory methods added to ImageProcessor or ShaderFactory; no JVM signature removed.",
+    "pixels": "ImageExportOptions requires integer output pixels; independent nullable positive finite coordinate dimensions default to output pixels. Stretch bilinear before effect, output-rectangle clipping.",
+    "formats": "Single-frame PNG/JPEG input; reject non-TOP_LEFT EXIF, animated PNG control chunk and animated codec input. PNG output only, no JPEG quality/flattening/fit/orientation normalization. Source metadata not copied; encoded output tagged sRGB with alpha.",
+    "color": "Explicit RGBA8888 premultiplied sRGB decoded bitmap and two raster stages; tested linear-profile source conversion and alpha. No GPU acceleration claim for Skia raster.",
+    "limits": "Encoded source1byte..8MiB; decoded source and output each <=4194304pixels and <=4096 per edge. Long arithmetic, eager decode, header preflight before providers. Admission limits do not cap codec/filter/native scratch or total memory.",
+    "worker": "One active + one queued suspend export globally; excess fails immediately. Queue borrows bytes/effect, copies bytes only after worker admission. Providers run in nonsuspend worker block; borrowed inputs retained by caller until completion; factory create/use/close on same worker thread. Sync processor route caller-serialized outside admission gate.",
+    "cancel": "Queued cancellation starts no native work; active cancellation releases gate/resources and suppresses delivery after native call returns. No driver/codec preemption or hard-timeout guarantee. Wasm Default is synchronous browser-event-loop work, not real background threading.",
+    "workbench": "CONTENT Run remains legacy ImageProcessor + separate remembered UI renderFactory, IMAGE_EXPORT preflight disabled on Android. BACKGROUND Run native modifier unchanged. No silent enabling or UI-factory transfer. Future migration must retain transactional revision/last-good/errors and worker ownership.",
+    "chains": "No offline chain support inferred from SX05 on-screen chains; exact bounded-route query rejects composites before decoding."
+  },
+  "dependencies": {
+    "ComposeKMP": "1.10.3",
+    "AndroidX_ui_graphics": "1.10.5",
+    "Skiko": "0.9.37.4",
+    "coroutines": "existing catalog1.10.2 now explicit library implementation dependency; matching test-only coroutines-test1.10.2 for platform test-result bridge, no upgrade",
+    "release": "published0.1.3 and development0.1.4 labels unchanged"
+  },
+  "suspend_entrypoint_validation": "ImageExportSuspendTest uses real Default dispatcher and worker-owned native factory on JVM/Wasm/iOS; exported PNG dimensions/filtered alpha pixels and provider execution verified, provider-triggered cancellation suppresses delivery and next export recovers. Browser case makes no threading or timing claim.",
+  "tests": {
+    "shaderx:jvmTest": {
+      "tests": 622,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shaderx:wasmJsBrowserTest": {
+      "tests": 524,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shaderx:iosSimulatorArm64Test": {
+      "tests": 524,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shaderx:testAndroidHostTest": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "samples/ShaderLab/composeApp:jvmTest": {
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "samples/ShaderLab/composeApp:wasmJsBrowserTest": {
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "validation/kmp-consumer:jvmTest": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "android_final": {
+    "31": {
+      "reported_tests": 18,
+      "assumption_skips": 5,
+      "passed": 13,
+      "unsafe_diagnostic_skips": 4,
+      "runtime_shader_skip": 1,
+      "API31_only_adoption_skips": 0,
+      "backend": "Task-owned software emulator, not physical GPU",
+      "log": "/private/tmp/sx13-api31-accepted-instrument.log"
+    },
+    "36": {
+      "reported_tests": 18,
+      "assumption_skips": 6,
+      "passed": 12,
+      "unsafe_diagnostic_skips": 4,
+      "runtime_shader_skip": 0,
+      "API31_only_adoption_skips": 2,
+      "backend": "Task-owned software emulator, not physical GPU",
+      "log": "/private/tmp/sx13-api36-accepted-instrument.log"
+    }
+  },
+  "artifact": {
+    "path": "shaderx/build/outputs/aar/shaderx.aar",
+    "sha256": "ebbb741b1f393e7983fb68bde21dd8881d16f8d39eeb01f3ceaf5e896e7c6019",
+    "minSdk": 31,
+    "metadata": {
+      "aarFormatVersion": "1.0",
+      "aarMetadataVersion": "1.0",
+      "minCompileSdk": "35",
+      "minCompileSdkExtension": "0",
+      "minAndroidGradlePluginVersion": "1.0.0",
+      "coreLibraryDesugaringEnabled": "false"
+    },
+    "classfile_majors": {
+      "61": 201
+    }
+  },
+  "probe_absent_from_AAR": true,
+  "android_feasibility": {
+    "source_set": "androidDeviceTest only; no renderer/fence/probe classes in AAR",
+    "actual_pipeline": "HardwareRenderer -> root/filtered child RenderNode -> ImageReader Surface -> waitForPresent -> guarded API33 fence -> HardwareBuffer -> readable bitmap -> actual filtered PNG",
+    "observed": "API31 native blur dimensions/alpha and API36 runtime grayscale/alpha passed. Default 24 cancellation cycles recover with bounded FD observation; graphics/native memory are coarse observations, not zero-leak proof.",
+    "failed_gate": "Original producer-first teardown emits exactly3 API31 host bad-color-buffer errors in 3 pre-first-render cancellations, none at afterRender/afterFence/readback/delivery. Official recipe reader->displaylists->renderer order removes those API31 errors but API36 crashes in isolated and combined pre-render cancellation. Native SIGSEGV RenderThread stack includes GraphicBuffer::from, Surface::hook_cancelBuffer, egl_window_surface destructor, eglDestroySurface, HWUI setSurface. No inference of physical-driver cause or harmlessness.",
+    "diagnostics": "4 unsafe variants require -e shaderxCleanupExperiment true; skipped in safe-default suite. Initial historical ungated instrumentation logs retained privately and NOT counted as passing production lifetime gate.",
+    "exact_opt_in_reproducer": "With explicit task-private ADB socket and owned API36 serial: adb -s <owned serial> shell am instrument -w -r -e shaderxCleanupExperiment true -e class com.debanshu.shaderlab.shaderx.HardwareImageExportTest#migrationRecipeCancellationBeforeRenderUnwinds io.github.debanshu.shaderx.test/androidx.test.runner.AndroidJUnitRunner. Do not run against user devices or in ordinary CI.",
+    "private_evidence": [
+      "/private/tmp/sx13-device-commands.json",
+      "/private/tmp/sx13-order-startup.json",
+      "/private/tmp/sx13-api36-native-crash.log",
+      "/private/tmp/sx13-api31-emulator.log",
+      "/private/tmp/sx13-final-device-commands.json"
+    ],
+    "unproven_followup": "Check cancellation before native setup and treat setup->first-submit as non-preemptible critical section; not implemented and would not prove safe cleanup for native setup exceptions."
+  },
+  "measurements": {
+    "scope": "Debug tiny-image software-emulator samples only, no warm/cold performance ranking, physical throughput, memory-leak or GPU FPS claim. Render/readback/encode split measured independently via elapsedRealtimeNanos. Raw transport details private.",
+    "records": {
+      "31": [
+        "resource sample API=31 before=ResourceSample(fdCount=72, nativeHeapBytes=15951536, graphicsKiB=0) after=ResourceSample(fdCount=72, nativeHeapBytes=17261648, graphicsKiB=0); graphics/native memory are coarse observations, not proof of zero GPU leaks",
+        "blur API=31 renderNs=5334083 readbackNs=374042 encodeNs=54000 pngBytes=198; debug tiny-image sample, not throughput evidence",
+        "resource sample API=31 before=ResourceSample(fdCount=72, nativeHeapBytes=16615872, graphicsKiB=0) after=ResourceSample(fdCount=72, nativeHeapBytes=17926112, graphicsKiB=0); graphics/native memory are coarse observations, not proof of zero GPU leaks",
+        "blur API=31 renderNs=5307250 readbackNs=402250 encodeNs=58209 pngBytes=198; debug tiny-image sample, not throughput evidence",
+        "resource sample API=31 before=ResourceSample(fdCount=72, nativeHeapBytes=15967104, graphicsKiB=0) after=ResourceSample(fdCount=72, nativeHeapBytes=17412224, graphicsKiB=0); graphics/native memory are coarse observations, not proof of zero GPU leaks"
+      ],
+      "36": [
+        "runtime-alpha API=36 renderNs=4573292 readbackNs=566250 encodeNs=69375 pngBytes=148; debug tiny-image sample, not throughput evidence",
+        "resource sample API=36 before=ResourceSample(fdCount=105, nativeHeapBytes=17040656, graphicsKiB=0) after=ResourceSample(fdCount=105, nativeHeapBytes=18520800, graphicsKiB=0); graphics/native memory are coarse observations, not proof of zero GPU leaks",
+        "blur API=36 renderNs=6050667 readbackNs=553208 encodeNs=73375 pngBytes=198; debug tiny-image sample, not throughput evidence",
+        "runtime-alpha API=36 renderNs=14888875 readbackNs=1185208 encodeNs=89542 pngBytes=148; debug tiny-image sample, not throughput evidence",
+        "resource sample API=36 before=ResourceSample(fdCount=105, nativeHeapBytes=17060320, graphicsKiB=0) after=ResourceSample(fdCount=105, nativeHeapBytes=18674608, graphicsKiB=0); graphics/native memory are coarse observations, not proof of zero GPU leaks"
+      ]
+    }
+  },
+  "sources": [
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/Codec.kt",
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/Data.kt",
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/Bitmap.kt",
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/Image.kt",
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/Surface.kt",
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/ImageInfo.kt",
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/ColorSpace.kt",
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/Canvas.kt",
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/SamplingMode.kt",
+    "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/commonMain/kotlin/org/jetbrains/skia/EncodedOrigin.kt",
+    "https://raw.githubusercontent.com/Kotlin/kotlinx.coroutines/1.10.2/kotlinx-coroutines-test/common/src/TestBuilders.kt",
+    "https://developer.android.com/guide/topics/renderscript/migrate#image-blur-on-android-12-rendered-into-a-bitmap",
+    "https://android.googlesource.com/platform/frameworks/base/+/android-12.0.0_r1/graphics/java/android/graphics/HardwareRenderer.java",
+    "https://android.googlesource.com/platform/frameworks/base/+/android-12.0.0_r1/graphics/java/android/graphics/Bitmap.java",
+    "https://android.googlesource.com/platform/frameworks/base/+/android-13.0.0_r1/media/java/android/media/Image.java",
+    "https://android.googlesource.com/platform/frameworks/base/+/android-12.0.0_r1/libs/hwui/renderthread/RenderProxy.cpp"
+  ],
+  "commands": [
+    {
+      "command": "JDK21 ./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:checkKotlinAbi",
+      "outcome": "pass:real suspend provider pixels + cancellation/recovery on all3backends",
+      "log": "/private/tmp/sx13-suspend-backends.log"
+    },
+    {
+      "command": "JDK21 ./gradlew :shaderx:compileKotlinJvm",
+      "outcome": "pass",
+      "log": "/private/tmp/sx13-first-compile.log"
+    },
+    {
+      "command": "JDK21 ./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:assembleAndroidDeviceTest :shaderx:updateKotlinAbi",
+      "outcome": "pass",
+      "log": "/private/tmp/sx13-backend-validation.log"
+    },
+    {
+      "command": "JDK21 ./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:compileKotlinIosArm64 :shaderx:compileCommonMainKotlinMetadata :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease :validation:android-app:assembleDebug :validation:android-app:assembleRelease :shaderx:bundleAndroidMainAar :shaderx:testAndroidHostTest",
+      "outcome": "pass",
+      "log": "/private/tmp/sx13-full-validation.log"
+    },
+    {
+      "command": "JDK21 ./gradlew :shaderx:assembleAndroidDeviceTest :shaderx:bundleAndroidMainAar :validation:android-app:assembleDebug :validation:android-app:assembleRelease :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease :validation:kmp-consumer:compileAndroidMain :shaderx:checkKotlinAbi",
+      "outcome": "pass",
+      "log": "/private/tmp/sx13-android-final-build.log"
+    },
+    {
+      "command": "JDK21 ./gradlew :shaderx:assembleAndroidDeviceTest :shaderx:bundleAndroidMainAar :shaderx:check",
+      "outcome": "pass",
+      "log": "/private/tmp/sx13-final-check.log"
+    },
+    {
+      "command": "python3 /private/tmp/sx13-run-devices.py",
+      "outcome": "initial default pixel/recovery pass; phase isolation API31 beforeRender 3 host handle errors",
+      "log": "/private/tmp/sx13-device-summary.log"
+    },
+    {
+      "command": "python3 /private/tmp/sx13-order-startup.py",
+      "outcome": "diagnostic gate FAILED: API36 isolated and combined native RenderThread SIGSEGV; API31 official order removed host errors; debug/release consumer startup passed on both",
+      "log": "/private/tmp/sx13-order-startup.json"
+    },
+    {
+      "command": "python3 /private/tmp/sx13-final-devices.py",
+      "outcome": "safe-default final instrumentation passed with explicit diagnostic skips",
+      "log": "/private/tmp/sx13-final-device-commands.json"
+    },
+    {
+      "command": "python3 -m venv /private/tmp/sx13-docs-venv; /private/tmp/sx13-docs-venv/bin/python -m pip install -r requirements-docs.txt",
+      "outcome": "pass (network/cache required authorized sandbox escalation)",
+      "log": "/private/tmp/sx13-doc-install.log"
+    },
+    {
+      "command": "/private/tmp/sx13-docs-venv/bin/python scripts/check_docs.py",
+      "outcome": "pass:27 guides/30Markdown files",
+      "log": "/private/tmp/sx13-doc-check.log"
+    },
+    {
+      "command": "/private/tmp/sx13-docs-venv/bin/python -m unittest discover -s scripts/tests -v",
+      "outcome": "pass:24tests",
+      "log": "/private/tmp/sx13-doc-tests.log"
+    },
+    {
+      "command": "/private/tmp/sx13-docs-venv/bin/zensical build --strict",
+      "outcome": "pass",
+      "log": "/private/tmp/sx13-doc-build.log"
+    },
+    {
+      "command": "/private/tmp/sx13-docs-venv/bin/python scripts/package_playground.py",
+      "outcome": "pass:11files/15552766bytes fresh production distribution",
+      "log": "/private/tmp/sx13-package.log"
+    },
+    {
+      "command": "/private/tmp/sx13-docs-venv/bin/python scripts/check_site.py",
+      "outcome": "pass:27indexable pages + packaged assets",
+      "log": "/private/tmp/sx13-site-check.log"
+    },
+    {
+      "command": "/private/tmp/sx13-docs-venv/bin/python scripts/check_android_artifact.py shaderx/build/outputs/aar/shaderx.aar",
+      "outcome": "pass:API31,minCompileSdk35,Java17",
+      "log": "/private/tmp/sx13-artifact.json"
+    },
+    {
+      "command": "python3 /private/tmp/sx13-cleanup.py",
+      "outcome": "pass:owned emulators/private servers/localpreview stopped",
+      "log": "/private/tmp/sx13-cleanup.json"
+    }
+  ],
+  "visual_preview": {
+    "docs": "Actual IAB1280x800 desktop and390x844 mobile guide/table inspected; wrapping fits viewport. New output limits/APNG rules visible.",
+    "app": "Fresh packaged productionWasm ShaderLab at desktop1280x800/mobile390x844: selected Grayscale, observed filtered landscape pixels and independent preview/export availability guidance. Existing sample behavior retained.",
+    "android": "Actual debug and shrunk release external consumer startup resumed on API31/API36; all4 captured screenshots visually inspected; native blur checkerboard visible. API36 validation activity draws behind statusbar, unchanged preexisting validation-app layout; not a new export UI.",
+    "cleanup": "Viewport reset; temporary IABtab closed; previewserver stopped."
+  },
+  "required_future_gates": [
+    "Android failure/cancellation/native-driver ownership gate unresolved; no public Android export",
+    "Physical GPU pixel/lifetime/resource-exhaustion/throughput verification unavailable: Pixel disconnected",
+    "Production Android orientation/source metadata/input admission policy",
+    "Offline chain ordering/bounds rendering proof",
+    "Browser real worker architecture, native driver preemption and hard timeout not provided",
+    "Additional output formats, JPEG flatten, contain/cover and automatic orientation intentionally not offered"
+  ],
+  "changed_file_count": 26,
+  "changed_files": [
+    {
+      "path": "CHANGELOG.md",
+      "change": "modified",
+      "sha256": "806c0a5056aa4b40b6671d27ca7ac3ac880f20f43772be12706dc1b6396d4f03"
+    },
+    {
+      "path": "README.md",
+      "change": "modified",
+      "sha256": "9818e1f7dec52047f3b040a9834bd2690b24fdb3acf42fd32deb642c2838eb76"
+    },
+    {
+      "path": "docs/contributing.md",
+      "change": "modified",
+      "sha256": "163ff8d17d4a320bf89d7ee803eb26d53d6f5e3763ffb51be7247aa0a421c4e3"
+    },
+    {
+      "path": "docs/image-processing.md",
+      "change": "modified",
+      "sha256": "4e990d2b06827adbb4fb6d29eda238c16af6291be3348f0e7ba73544bc4eaada"
+    },
+    {
+      "path": "docs/platforms.md",
+      "change": "modified",
+      "sha256": "a443e6d7eea0860cf4beb5cc1fa6f3d1fcd9cc27e88171130cd05aed877d594b"
+    },
+    {
+      "path": "docs/roadmap/13-image-export.md",
+      "change": "modified",
+      "sha256": "a1dbdc92184779cc55c3f906e6917c937482695be57e7862f1faf50d3c2ae8a5"
+    },
+    {
+      "path": "docs/roadmap/index.md",
+      "change": "modified",
+      "sha256": "47ecb56be1e9b5e538b62563dcdb8265b69b201029cd3b5aa88c4f9c700d0686"
+    },
+    {
+      "path": "docs/samples.md",
+      "change": "modified",
+      "sha256": "5e9af529fb019d4d42ff3d69e9c47f35e3c66fbfe69a918ef159ee5fbdc10f3e"
+    },
+    {
+      "path": "docs/troubleshooting.md",
+      "change": "modified",
+      "sha256": "038fd72148fd89f2ae621806aa390b940692f39de569efafb5963ac0173e6c51"
+    },
+    {
+      "path": "gradle/libs.versions.toml",
+      "change": "modified",
+      "sha256": "3cbd05bdef566f42d93331842b92ffc6ca295687302a8f219d51cfff5daf4eae"
+    },
+    {
+      "path": "shaderx/api/jvm/shaderx.api",
+      "change": "modified",
+      "sha256": "19d0927dd60cdc63ae6eeb2d41a9281019a9aec03c0dc459c59e3c5cc33ffe76"
+    },
+    {
+      "path": "shaderx/build.gradle.kts",
+      "change": "modified",
+      "sha256": "b346416295f75bce6b93a760ca19bd0c90b332e60b9d2a58667c1c4e89bec164"
+    },
+    {
+      "path": "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/HardwareImageExportTest.kt",
+      "change": "added",
+      "sha256": "b2c31306c80157f3b4691d1c2acd46ee578f727390af17d66eca6b7f73df3895"
+    },
+    {
+      "path": "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/factory/AndroidHardwareImageExport.kt",
+      "change": "added",
+      "sha256": "95e7094f3ca6c8347d768e274a6b48594b7d508a91e56a1f8f4b584f6965d861"
+    },
+    {
+      "path": "shaderx/src/androidHostTest/kotlin/com/debanshu/shaderlab/shaderx/AndroidImageProcessorTest.kt",
+      "change": "modified",
+      "sha256": "b629d564e323c889f43aa1aa10d0d2608779d15569be867ad28795fa9abe2585"
+    },
+    {
+      "path": "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ImageExport.kt",
+      "change": "added",
+      "sha256": "7d71c3f97c092ddcb68a39abbae5036678e25dc9bb7741499df21763a81584fc"
+    },
+    {
+      "path": "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ImageProcessor.kt",
+      "change": "modified",
+      "sha256": "1adf6a82884aa3bc7a2e4b81eb7b3509e1508525bf825a9262be11cfcd68606c"
+    },
+    {
+      "path": "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderCapabilities.kt",
+      "change": "modified",
+      "sha256": "77b63f56493d76f0fb23f9b3a8c44d60b637e9a931200f37a323a4f0ff048925"
+    },
+    {
+      "path": "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/ImageExportContractTest.kt",
+      "change": "added",
+      "sha256": "db3008b0e59d58461831a42518e8cdb7cf894d8cc96a03e18c1de86b92a2eb5d"
+    },
+    {
+      "path": "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/ImageExportWorkerTest.kt",
+      "change": "added",
+      "sha256": "0d0d1a4f867701db1bd595fce8ccf2fcb1403565b4b1ca26243f15d4f1497bab"
+    },
+    {
+      "path": "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/SkiaImageProcessor.kt",
+      "change": "modified",
+      "sha256": "2ec7d65712db5d8e79550b21bfcab22b6cfd3382c0bf8f269af373e8a02e57e3"
+    },
+    {
+      "path": "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/SkiaPngExport.kt",
+      "change": "added",
+      "sha256": "282ff45e1c09c8ec5cfed368ae2cb39d813892bf261fdd3697d2375c576a845a"
+    },
+    {
+      "path": "shaderx/src/skiaTest/kotlin/com/debanshu/shaderlab/shaderx/ImageExportRasterTest.kt",
+      "change": "added",
+      "sha256": "9e5ee84b3d7695b315cdf38beff3700794e279f0a7ae3e3a4b1020a6ae6efca6"
+    },
+    {
+      "path": "shaderx/src/skiaTest/kotlin/com/debanshu/shaderlab/shaderx/ImageExportSuspendTest.kt",
+      "change": "added",
+      "sha256": "0856732967a94787ba7d5ff52d29d47b308dafb130769ee8e5244cc792e29ddc"
+    },
+    {
+      "path": "validation/consumer-contracts/development/ImageExportConsumer.kt",
+      "change": "added",
+      "sha256": "e6a50a1a1c9d3a6f569c89a88a3560fe23853c197435169af8d625de045b0460"
+    },
+    {
+      "path": "validation/evidence/sx13-image-export.json",
+      "change": "added"
+    }
+  ],
+  "review_patch": "/private/tmp/sx13-review.patch",
+  "cleanup": {
+    "private_log": "/private/tmp/sx13-cleanup.json",
+    "scope": "Stopped task-owned API31 and small_phone software emulators, only privateADB5038/5039, only localhost8133 server; default ADB/pairings/shared SDK unchanged. Retained private SDK/AVD for reproduction."
+  }
+}

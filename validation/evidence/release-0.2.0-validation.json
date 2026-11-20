@@ -1,0 +1,168 @@
+{
+  "version": "0.2.0",
+  "validation_date": "2026-11-20",
+  "publication": "Not performed; direct stable publication follows reviewed commit and merge",
+  "source_state": {
+    "branch": "codex/developer-experience-research",
+    "base_head_before_release_commit": "9cee35c9cb92d4f2ca0bc3688917c09ab0f055b4",
+    "note": "Validation ran on release worktree before its commit; source fingerprint and artifact hashes identify the checked inputs.",
+    "build_input_fingerprint_sha256": "2aedd8a3ee689feb52cacc2791c54c1128ccb6f8173da9557a8491d751f8085a",
+    "build_input_file_count": 358,
+    "final_build_input_fingerprint_sha256": "dda1eb579059e20d26b98a353bea5854203018d418f97ebb4617f0c08ebd1a2f",
+    "post_validation_cleanup": "Trailing whitespace and extra EOF blank lines removed from a sampler XML resource, a legacy consumer source and the roadmap index. The JVM ABI reference retains its generator-required final separator; .gitattributes exempts only that generated EOF separator. Runtime/library Kotlin is unchanged; final API check rerun."
+  },
+  "toolchain": {
+    "launcher": "JBR21.0.10",
+    "gradle_daemon": "Homebrew OpenJDK21.0.12.1 (daemon criteria JDK21)",
+    "gradle": "9.6.0",
+    "chrome": "Installed Google Chrome; CHROME_BIN explicitly set"
+  },
+  "gradle_checks": {
+    "jvm": {
+      "path": "/private/tmp/shaderx-020-jvm.log",
+      "sha256": "d7af65d66d28d8d2babcbc07a483d8c0f2b6681142c194e3d63aaa3a0019fea7",
+      "status": "PASS"
+    },
+    "integration": {
+      "path": "/private/tmp/shaderx-020-integration.log",
+      "sha256": "33eb387a335449a588c37e28a299a32e2f155af93f0718278e8773cbbee4fcb0",
+      "status": "PASS"
+    },
+    "distributions": {
+      "path": "/private/tmp/shaderx-020-distributions.log",
+      "sha256": "74f862a569b03592389034701fa4e28e26f7d0728dd9207c3e570b39308b5c9b",
+      "status": "PASS"
+    },
+    "stage": {
+      "path": "/private/tmp/shaderx-020-stage.log",
+      "sha256": "0105db4486c8156ac05c9a1de8c0b3f1a1f1c7c105943c9f50d987d1b76c8a7c",
+      "status": "PASS"
+    },
+    "staged-consumers": {
+      "path": "/private/tmp/shaderx-020-staged-consumers.log",
+      "sha256": "1334afa5051fdaad58f96ec0d1ee52279b8375a3f16d8da75277a6fa937d67b7",
+      "status": "PASS"
+    },
+    "final_baseline_and_sampler": {
+      "path": "/private/tmp/shaderx-020-final-format-check.log",
+      "sha256": "944d14517d4264f61f53ae97a4291baee6afff1d4c576f63ef9c735e5371b95b",
+      "status": "PASS"
+    }
+  },
+  "test_results": {
+    "shaderx:jvmTest": {
+      "tests": 635,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shaderx:wasmJsBrowserTest": {
+      "tests": 536,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shaderx:iosSimulatorArm64Test": {
+      "tests": 536,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shaderx:testAndroidHostTest": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "samples/ShaderLab/composeApp:jvmTest": {
+      "tests": 52,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "samples/ShaderLab/composeApp:wasmJsBrowserTest": {
+      "tests": 46,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "samples/Sampler/composeApp:jvmTest": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "samples/Sampler/composeApp:wasmJsBrowserTest": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "validation/kmp-consumer:jvmTest": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "validation/ecosystem-consumer:jvmTest": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "additional_checks": {
+    "jvm_api_check": "PASS :shaderx:checkKotlinAbi",
+    "published_binary_compatibility": "PASS for actual0.1.4 and unchanged0.1.3 frozen JVM consumers; see release-0.2.0-jvm-compatibility.json",
+    "android_artifact": {
+      "path": "shaderx/build/outputs/aar/shaderx.aar",
+      "sha256": "bb0367d8421d2216e102befdc2b3188568ed43b28e9d3ce62d27ef7115522539",
+      "minSdk": 31,
+      "metadata": {
+        "aarFormatVersion": "1.0",
+        "aarMetadataVersion": "1.0",
+        "minCompileSdk": "35",
+        "minCompileSdkExtension": "0",
+        "minAndroidGradlePluginVersion": "1.0.0",
+        "coreLibraryDesugaringEnabled": "false"
+      },
+      "classfile_majors": {
+        "61": 203
+      }
+    },
+    "python_tests": "PASS 47 tests; python -m unittest discover -s scripts/tests -v",
+    "docs": "PASS check_docs.py, zensical build --strict, package_playground.py and check_site.py (30 pages and both apps)",
+    "staging": "Unsigned exact0.2.0 artifacts staged without signing/publication; independent JVM/Android/Wasm/iOS source consumers PASS",
+    "visual": "Updated local effect catalog checked at desktop and390x844; production ShaderLab rendered grayscale and generated Requires ShaderX0.2.0 Kotlin",
+    "live_site_comparison": "Live effects page still serves Available since0.1.3 / Added in0.1.4 before this release deployment; local rebuilt catalog has0.2.0 overview and19effects",
+    "version_preflight": {
+      "mode": "read-only simulation for future dispatch from main",
+      "actual_branch": "codex/developer-experience-research",
+      "published_versions": [
+        "0.1.2",
+        "0.1.3",
+        "0.1.4"
+      ],
+      "remote_tags": [
+        "0.1.0",
+        "0.1.1",
+        "0.1.2",
+        "0.1.3",
+        "v0.1.4"
+      ],
+      "selected": {
+        "version": "0.2.0",
+        "tag": "v0.2.0",
+        "previous_tag": "v0.1.4"
+      },
+      "coordinate_available_for_publication": true,
+      "mutations": "none; no tag, commit, signing or upload"
+    }
+  },
+  "remaining_limits": [
+    "No physical GPU or long-running native memory/performance claim from this pass.",
+    "No Android DEX or Kotlin/Native/Wasm binary ABI guarantee; fresh source consumers are separate evidence.",
+    "Android public image export and offline composite export remain unsupported.",
+    "Remote Actions publication and hosted documentation deployment were not executed."
+  ]
+}

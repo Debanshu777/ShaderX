@@ -1,0 +1,123 @@
+{
+  "roadmap": "SX10",
+  "scope": "Android AGSL numerical and nested inputs",
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-16.0.0_r1/graphics/java/android/graphics/RuntimeShader.java",
+      "finding": "setInputBuffer requests direct bitmap sampling, bypassing color conversion and alpha premultiplication; RuntimeShader retains child Shader Java references."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/android-16.0.0_r1/graphics/java/android/graphics/BitmapShader.java",
+      "finding": "BitmapShader retains its Bitmap; setFilterMode explicitly selects nearest or bilinear filtering. Pixel coordinates, not normalized UV."
+    },
+    {
+      "url": "https://developer.android.com/reference/android/graphics/BitmapShader",
+      "finding": "Filtering constants and setters available since API33."
+    }
+  ],
+  "device": {
+    "kind": "task-owned software emulator",
+    "avd": "small_phone",
+    "serial": "emulator-5554",
+    "api": 36,
+    "fingerprint": "google/sdk_gphone64_arm64/emu64a:16/BE4B.251210.005/14574095:user/release-keys",
+    "egl": "emulation",
+    "physical_device": "No connected authorized transport; no pairing or shared ADB reset performed.",
+    "lifecycle": "Only small_phone was started/stopped. Repeated startups were required when additional acceptance gates arrived after prior stop commands; final emulator and task-owned private5038 server are stopped.",
+    "private_transport": {
+      "server_env": "ADB_SERVER_SOCKET=tcp:localhost:5038",
+      "serial": "127.0.0.1:5555",
+      "final_validation": "26testsPASS3.338s",
+      "cleanup": "Only task-owned small_phone and private5038 server stopped"
+    },
+    "earlier_transport_deviation": "Earlier experiments and completed runs used the local default ADB server rather than the requested explicit private environment. No default server reset/kill/restart or pairing changes were performed. Final verification was repeated using the explicit private5038 endpoint and local emulator transport. Initial tcp:127.0.0.1:5038 server-start spelling was rejected as remote; tcp:localhost:5038 succeeds."
+  },
+  "ownership": {
+    "native_lifetime": "RuntimeShader and BitmapShader expose no close API. Data bitmaps are not recycled while retained shaders or RenderEffects may use them. Session close drops owned Java shader/effect references; native release is reference/GC managed. No measured memory stabilization claim.",
+    "uploads": "Each actual DataUniform binding creates/copies a bitmap. No upload cache or performance claim. Explicit host revisions prevent unrequested refreshes; unchanged value on an explicitly requested refresh still uploads."
+  },
+  "commands": [
+    {
+      "command": "JAVA_HOME=/Users/debanshud/.gradle/jdks/jetbrains_s_r_o_-21-aarch64-os_x.2/jbrsdk_jcef-21.0.10-osx-aarch64-b1163.108/Contents/Home ./gradlew :shaderx:assembleAndroidDeviceTest",
+      "outcome": "PASS final ownership/source-retention/diagnostic APK, 1 second (48 tasks: 9 executed, 39 up-to-date)",
+      "log": "/tmp/sx10-android-build.log"
+    },
+    {
+      "command": "adb -s emulator-5554 shell am instrument -w -e class com.debanshu.shaderlab.shaderx.ShaderInputsDeviceTest io.github.debanshu.shaderx.test/androidx.test.runner.AndroidJUnitRunner",
+      "outcome": "PASS initial completed 7-input test suite, 0 failed/ignored, 27.996 seconds; superseded by final combined 26-test run below",
+      "log": "/tmp/sx10-android-inputs.log"
+    },
+    {
+      "command": "adb -s emulator-5554 shell am instrument -w -e class com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest,com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest,com.debanshu.shaderlab.shaderx.BackgroundDeviceTest,com.debanshu.shaderlab.shaderx.EffectCollectionDeviceTest io.github.debanshu.shaderx.test/androidx.test.runner.AndroidJUnitRunner",
+      "outcome": "PASS 18 existing HWUI/AGSL tests (3.076 seconds)",
+      "log": "/tmp/sx10-android-regressions.log"
+    },
+    {
+      "command": "/Users/debanshud/Library/Android/sdk/platform-tools/adb -s emulator-5554 install -r shaderx/build/outputs/apk/androidTest/shaderx-androidTest.apk",
+      "outcome": "Success final APK"
+    },
+    {
+      "command": "/Users/debanshud/Library/Android/sdk/platform-tools/adb -s emulator-5554 shell am instrument -w -e class com.debanshu.shaderlab.shaderx.ShaderInputsDeviceTest,com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest,com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest,com.debanshu.shaderlab.shaderx.BackgroundDeviceTest,com.debanshu.shaderlab.shaderx.EffectCollectionDeviceTest io.github.debanshu.shaderx.test/androidx.test.runner.AndroidJUnitRunner",
+      "outcome": "PASS 26 tests (8 new input/diagnostic + 18 previous), zero failures/ignored, 26.081 seconds",
+      "log": "/tmp/sx10-android-final.log",
+      "renderer_log": "/tmp/sx10-android-final-logcat.log"
+    },
+    {
+      "command": "lsof -nP -iTCP:5038 -sTCP:LISTEN",
+      "outcome": "No existing listener; verified free before task-owned private server start"
+    },
+    {
+      "command": "ADB_SERVER_SOCKET=tcp:localhost:5038 /Users/debanshud/Library/Android/sdk/platform-tools/adb start-server",
+      "outcome": "Started task-owned private ADB server successfully"
+    },
+    {
+      "command": "ADB_SERVER_SOCKET=tcp:localhost:5038 /Users/debanshud/Library/Android/sdk/platform-tools/adb connect 127.0.0.1:5555",
+      "outcome": "Connected only to local task-owned small_phone emulator; no pairing change"
+    },
+    {
+      "command": "ADB_SERVER_SOCKET=tcp:localhost:5038 /Users/debanshud/Library/Android/sdk/platform-tools/adb -s 127.0.0.1:5555 install -r shaderx/build/outputs/apk/androidTest/shaderx-androidTest.apk",
+      "outcome": "Success final ownership-cleanup APK"
+    },
+    {
+      "command": "ADB_SERVER_SOCKET=tcp:localhost:5038 /Users/debanshud/Library/Android/sdk/platform-tools/adb -s 127.0.0.1:5555 shell am instrument -w -e class com.debanshu.shaderlab.shaderx.ShaderInputsDeviceTest,com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest,com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest,com.debanshu.shaderlab.shaderx.BackgroundDeviceTest,com.debanshu.shaderlab.shaderx.EffectCollectionDeviceTest io.github.debanshu.shaderx.test/androidx.test.runner.AndroidJUnitRunner",
+      "outcome": "PASS final code:26 tests (8 new input/diagnostic +18previous), zero failures/ignored,3.338seconds",
+      "log": "/tmp/sx10-android-private-final.log",
+      "renderer_log": "/tmp/sx10-android-private-final-logcat.log"
+    },
+    {
+      "command": "ADB_SERVER_SOCKET=tcp:localhost:5038 android emulator stop small_phone",
+      "outcome": "Stopped only task-owned emulator-5554"
+    },
+    {
+      "command": "ADB_SERVER_SOCKET=tcp:localhost:5038 /Users/debanshud/Library/Android/sdk/platform-tools/adb kill-server",
+      "outcome": "Stopped only task-owned private server5038; lsof confirms no5038listener. Shared default server was not killed/reset/restarted."
+    }
+  ],
+  "residual_gates": [
+    "Physical GPU and other Android API/OEM validation",
+    "Native memory stabilization/performance measurements",
+    "RGBA_FP16 destinations explicitly skip on unsupported hardware; all three tested destinations ran without skips on this emulator"
+  ],
+  "coverage": [
+    "Raw RGBA byte channel preservation incl nonzero RGB alpha0 and alpha remapped to opaque output",
+    "Caller input array and defensive output mutation leave immutable data unchanged",
+    "Native nearest centers, bilinear midpoint, clamp/repeat/mirror tiling independently on both axes",
+    "Portable uniform sampler actual AGSL all64texels/allRGBA channels, linear midpoint, repeat/mirror",
+    "Source-free FP16 sRGB/linear-sRGB/Display-P3 raw byte invariance and color-managed TextureUniform contrast; no skips on this emulator",
+    "Same-source sibling explicit independent times and schema values",
+    "Live raw replacement and unchanged explicit refresh, repeated close rejects refresh, retained filters survive close",
+    "Live nested replacement, bad child compiler recovery and retained old filter",
+    "Factory eviction/close leaves retained nested snapshots valid",
+    "Deepest child/grandchild shaderSource and alias/definition-id path preserved in existing CompilationError across static, animated-session and background routes; invalid parent alias remains attributed to parent source",
+    "Manual live session uses retained actual compiled source for alias preflight and diagnostics even if refresh shaderSource getter throws; getter read exactly once at creation",
+    "Static provider mutating source cannot replace captured pre-provider parent source in diagnostics; getter read exactly once",
+    "Defined session close clears native ownership; closed currentRenderEffect throws and refresh fails; separately retained output survives close and factory cache clear"
+  ],
+  "destination_contract": "DataUniform samples numerical channels without input color/premultiplication conversion. Final output remains a color and participates in normal Android destination/layer color conversion. Destination audit uses direct source-free shader draw rather than an sRGB content-filter intermediate.",
+  "observed_failures_and_corrections": [
+    "Test-only identifier input is reserved in AGSL: fixtures renamed bufferData.",
+    "Initial destination fixture incorrectly expected final content-filter output to avoid sRGB layer conversion; corrected to direct source-free FP16 draw. Raw sampling itself passed.",
+    "Final narrow declaration checker correctly rejected invalid shader source fixture before native compilation; fixture changed to syntactically invalid main expression to keep native compile-recovery coverage.",
+    "New unknown-parent-alias test triggered stock API36 RuntimeShader.nativeUpdateShader CheckJNI abort while constructing its unable-to-find-shader diagnostic (invalid ModifiedUTF8). Added shared new-kind alias preflight before native work; final same fixture returns parent CompilationError safely. No ADB resets/restarts or pairing changes were made. Crash trace /tmp/sx10-android-crash.log."
+  ]
+}

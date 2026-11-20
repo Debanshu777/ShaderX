@@ -46,6 +46,7 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
  * [com.debanshu.shaderlab.shaderx.effect.impl.AudioVisualizerEffect].
  *
  * @see AnimatedShaderEffect for effects that animate over time
+ * @see com.debanshu.shaderlab.shaderx.authoring.ShaderDefinition for generated public adapters
  */
 @Stable
 public interface RuntimeShaderEffect : ShaderEffect {

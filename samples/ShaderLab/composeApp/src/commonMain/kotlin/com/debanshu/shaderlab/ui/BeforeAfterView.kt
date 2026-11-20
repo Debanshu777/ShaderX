@@ -29,6 +29,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.debanshu.shaderlab.shaderx.compose.controlledShaderEffect
 import com.debanshu.shaderlab.shaderx.compose.shaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
@@ -53,7 +54,9 @@ fun BeforeAfterView(
     }
 
     val afterModifier =
-        if (effect != null && factory.isSupported()) {
+        if (effect is com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect && LocalPlaygroundPlayback.current != null) {
+            Modifier.controlledShaderEffect(effect, LocalPlaygroundPlayback.current!!, factory = factory, onError = { shaderError = it.message })
+        } else if (effect != null && factory.isSupported()) {
             Modifier.shaderEffect(
                 effect = effect,
                 factory = factory,

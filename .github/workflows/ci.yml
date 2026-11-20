@@ -14,11 +14,15 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ ubuntu-latest, macos-latest ]
-    
+
     runs-on: ${{ matrix.os }}
-    
+    env:
+      # Configuration caching allows concurrent Native links; keep the small Mac runner bounded.
+      GRADLE_OPTS: ${{ matrix.os == 'macos-latest' && '-Dorg.gradle.workers.max=1' || '' }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,21 +33,98 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Set up Python for artifact checks and SDK selection
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Install library, consumer, and sample Android platforms
+        run: |
+          sdk_platform=$(python3 -c 'import tomllib; version = str(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["android-compileSdk"]); print(f"{version}.0" if version.isdigit() and int(version) >= 37 else version)')
+          sdkmanager "platforms;android-35" "platforms;android-$sdk_platform"
+
+      - name: Select and smoke-test sandboxed Chrome
+        id: browser
+        timeout-minutes: 1
+        run: bash scripts/select_ci_chrome.sh
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Build shaderx library
-        run: ./gradlew :shaderx:build --no-daemon
+        env:
+          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}
+        run: ./gradlew :shaderx:build :shaderx:generateMetadataFileForKotlinMultiplatformPublication --no-daemon
 
-      # build already includes check. Keep the XML/HTML reports even on failure.
-      - name: Upload test reports
+      # Run the sample browser suite once; the library build covers its own browser tests.
+      - name: Test ShaderLab workbench and pipeline in Chrome
+        if: runner.os == 'Linux'
+        env:
+          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}
+        run: ./gradlew :samples:ShaderLab:composeApp:wasmJsBrowserTest --no-daemon
+
+      - name: Build and test the visual sampler
+        if: runner.os == 'Linux'
+        env:
+          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}
+        run: >-
+          ./gradlew :samples:Sampler:composeApp:jvmTest
+          :samples:Sampler:composeApp:wasmJsBrowserTest
+          :samples:Sampler:androidApp:assembleDebug --no-daemon --no-parallel
+
+      # Consumer compilation depends on ShaderLab jvmTest, which produces the actual
+      # workbench/pipeline Kotlin exports. Do not substitute handwritten snippets.
+      - name: Compile and test external public API consumers
+        run: >-
+          ./gradlew :validation:kmp-consumer:jvmTest
+          :validation:kmp-consumer:compileKotlinWasmJs
+          :validation:kmp-consumer:compileAndroidMain
+          :validation:android-consumer:compileDebugKotlin --no-daemon
+
+      - name: Validate optional ecosystem recipes
+        run: >-
+          ./gradlew :validation:ecosystem-consumer:jvmTest
+          :validation:ecosystem-consumer:compileAndroidMain
+          :validation:ecosystem-consumer:compileKotlinWasmJs --no-daemon
+
+      - name: Compile Apple sample and consumer sources
+        if: runner.os == 'macOS'
+        run: >-
+          ./gradlew :samples:ShaderLab:composeApp:compileKotlinIosSimulatorArm64
+          :samples:Sampler:composeApp:compileKotlinIosSimulatorArm64
+          :validation:kmp-consumer:compileKotlinIosSimulatorArm64
+          :validation:ecosystem-consumer:compileKotlinIosSimulatorArm64 --no-daemon
+
+      - name: Check Android artifact requirements and shrink consumer
+        run: |
+          mkdir -p build/reports/validation
+          python3 scripts/check_android_artifact.py shaderx/build/outputs/aar/shaderx.aar > build/reports/validation/android-artifact.json
+          cat build/reports/validation/android-artifact.json
+          ./gradlew :validation:android-app:assembleDebug :validation:android-app:assembleRelease --no-daemon
+
+      # build includes check. Preserve failed-test diagnostics and the exact generated
+      # consumer inputs along with packaged Android metadata and shrinker reports.
+      - name: Upload validation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ matrix.os }}
+          name: validation-reports-${{ matrix.os }}
           path: |
-            shaderx/build/reports/tests/
+            shaderx/build/reports/
             shaderx/build/test-results/
+            shaderx/build/outputs/aar/
+            shaderx/build/publications/
+            samples/ShaderLab/composeApp/build/reports/
+            samples/ShaderLab/composeApp/build/test-results/
+            samples/ShaderLab/composeApp/build/generated-playground-consumer/
+            validation/*/build/reports/
+            validation/*/build/test-results/
+            validation/android-app/build/outputs/mapping/
+            validation/android-app/build/outputs/apk/**/output-metadata.json
+            build/reports/validation/
           if-no-files-found: ignore

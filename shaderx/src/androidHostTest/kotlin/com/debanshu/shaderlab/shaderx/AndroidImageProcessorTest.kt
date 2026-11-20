@@ -4,6 +4,10 @@ import androidx.compose.ui.graphics.RenderEffect
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.RuntimeShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
+import com.debanshu.shaderlab.shaderx.factory.exportImage
+import com.debanshu.shaderlab.shaderx.factory.queryImageExportSupport
+import com.debanshu.shaderlab.shaderx.factory.ImageExportOptions
+import com.debanshu.shaderlab.shaderx.factory.ShaderSupportStatus
 import com.debanshu.shaderlab.shaderx.factory.ImageProcessor
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.ShaderSession
@@ -19,6 +23,14 @@ import kotlin.test.assertTrue
 
 /** No Android runtime or Robolectric: invoking a bitmap API here would throw from android.jar. */
 class AndroidImageProcessorTest {
+    @Test
+    fun boundedRouteIsExplicitlyUnsupportedWithoutInspectingOrUsingLegacyFactory() {
+        val processor = ImageProcessor.create(UnusedFactory)
+        assertTrue(processor.queryImageExportSupport(UnusedEffect).status == ShaderSupportStatus.UNSUPPORTED)
+        val result = processor.exportImage(byteArrayOf(1, 2, 3), UnusedEffect, ImageExportOptions(8, 8))
+        assertTrue(result is ShaderResult.Failure && result.error is ShaderError.ProcessingError)
+    }
+
     @Test
     fun validImage_returnsUnsupportedProcessingFailureWithoutRendering() {
         val png = Base64.getDecoder().decode(

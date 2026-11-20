@@ -13,12 +13,20 @@ plugins {
 }
 
 group = "io.github.debanshu777"
-// Release workflows supply an immutable tag-derived version; local builds keep the development version.
-version = providers.gradleProperty("shaderxVersion").getOrElse("0.1.4")
+// The release coordinate is declared once in root gradle.properties.
+version = providers.gradleProperty("shaderxVersion").get()
 
 kotlin {
     applyDefaultHierarchyTemplate()
     explicitApi()
+
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled.set(true)
+        // KGP 2.3 validates JVM classfiles here; Android's new KMP plugin needs
+        // the separate consumer/device gates. Native/Wasm dumps follow later.
+        klib.enabled.set(false)
+    }
 
     // Suppress beta warning for expect/actual classes (LruCache)
     @Suppress("OPT_IN_USAGE")
@@ -28,21 +36,23 @@ kotlin {
 
     androidLibrary {
         namespace = "io.github.debanshu.shaderx"
-        compileSdk =
-            libs.versions.android.compileSdk
-                .get()
-                .toInt()
-        minSdk =
-            libs.versions.android.minSdk
-                .get()
-                .toInt()
+        // Keep the published consumer floor separate from the contributor/sample SDK.
+        compileSdk = 35
+        minSdk = 31
 
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
 
-        // Pure Android implementation contracts can run against the JVM stubs. Common tests
-        // that allocate ImageBitmaps still need a device or the existing Skia JVM target.
+        // Compose 1.10's device-test asset wiring requires Android resources enabled.
+        androidResources { enable = true }
+        withDeviceTestBuilder {
+            sourceSetTreeName = "androidDevice"
+        }.configure {
+            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
+
+        // Isolate host tests from common bitmap tests that need a real backend.
         withHostTestBuilder {
             sourceSetTreeName = "androidHost"
         }
@@ -70,6 +80,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.kotlinx.coroutinesCore)
             // Exposed as `api` — the public surface returns Compose types (ImageBitmap, Modifier,
             // RenderEffect), so consumers of the published artifact must receive Compose transitively.
             api(libs.runtime)
@@ -100,9 +111,25 @@ kotlin {
             dependsOn(skiaMain)
         }
 
+        // Exercise the same native Skia filter semantics on JVM, Wasm and iOS simulators.
+        val skiaTest by creating {
+            dependsOn(commonTest.get())
+            dependencies { implementation(libs.kotlinx.coroutinesTest) }
+        }
+        jvmTest { dependsOn(skiaTest) }
+        iosTest { dependsOn(skiaTest) }
+        wasmJsTest { dependsOn(skiaTest) }
+
         jvmTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlin.testJunit)
+        }
+
+        named("androidDeviceTest") {
+            dependencies {
+                implementation(libs.kotlin.testJunit)
+                implementation(libs.androidx.test.runner)
+            }
         }
 
         named("androidHostTest") {

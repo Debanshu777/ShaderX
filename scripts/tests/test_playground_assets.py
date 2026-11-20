@@ -60,6 +60,19 @@ class PlaygroundArtifactsTest(unittest.TestCase):
         (self.distribution / "index.html").write_text('<script src="/composeApp.js"></script>')
         self.assertTrue(any("relative to its own directory" in error for error in validate_distribution(self.distribution)))
 
+    def test_sampler_has_its_own_resource_contract_and_manifest(self):
+        resources = self.distribution / "composeResources/sample/drawable"
+        for file in resources.iterdir():
+            if file.name != "sample_nature.xml":
+                file.unlink()
+        destination = package(self.distribution, self.site, "https://example.org/ShaderX/",
+                              "sampler", {"sample_nature.xml"})
+        self.assertEqual(self.site / "sampler", destination)
+        self.assertEqual([], validate_package(destination, {"sample_nature.xml"}))
+        (destination / "composeResources/sample/drawable/sample_nature.xml").unlink()
+        self.assertTrue(any("sample_nature.xml" in error for error in
+                            validate_package(destination, {"sample_nature.xml"})))
+
     def test_unsafe_manifest_paths_are_rejected(self):
         destination = package(self.distribution, self.site, "https://example.org/ShaderX/")
         (destination / MANIFEST).write_text(json.dumps({"version": 1, "files": {"../outside": {}}}))

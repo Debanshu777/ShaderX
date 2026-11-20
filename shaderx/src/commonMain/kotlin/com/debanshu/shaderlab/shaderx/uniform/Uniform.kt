@@ -15,7 +15,9 @@ import com.debanshu.shaderlab.shaderx.uniform.MatrixUniform.Companion.rowMajor
  * - [IntUniform]: Single or multiple integer values
  * - [ColorUniform]: Color values with proper color space handling
  * - [MatrixUniform]: Column-major float matrices (mat2, mat3, mat4)
- * - [TextureUniform]: An image bound as an additional `uniform shader` input
+ * - [TextureUniform]: A color-managed image bound as an additional `uniform shader` input
+ * - [DataUniform]: Explicit RGBA8 numerical data on a supported raw backend
+ * - [NestedUniform]: An immutable, source-free child snapshot with explicit time and values
  *
  * ## Example
  * ```kotlin
@@ -119,20 +121,16 @@ public data class IntUniform(
 /**
  * Uniform containing color values.
  *
- * Uses `layout(color)` annotation in AGSL shaders for proper color space handling.
- * On Android, this uses `setColorUniform()` which handles color space conversions.
- * On Skia platforms, this is passed as a vec4 (r, g, b, a).
+ * Components describe an unpremultiplied sRGB color. Declare `layout(color)` on the
+ * uniform so Android/Skia can transform it into the destination working color space.
+ * Android binds with `setColorUniform`; Skia binds the four components to the runtime
+ * builder. SkSL's `layout(color)` is meaningful even with that float-array binding.
+ * The working space is not necessarily linear sRGB. Shader output must be premultiplied
+ * (multiply RGB by alpha when returning a color uniform directly).
  *
- * ## Color space behaviour
- * The two platforms handle colors differently:
- * - **Android (AGSL):** `setColorUniform()` with `layout(color)` applies the sRGB ↔ linear
- *   color space conversion required by AGSL. Declare the uniform with `layout(color)` in the
- *   shader source to get correct results on Android.
- * - **Skia (iOS / Desktop / Wasm):** The components are passed as a raw `float4` with no
- *   color space conversion. `layout(color)` is parsed but has no semantic effect in SkSL.
- *   Results on these platforms assume sRGB components, which matches Compose's standard
- *   rendering pipeline for most devices. Wide-gamut (Display P3) displays may show subtle
- *   color differences between Android and Skia targets for highly saturated colors.
+ * [fromColor] currently copies components without converting or retaining the Compose
+ * color space. Convert wide-gamut Compose colors to sRGB before calling it. Changing
+ * that legacy conversion behavior is a separate compatibility decision.
  *
  * ## Shader Declaration
  * ```glsl
@@ -178,7 +176,8 @@ public data class ColorUniform(
         /**
          * Creates a color uniform from a Compose Color.
          *
-         * This is the recommended way to create ColorUniform in Compose UI code.
+         * For non-sRGB colors, call `color.convert(ColorSpaces.Srgb)` first; this method copies
+         * components and does not preserve color-space metadata.
          *
          * @param name The uniform name in shader code
          * @param color Compose Color value

@@ -28,10 +28,12 @@ validation coverage without implying a public API change. Do not add filler.
 | Docs build, publishing or agent instructions | `docs/maintaining.md`, `docs/contributing.md` |
 
 Read the implementation and tests before describing behavior. Check each code
-example's imports, signatures and platform restrictions. Verify that a version
-is published on Maven Central before recommending it in an install command.
-The guides use published 0.1.4 as their baseline. Label later unreleased APIs
-explicitly, and update version examples only after the release is verified.
+example's imports, signatures and platform restrictions. Use `shaderxVersion` in root `gradle.properties` for release preparation.
+Release-ready installation examples may target that version before publication
+when the central release-status notice clearly says publication is pending.
+Verify Maven Central artifacts before claiming a version is available. Keep
+version history in `CHANGELOG.md` and upgrade actions in `docs/migration.md`;
+do not relabel historical validation evidence as a new release test.
 
 Keep the flower banner and **all four inline sample recordings** in the
 README. Preserve the visual showcase when shortening or reorganizing prose.

@@ -1,0 +1,717 @@
+{
+  "roadmap": "SX14",
+  "recorded": "2026-11-20",
+  "branch": "codex/developer-experience-research",
+  "scope": "Optional public-API consumer recipes only; ShaderX core changed only in KDoc",
+  "baseline_manifest": "/private/tmp/shaderx-sx13-accepted-files.json",
+  "review_patch": "/private/tmp/sx14-review.patch",
+  "public_contracts": {
+    "core_abi": "byte-for-byte unchanged",
+    "abi_sha256": "19d0927dd60cdc63ae6eeb2d41a9281019a9aec03c0dc459c59e3c5cc33ffe76",
+    "adapter": "No demonstrated gap; plain public modifier composition suffices",
+    "dependencies": "Consumer-only catalog aliases: reuse coil=3.4.0, add coil-compose and haze=1.7.2; no core dependency or toolchain upgrade",
+    "image": "Caller supplies one shared ImageLoader, nullable contentDescription, factory and playback; onLoadState reports Loading/Success/Error, not Empty. Coil owns requests/cache/decoding, Compose animates reveal, ShaderX owns its modifier sessions.",
+    "backdrop": "Haze 1.7.2 hazeSource -> separate clipped shaderEffect(Grayscale).hazeEffect overlay -> unfiltered foreground sibling. No native renderer internals, new capture, export or loader APIs.",
+    "release": "0.1.3 published / 0.1.4 development labels preserved; no release/publish/merge/commit/branch switch"
+  },
+  "toolchain": {
+    "launcher_jdk": "Homebrew OpenJDK21.0.12.1",
+    "daemon_criteria": "Compatible Java21, any vendor, from checked-in gradle-daemon-jvm.properties",
+    "gradle": "9.6.0",
+    "kotlin": "2.3.21",
+    "compose": "1.10.3",
+    "androidx_runtime": "1.10.5",
+    "skiko": "0.9.37.4",
+    "coroutines": "1.10.2"
+  },
+  "resolved_versions": {
+    "jvmRuntimeClasspath": {
+      "org.jetbrains.kotlin:kotlin-stdlib": [
+        "2.3.21"
+      ],
+      "androidx.compose.runtime:runtime": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-desktop": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-annotation": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-retain": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-saveable": [
+        "1.10.5"
+      ],
+      "org.jetbrains.compose.ui:ui": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-desktop": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-backhandler": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-util": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-geometry": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-graphics": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-unit": [
+        "1.10.3"
+      ],
+      "org.jetbrains.skiko:skiko": [
+        "0.9.37.4"
+      ],
+      "org.jetbrains.skiko:skiko-awt": [
+        "0.9.37.4"
+      ],
+      "org.jetbrains.compose.ui:ui-text": [
+        "1.10.3"
+      ],
+      "org.jetbrains.skiko:skiko-awt-runtime-macos-arm64": [
+        "0.9.37.4"
+      ],
+      "io.coil-kt.coil3:coil-compose": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-jvm": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core-jvm": [
+        "3.4.0"
+      ],
+      "dev.chrisbanes.haze:haze": [
+        "1.7.2"
+      ],
+      "dev.chrisbanes.haze:haze-jvm": [
+        "1.7.2"
+      ]
+    },
+    "androidRuntimeClasspath": {
+      "org.jetbrains.kotlin:kotlin-stdlib": [
+        "2.3.21"
+      ],
+      "androidx.compose.runtime:runtime": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-android": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-annotation": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-retain": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-saveable": [
+        "1.10.5"
+      ],
+      "org.jetbrains.compose.ui:ui": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-geometry": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-util": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-graphics": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-unit": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-text": [
+        "1.10.3"
+      ],
+      "io.coil-kt.coil3:coil-compose": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-android": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core-android": [
+        "3.4.0"
+      ],
+      "dev.chrisbanes.haze:haze": [
+        "1.7.2"
+      ],
+      "dev.chrisbanes.haze:haze-android": [
+        "1.7.2"
+      ]
+    },
+    "wasmJsRuntimeClasspath": {
+      "org.jetbrains.kotlin:kotlin-stdlib": [
+        "2.3.21"
+      ],
+      "androidx.compose.runtime:runtime": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-annotation": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-retain": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-saveable": [
+        "1.10.5"
+      ],
+      "org.jetbrains.compose.ui:ui": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-backhandler": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-util": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-geometry": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-graphics": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-unit": [
+        "1.10.3"
+      ],
+      "org.jetbrains.skiko:skiko": [
+        "0.9.37.4"
+      ],
+      "org.jetbrains.skiko:skiko-wasm-js": [
+        "0.9.37.4"
+      ],
+      "org.jetbrains.skiko:skiko-js-wasm-runtime": [
+        "0.9.37.4"
+      ],
+      "org.jetbrains.compose.ui:ui-text": [
+        "1.10.3"
+      ],
+      "io.coil-kt.coil3:coil-compose": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-wasm-js": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core-wasm-js": [
+        "3.4.0"
+      ],
+      "dev.chrisbanes.haze:haze": [
+        "1.7.2"
+      ]
+    },
+    "iosSimulatorArm64CompileKlibraries": {
+      "org.jetbrains.kotlin:kotlin-stdlib": [
+        "2.3.21"
+      ],
+      "androidx.compose.runtime:runtime": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-iossimulatorarm64": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-annotation": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-retain": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-saveable": [
+        "1.10.5"
+      ],
+      "org.jetbrains.compose.ui:ui": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-uikitsimarm64": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-backhandler": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-util": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-uikit": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-geometry": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-graphics": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-unit": [
+        "1.10.3"
+      ],
+      "org.jetbrains.skiko:skiko": [
+        "0.9.37.4"
+      ],
+      "org.jetbrains.skiko:skiko-iossimulatorarm64": [
+        "0.9.37.4"
+      ],
+      "org.jetbrains.compose.ui:ui-text": [
+        "1.10.3"
+      ],
+      "io.coil-kt.coil3:coil-compose": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-iossimulatorarm64": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core-iossimulatorarm64": [
+        "3.4.0"
+      ],
+      "dev.chrisbanes.haze:haze": [
+        "1.7.2"
+      ],
+      "dev.chrisbanes.haze:haze-iossimulatorarm64": [
+        "1.7.2"
+      ]
+    },
+    "iosArm64CompileKlibraries": {
+      "org.jetbrains.kotlin:kotlin-stdlib": [
+        "2.3.21"
+      ],
+      "androidx.compose.runtime:runtime": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-iosarm64": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-annotation": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-retain": [
+        "1.10.5"
+      ],
+      "androidx.compose.runtime:runtime-saveable": [
+        "1.10.5"
+      ],
+      "org.jetbrains.compose.ui:ui": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-uikitarm64": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-backhandler": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-util": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-uikit": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-geometry": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-graphics": [
+        "1.10.3"
+      ],
+      "org.jetbrains.compose.ui:ui-unit": [
+        "1.10.3"
+      ],
+      "org.jetbrains.skiko:skiko": [
+        "0.9.37.4"
+      ],
+      "org.jetbrains.skiko:skiko-iosarm64": [
+        "0.9.37.4"
+      ],
+      "org.jetbrains.compose.ui:ui-text": [
+        "1.10.3"
+      ],
+      "io.coil-kt.coil3:coil-compose": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-iosarm64": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core": [
+        "3.4.0"
+      ],
+      "io.coil-kt.coil3:coil-compose-core-iosarm64": [
+        "3.4.0"
+      ],
+      "dev.chrisbanes.haze:haze": [
+        "1.7.2"
+      ],
+      "dev.chrisbanes.haze:haze-iosarm64": [
+        "1.7.2"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "coordinates": "dev.chrisbanes.haze:haze:1.7.2",
+      "file": "haze-1.7.2.pom",
+      "sha256": "d8df9780a0c03a86e6cefa00f8e43330ede7170e903f996aa0075af78f88561f"
+    },
+    {
+      "coordinates": "dev.chrisbanes.haze:haze:1.7.2",
+      "file": "haze-1.7.2.module",
+      "sha256": "c40059b701af9b37ce09c27ff0c2661512950284bfb00c71e733de598908f6b6"
+    },
+    {
+      "coordinates": "dev.chrisbanes.haze:haze-jvm:1.7.2",
+      "file": "haze-jvm.jar",
+      "sha256": "e9d046752b71d878c64707a3f53858f6be29cd1a74122e148a0c5f7899544fa1"
+    },
+    {
+      "coordinates": "dev.chrisbanes.haze:haze-jvm:1.7.2",
+      "file": "haze-jvm-1.7.2.module",
+      "sha256": "cb6ea28fb25b2fb307bdf163adf8ff314c2e06923c69451a2dbb3a84ff5dd3fe"
+    },
+    {
+      "coordinates": "dev.chrisbanes.haze:haze-jvm:1.7.2",
+      "file": "haze-jvm-1.7.2.pom",
+      "sha256": "9aad5417c3fe1ef7290aa62c99d5968eb7c990cd41cd9880ee510113be9e16a8"
+    },
+    {
+      "coordinates": "io.coil-kt.coil3:coil-compose:3.4.0",
+      "file": "coil-compose-3.4.0.module",
+      "sha256": "8148bde8cbb771368deafb0f5e8a5730e8ddaa7b9977d2bf49aea85bd499e5ff"
+    },
+    {
+      "coordinates": "io.coil-kt.coil3:coil-compose:3.4.0",
+      "file": "coil-compose-3.4.0.pom",
+      "sha256": "48798b43d976f776981c0811e78376efd4bf8dffda033bd49e1f412e0b078b5f"
+    },
+    {
+      "coordinates": "io.coil-kt.coil3:coil-compose-core-jvm:3.4.0",
+      "file": "coil-compose-core-jvm-3.4.0.jar",
+      "sha256": "519a471a2641ed5256d39da851b178aaff327c9fa2350622faeb44eeb18ed397"
+    },
+    {
+      "coordinates": "io.coil-kt.coil3:coil-compose-core-jvm:3.4.0",
+      "file": "coil-compose-core-jvm-3.4.0.module",
+      "sha256": "0c72e26d8540fc737c9051c684055086533f5139a0727bad7373d61789276008"
+    },
+    {
+      "coordinates": "io.coil-kt.coil3:coil-compose-core-jvm:3.4.0",
+      "file": "coil-compose-core-jvm-3.4.0.pom",
+      "sha256": "8ed5951ef640459b3b2459c7c513a8a803e0f67e056d998c6445897e0c0aa0b0"
+    }
+  ],
+  "target_scope": {
+    "jvm": "5 real Coil/Compose/Skia CPU raster integration tests; not a physical GPU or unlocked native-window interaction",
+    "android": "Optional recipes compile against API33+ runtime path / compileSdk35 / JVM17. Existing debug/release validation apps assemble; Coil/Haze Android runtime not exercised.",
+    "wasm": "Optional recipes source compile; core/sample browser tests and fresh production ShaderLab browser preview pass, not Coil/Haze browser runtime evidence.",
+    "ios": "Optional recipes source compile arm64 and simulator arm64. Core Skia simulator tests pass; not Coil/Haze native UI runtime evidence."
+  },
+  "tests": {
+    "shaderx/build/test-results/iosSimulatorArm64Test": {
+      "tests": 524,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shaderx/build/test-results/testAndroidHostTest": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shaderx/build/test-results/jvmTest": {
+      "tests": 622,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shaderx/build/test-results/wasmJsBrowserTest": {
+      "tests": 524,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "samples/ShaderLab/composeApp/build/test-results/jvmTest": {
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "samples/ShaderLab/composeApp/build/test-results/wasmJsBrowserTest": {
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "validation/kmp-consumer/build/test-results/jvmTest": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "validation/ecosystem-consumer/build/test-results/jvmTest": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "assertions": [
+    "Actual Coil loading, success, failure and retry/replacement callbacks with expected placeholder/result/error pixels; separate blue status sibling unchanged",
+    "Controlled interceptor defers first and second requests; replacement and removing the image each cancel their own request",
+    "Paused ShaderPlayback remains2.5 across model changes, retains explicit seek7.0 after removal; request status never recreates or seeks it",
+    "TrackingFactory wraps actual ShaderSessions; all sessions close when image disappears before factory shutdown; no frame awaiters remain",
+    "Actual local PNG decoder produces green output; same ImageLoader remount changes dataSource DISK -> MEMORY_CACHE",
+    "Ordinary scroll-derived Grayscale intensity changes real decoded image pixels to~150 RGB without another load",
+    "Compose tween240ms tested at1.0s/1.12s/1.4s on striped PNG; >100 interior pixels change at each interval, one successful request, retained.75 playback and settled frame scheduler",
+    "Haze spatial blur crosses red/blue edge; grayscale overlay blends~33..72 RGB, visible source stays red and independent foreground green; registered source area count1 ->0 on removal",
+    "Exact guide ImageRecipeScreen source compiles alongside optional consumer; responsive demo renders actual banner and surface at720x844 and390x844"
+  ],
+  "visual_preview": {
+    "optional_demo": "Inspected actual Skia scene PNGs at720x844/390x844; successful Coil banner, clear status, colored source, grayscale Haze surface, green foreground. Native CUA inventory reported Mac locked; native-window interaction was unavailable, no unlock requested.",
+    "docs": "Actual IAB at1280x800 and390x844; readable guide, new nav item and dependency snippet, mobile text wrapping/code scrolling.",
+    "production_app": "Fresh production Wasm ShaderLab at390x844 and1280x800; actual Grayscale selection and filtered landscape pixels on both, independent export/support guidance.",
+    "screenshots": [
+      "validation/ecosystem-consumer/build/reports/ecosystem-render/demo-720.png",
+      "validation/ecosystem-consumer/build/reports/ecosystem-render/demo-390.png",
+      "validation/ecosystem-consumer/build/reports/ecosystem-render/haze-source-foreground.png",
+      "validation/ecosystem-consumer/build/reports/ecosystem-render/coil-decoded-success.png"
+    ]
+  },
+  "artifact": {
+    "path": "shaderx/build/outputs/aar/shaderx.aar",
+    "sha256": "4e62aaee061ff695d91d84b6fb0f631b92834c10daa3bf7e9bde43baee5f0b58",
+    "minSdk": 31,
+    "metadata": {
+      "aarFormatVersion": "1.0",
+      "aarMetadataVersion": "1.0",
+      "minCompileSdk": "35",
+      "minCompileSdkExtension": "0",
+      "minAndroidGradlePluginVersion": "1.0.0",
+      "coreLibraryDesugaringEnabled": "false"
+    },
+    "classfile_majors": {
+      "61": 201
+    }
+  },
+  "core_metadata": {
+    "optional_dependencies_present": false,
+    "metadata_sha256": "7015313f34ab21c2bb3bb2ef898bffd900f565731766cab88c1aed632ffc5c7a",
+    "core_build_file_unchanged": true
+  },
+  "sources": [
+    "https://raw.githubusercontent.com/coil-kt/coil/3.4.0/gradle/libs.versions.toml",
+    "https://raw.githubusercontent.com/coil-kt/coil/3.4.0/coil-compose-core/src/commonMain/kotlin/coil3/compose/AsyncImage.kt",
+    "https://raw.githubusercontent.com/coil-kt/coil/3.4.0/coil-core/src/commonMain/kotlin/coil3/intercept/Interceptor.kt",
+    "https://raw.githubusercontent.com/chrisbanes/haze/1.7.2/gradle/libs.versions.toml",
+    "https://raw.githubusercontent.com/chrisbanes/haze/1.7.2/haze/src/commonMain/kotlin/dev/chrisbanes/haze/Haze.kt",
+    "https://raw.githubusercontent.com/chrisbanes/haze/1.7.2/haze/src/commonMain/kotlin/dev/chrisbanes/haze/HazeChild.kt",
+    "https://raw.githubusercontent.com/chrisbanes/haze/1.7.2/haze/src/commonMain/kotlin/dev/chrisbanes/haze/HazeSourceNode.kt",
+    "https://raw.githubusercontent.com/chrisbanes/haze/1.7.2/docs/usage.md",
+    "https://raw.githubusercontent.com/chrisbanes/haze/1.7.2/docs/platforms.md",
+    "https://chrisbanes.github.io/haze/2.1.0/changelog/",
+    "https://raw.githubusercontent.com/chrisbanes/haze/2.1.0/docs/migrating-2.0.md",
+    "https://coil-kt.github.io/coil/changelog/",
+    "https://developer.android.com/reference/kotlin/androidx/camera/viewfinder/core/ImplementationMode"
+  ],
+  "commands": [
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :validation:ecosystem-consumer:dependencies --configuration jvmRuntimeClasspath",
+      "outcome": "passed; compatible exact pins resolved, no Compose/Skiko upgrade",
+      "log": "/private/tmp/sx14-dependencies.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :validation:ecosystem-consumer:compileKotlinJvm",
+      "outcome": "initial draft FAILED: Coil placeholder/callback overload and controlled modifier name corrected before passing tests",
+      "log": "/private/tmp/sx14-compile.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :validation:ecosystem-consumer:jvmTest :validation:ecosystem-consumer:dependencies",
+      "outcome": "passed; all target dependency graphs inspected; initial four patterned render tests passed",
+      "log": "/private/tmp/sx14-graph-tests.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :validation:ecosystem-consumer:jvmTest :validation:ecosystem-consumer:compileKotlinWasmJs :validation:ecosystem-consumer:compileKotlinIosSimulatorArm64 :validation:ecosystem-consumer:compileKotlinIosArm64 :validation:ecosystem-consumer:compileAndroidMain :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:checkKotlinAbi :shaderx:bundleAndroidMainAar :shaderx:testAndroidHostTest :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:assembleDebug :validation:android-consumer:assembleRelease :validation:android-app:assembleDebug :validation:android-app:assembleRelease",
+      "outcome": "passed; fresh production Wasm, library backends, existing consumers and Android debug/release artifacts",
+      "log": "/private/tmp/sx14-full-validation.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :validation:ecosystem-consumer:jvmTest :validation:ecosystem-consumer:compileKotlinWasmJs :validation:ecosystem-consumer:compileKotlinIosSimulatorArm64 :validation:ecosystem-consumer:compileKotlinIosArm64 :validation:ecosystem-consumer:compileAndroidMain",
+      "outcome": "passed after final demo scroll fix and native-session tracking; 5 tests, 0 skipped/failures/errors",
+      "log": "/private/tmp/sx14-final-consumers.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:dependencies --configuration jvmRuntimeClasspath :shaderx:generateMetadataFileForKotlinMultiplatformPublication",
+      "outcome": "passed; core runtime graph and generated publication metadata contain neither Coil nor Haze",
+      "log": "/private/tmp/sx14-core-graph.log"
+    },
+    {
+      "command": "python3 -m venv /private/tmp/sx14-docs-venv && /private/tmp/sx14-docs-venv/bin/python -m pip install -r requirements-docs.txt",
+      "outcome": "passed; isolated pinned documentation tools",
+      "log": "/private/tmp/sx14-doc-install.log"
+    },
+    {
+      "command": "/private/tmp/sx14-docs-venv/bin/python scripts/check_docs.py",
+      "outcome": "passed:28 guides/31 Markdown files",
+      "log": "/private/tmp/sx14-doc-check.log"
+    },
+    {
+      "command": "/private/tmp/sx14-docs-venv/bin/python -m unittest discover -s scripts/tests -v",
+      "outcome": "passed:24 tests",
+      "log": "/private/tmp/sx14-doc-tests.log"
+    },
+    {
+      "command": "/private/tmp/sx14-docs-venv/bin/zensical build --strict",
+      "outcome": "passed",
+      "log": "/private/tmp/sx14-doc-build.log"
+    },
+    {
+      "command": "/private/tmp/sx14-docs-venv/bin/python scripts/package_playground.py",
+      "outcome": "passed:11 files/15552766 bytes fresh production distribution",
+      "log": "/private/tmp/sx14-package.log"
+    },
+    {
+      "command": "/private/tmp/sx14-docs-venv/bin/python scripts/check_site.py",
+      "outcome": "passed:28 indexable pages/playground metadata, links, anchors, assets",
+      "log": "/private/tmp/sx14-site-check.log"
+    },
+    {
+      "command": "/private/tmp/sx14-docs-venv/bin/python scripts/check_android_artifact.py shaderx/build/outputs/aar/shaderx.aar",
+      "outcome": "passed:API31 floor/minCompileSdk35/201 Java17 classes",
+      "log": "/private/tmp/sx14-artifact.json"
+    },
+    {
+      "command": "cmp shaderx/api/jvm/shaderx.api /private/tmp/shaderx-sx13-accepted.api",
+      "outcome": "passed; exact ABI bytes unchanged",
+      "log": null
+    }
+  ],
+  "required_future_gates": [
+    "Coil/Haze Android HWUI, Wasm/browser and iOS rendered boundaries, request/layer lifetime and native driver behavior",
+    "Physical camera/video preview with embedded texture path, crop/rotation/lifecycle; SurfaceView/external platform surfaces are excluded from this Compose recording recipe",
+    "Additional upstream versions or supported ranges; newer Coil3.6.3/Haze2.1.0 comparison does not establish compatible integration",
+    "HTTP-engine/auth/network-policy configuration and transport performance belong to the consumer; no new network engine or FPS benchmark is claimed",
+    "Native desktop interactive window inspection unavailable while Mac locked; raster assertions/phone-width render are not native mobile hardware tests"
+  ],
+  "cleanup": {
+    "local_preview": "Stopped task-owned localhost8144 HTTP server; exact PID/command in /private/tmp/sx14-cleanup.json",
+    "browser": "Temporary IAB tab closed; viewport override reset",
+    "android": "No ADB server/device/emulator state changed; no shared transport, pairing, or unsafe SX13 export probe used",
+    "preserved": "Flower banner/all four README recordings, all baseline unrelated files/edits retained"
+  },
+  "changed_files": [
+    {
+      "path": "CHANGELOG.md",
+      "change": "modified",
+      "sha256": "69eb5b7191a866adc7625e543c5ea435685313f6383c8e82b5cb7bbece680b96"
+    },
+    {
+      "path": "README.md",
+      "change": "modified",
+      "sha256": "d4f79aa19a5bb07f6b4506391ddc60fabfe853d7398460a1a2dc3d745e81421f"
+    },
+    {
+      "path": "docs/compose.md",
+      "change": "modified",
+      "sha256": "f6da71cacc027490e4fe9ddd32c97cc78822183c05f2547fe95c540f3e8d9086"
+    },
+    {
+      "path": "docs/contributing.md",
+      "change": "modified",
+      "sha256": "291cb37c3645c2016d6e215e8ead93b479fdc110678433971e1ea8d3e66fc133"
+    },
+    {
+      "path": "docs/ecosystem.md",
+      "change": "added",
+      "sha256": "155d670e29a1b50645f954b32dc481c6858a01166a13b98927e347f66dc43827"
+    },
+    {
+      "path": "docs/getting-started.md",
+      "change": "modified",
+      "sha256": "33b8141a045bc2d3bbfa547296ec6b046eb39ba93f79f5c16cd53ee7fa65b6a2"
+    },
+    {
+      "path": "docs/platforms.md",
+      "change": "modified",
+      "sha256": "d3bebc604fa8ee3163c909c251e32b769a4b60e355f37cac9ad4ab5156da31f5"
+    },
+    {
+      "path": "docs/roadmap/14-ecosystem-integration.md",
+      "change": "modified",
+      "sha256": "83488cc255566adf17ffa76ec5d337cbe05228c37078a517a9229cfebb31adc2"
+    },
+    {
+      "path": "docs/roadmap/index.md",
+      "change": "modified",
+      "sha256": "738a337a562af2c471f4f83fdc4e4356833b25cbbf9a8bc08c0c3749a6426ef0"
+    },
+    {
+      "path": "docs/samples.md",
+      "change": "modified",
+      "sha256": "ac85acbd5e66a5747337ea3a2318a8e3b5c28447ecf638f87f7a09f775ad5e97"
+    },
+    {
+      "path": "gradle/libs.versions.toml",
+      "change": "modified",
+      "sha256": "18826d089b8862eb6d9771652f89119cc4e2b0b6171366c823948fec6749eb8b"
+    },
+    {
+      "path": "mkdocs.yml",
+      "change": "modified",
+      "sha256": "5e42e3cc68d8f0abf601cafac9251272755f1e1e4c0cfddfc3a8e3985b3a1c14"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "change": "modified",
+      "sha256": "72e0a24ee6d3034be7554715f1c6048af4a612e97522701c76de7a33d7b2829e"
+    },
+    {
+      "path": "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/compose/ShaderModifier.kt",
+      "change": "modified",
+      "sha256": "8a9f49a66c64a6e722cda42ef08010fac4b2c78938dfd4b982e319c04de0c86a"
+    },
+    {
+      "path": "validation/ecosystem-consumer/build.gradle.kts",
+      "change": "added",
+      "sha256": "e615df5cc320523340cbc9fb213d4c8aa639817fc54b8a3dfcfce7bbd1b944f3"
+    },
+    {
+      "path": "validation/ecosystem-consumer/src/commonMain/kotlin/io/github/debanshu/shaderx/ecosystem/EcosystemDemo.kt",
+      "change": "added",
+      "sha256": "6feb2f422a744c8f8ca2dc5e083cf742c28901d54a745d3fea46ddd43c903a48"
+    },
+    {
+      "path": "validation/ecosystem-consumer/src/commonMain/kotlin/io/github/debanshu/shaderx/ecosystem/EcosystemRecipes.kt",
+      "change": "added",
+      "sha256": "e34f43939ac892f447c18f4320bef28fdcdcc82123b32709b436391528fd2b1e"
+    },
+    {
+      "path": "validation/ecosystem-consumer/src/commonMain/kotlin/io/github/debanshu/shaderx/ecosystem/ImageRecipeScreen.kt",
+      "change": "added",
+      "sha256": "020bc4400955b763d6df68748238e981177a82ab7da295adac7eab4577e49acf"
+    },
+    {
+      "path": "validation/ecosystem-consumer/src/jvmMain/kotlin/io/github/debanshu/shaderx/ecosystem/Main.kt",
+      "change": "added",
+      "sha256": "f28ebd41c87a78555f73c325dd453eb0cec914eab3e2efb4c67f0460f4bec231"
+    },
+    {
+      "path": "validation/ecosystem-consumer/src/jvmTest/kotlin/io/github/debanshu/shaderx/ecosystem/EcosystemRenderTest.kt",
+      "change": "added",
+      "sha256": "aa5ceebac246559d874cc8ece8b7a5967832fcb91ffaa7bb781dfbefb1675e5a"
+    },
+    {
+      "path": "validation/evidence/sx14-ecosystem-integration.json",
+      "change": "added"
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 package com.debanshu.shaderlab.shaderx.factory
 
 import com.debanshu.shaderlab.shaderx.ShaderConstants
+import com.debanshu.shaderlab.shaderx.authoring.definedContentError
+import com.debanshu.shaderlab.shaderx.authoring.ShaderBindingException
+import com.debanshu.shaderlab.shaderx.authoring.ShaderInputCompilationException
+import com.debanshu.shaderlab.shaderx.authoring.validateInputTree
+import com.debanshu.shaderlab.shaderx.authoring.validateInputAliases
 import com.debanshu.shaderlab.shaderx.effect.BlurEffect
 import com.debanshu.shaderlab.shaderx.effect.CompositeEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
@@ -28,13 +33,30 @@ import org.jetbrains.skia.impl.use
  */
 internal class SkiaImageProcessor(
     private val factory: SkiaShaderFactory,
-) : ImageProcessor {
+) : ImageProcessor, ImageExportProvider {
+    override fun queryImageExportSupport(effect: ShaderEffect): ShaderSupport =
+        factory.querySupport(ShaderOperation.IMAGE_EXPORT, effect)
+
+    override fun exportImage(imageBytes: ByteArray, effect: ShaderEffect, options: ImageExportOptions): ShaderResult<ByteArray> {
+        definedContentError(effect)?.let { return ShaderResult.failure(it) }
+        val support = queryImageExportSupport(effect)
+        if (support.status == ShaderSupportStatus.UNSUPPORTED) {
+            return ShaderResult.failure(support.asError(ShaderOperation.IMAGE_EXPORT, effect))
+        }
+        return exportSkiaPng(imageBytes, effect, options, ::createImageFilter)
+    }
+
     override fun process(
         imageBytes: ByteArray,
         effect: ShaderEffect,
         width: Float,
         height: Float,
     ): ShaderResult<ByteArray> {
+        definedContentError(effect)?.let { return ShaderResult.failure(it) }
+        val support = factory.querySupport(ShaderOperation.IMAGE_EXPORT, effect, emptySet())
+        if (support.status == ShaderSupportStatus.UNSUPPORTED) {
+            return ShaderResult.failure(support.asError(ShaderOperation.IMAGE_EXPORT, effect))
+        }
         return try {
             Image.makeFromEncoded(imageBytes).use { image ->
                 val effectWidth = if (width > 0) width else image.width.toFloat()
@@ -91,11 +113,17 @@ internal class SkiaImageProcessor(
             }
 
             is RuntimeShaderEffect -> {
+                var capturedSource: String? = null
                 try {
                     // Reuse the factory's cached RuntimeEffect — no recompilation
-                    val runtimeEffect = factory.getOrCreateEffect(effect.shaderSource)
+                    val source = effect.shaderSource
+                    capturedSource = source
+                    val uniforms = effect.buildUniforms(width, height)
+                    validateInputTree(uniforms, rawSupported = false)
+                    validateInputAliases(source, uniforms)
+                    val runtimeEffect = factory.getOrCreateEffect(source)
                     RuntimeShaderBuilder(runtimeEffect).use { builder ->
-                        SkiaShaderFactory.applyUniforms(builder, effect.buildUniforms(width, height))
+                        SkiaShaderFactory.applyUniforms(builder, uniforms, factory)
                         ShaderResult.success(
                             ImageFilter.makeRuntimeShader(
                                 builder,
@@ -104,11 +132,15 @@ internal class SkiaImageProcessor(
                             ),
                         )
                     }
+                } catch (e: ShaderInputCompilationException) {
+                    ShaderResult.failure(e.asError())
+                } catch (e: ShaderBindingException) {
+                    ShaderResult.failure(ShaderError.Unknown(e.message ?: "Effect '${effect.id}' binding failed", e))
                 } catch (e: Exception) {
                     ShaderResult.failure(
                         ShaderError.CompilationError(
-                            "Failed to compile shader for image processing: ${e.message}",
-                            effect.shaderSource,
+                            "Effect '${effect.id}' image export compile/bind failed: ${e.message}",
+                            capturedSource,
                         ),
                     )
                 }

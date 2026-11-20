@@ -8,8 +8,12 @@ import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
  * A composite effect that combines multiple shader effects in sequence.
  *
  * Each effect is applied in order, with the output of one becoming
- * the input of the next. Chaining is supported on Android (API 33+);
- * on other platforms a [ShaderError.UnsupportedEffect] error is returned.
+ * the input of the next. ShaderX supports on-screen chaining on Android (API 33+)
+ * and Skia. Every required child must succeed. Controlled pipeline sessions provide an explicit
+ * shared clock; ordinary shaderEffect composites remain static snapshots. Offline export rejects every composite, including
+ * one child. Animated children use their stored values and receive no automatic session clock.
+ * Query the factory's operation capabilities before choosing an explicit fallback; no child is
+ * silently dropped.
  *
  * ## Usage
  * ```kotlin
@@ -19,7 +23,7 @@ import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
  * val effect = CompositeEffect.of(
  *     GrayscaleEffect(),
  *     VignetteEffect(),
- *     NativeBlurEffect(radius = 5f)
+ *     com.debanshu.shaderlab.shaderx.effect.impl.NativeBlurEffect(radius = 5f)
  * )
  *
  * Image(
@@ -153,7 +157,7 @@ public data class CompositeEffect(
  *
  * ## Usage
  * ```kotlin
- * val effect = GrayscaleEffect() + VignetteEffect() + NativeBlurEffect()
+ * val effect = GrayscaleEffect() + VignetteEffect() + com.debanshu.shaderlab.shaderx.effect.impl.NativeBlurEffect()
  * ```
  */
 public operator fun ShaderEffect.plus(other: ShaderEffect): CompositeEffect = when {

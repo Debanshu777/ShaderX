@@ -149,17 +149,12 @@ class SkiaFactoryEdgeCaseTest {
     // ── Two-effect composite returns UnsupportedEffect ─────────────────────────
 
     @Test
-    fun skiaFactory_twoEffectComposite_returnsUnsupportedEffect() {
+    fun skiaFactory_twoEffectComposite_returnsWholeFilter() {
         val factory = ShaderFactory.create()
         val composite = GrayscaleEffect() + SepiaEffect()
         val result = factory.createRenderEffect(composite, 100f, 100f)
 
-        assertTrue(result is ShaderResult.Failure)
-        assertTrue(
-            (result as ShaderResult.Failure).error is ShaderError.UnsupportedEffect,
-            "Two-effect composite should produce UnsupportedEffect on Skia",
-        )
-        factory.close()
+        assertTrue(result is ShaderResult.Success, "Skia chains must produce a complete filter")
     }
 
     // ── Custom cache size ─────────────────────────────────────────────────────

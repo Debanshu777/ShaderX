@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sampler · ShaderX</title>
+    <meta name="description" content="Explore ShaderX in four playable tabs: grayscale, custom color, animation and ordered chains, with live visual comparisons.">
+    <meta name="robots" content="noindex,follow">
+    <link rel="canonical" href="https://debanshu777.github.io/ShaderX/sampler/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ShaderX">
+    <meta property="og:title" content="Sampler · ShaderX">
+    <meta property="og:description" content="Explore live grayscale, custom tint, playback and ordered shader stages in one sampler.">
+    <meta property="og:url" content="https://debanshu777.github.io/ShaderX/sampler/">
+    <meta property="og:image" content="https://debanshu777.github.io/ShaderX/assets/shaderx-banner.png">
+    <meta property="og:image:alt" content="ShaderX: blue halftone flower — GPU shader effects for Kotlin and Compose Multiplatform">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sampler · ShaderX">
+    <meta name="twitter:description" content="Explore live grayscale, custom tint, playback and ordered shader stages in one sampler.">
+    <meta name="twitter:image" content="https://debanshu777.github.io/ShaderX/assets/shaderx-banner.png">
+    <style>
+        html, body, #sample-app { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+        body { background: #f7f8f3; color: #18251e; font: 16px/1.6 system-ui, sans-serif; }
+        #sample-loading { position: fixed; inset: 0; display: grid; place-content: center; padding: 24px; overflow: auto; background: #f7f8f3; }
+        #sample-loading[hidden] { display: none; }
+        #sample-loading > div { max-width: 38rem; }
+        h1 { font-size: clamp(1.8rem, 6vw, 3rem); line-height: 1.15; }
+        a { color: #315c4d; }
+        button { font: inherit; padding: .6rem 1rem; background: #315c4d; color: white; border: 0; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <main id="sample-app" aria-label="ShaderX visual sampler"></main>
+    <section id="sample-loading" aria-labelledby="sample-title"><div>
+        <h1 id="sample-title">ShaderX Sampler</h1>
+        <p id="sample-status" role="status">Loading four playable shader examples. The first visit downloads the WebAssembly graphics runtime.</p>
+        <noscript><p>Enable JavaScript to use this example.</p></noscript>
+        <p><a href="https://debanshu777.github.io/ShaderX/samples/">Sample guides and run commands</a></p>
+        <button id="sample-retry" type="button" hidden>Reload example</button>
+    </div></section>
+    <script>
+        (() => {
+            const loading = document.getElementById("sample-loading");
+            const status = document.getElementById("sample-status");
+            const retry = document.getElementById("sample-retry");
+            const failed = () => {
+                if (loading.hidden) return;
+                status.textContent = "The example could not start. Use a current browser with WebAssembly GC support, check your connection, then reload.";
+                retry.hidden = false;
+            };
+            window.addEventListener("error", failed, true);
+            window.addEventListener("unhandledrejection", failed);
+            retry.addEventListener("click", () => window.location.reload());
+            window.setTimeout(() => {
+                if (!loading.hidden && retry.hidden) status.textContent = "Still loading the graphics runtime. The sample guides remain available.";
+            }, 15000);
+        })();
+    </script>
+    <script src="composeApp.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX01",
+  "status": "typed contract and two-pilot slice implemented; dependent gates remain open",
+  "branch": "codex/developer-experience-research",
+  "toolchain": {
+    "java": "21.0.10",
+    "gradle": "9.6.0",
+    "kotlin": "2.3.21",
+    "agp": "9.4.1",
+    "compose": "1.10.3",
+    "skiko": "0.9.37.4"
+  },
+  "availability": {
+    "published_baseline": "0.1.3 (new typed API unavailable)",
+    "checkout": "0.1.4 development; not published by this task"
+  },
+  "contract": {
+    "kinds": [
+      "Float",
+      "unsigned 32-bit sRGB ARGB Long",
+      "Boolean"
+    ],
+    "keys": "declaration reference identity; effect-type owner ID; same-name foreign declarations reject",
+    "value_equality": "schema reference identity plus scalar contents",
+    "default_policy": "REJECT",
+    "clamp_policy": "explicit CLAMP for finite numeric bounds only; no quantization",
+    "snapshots": "defensive descriptor lists, range bounds and value maps; only immutable scalar payloads",
+    "legacy": "constructors/copy/string update behavior unchanged; stored Wave time retained; Compose session-clock restart behavior unchanged",
+    "adapters": [
+      "ParameterSchema.fromLegacy",
+      "ParameterSchema.valuesFrom",
+      "ParameterValues.applyTo"
+    ],
+    "pilots": [
+      "GradientEffect",
+      "WaveEffect"
+    ]
+  },
+  "inventory": {
+    "built_ins": 15,
+    "descriptors": 37,
+    "float": 26,
+    "color": 4,
+    "boolean": 7,
+    "all_defaults_adapt": true
+  },
+  "abi": {
+    "baseline": "shaderx/api/jvm/shaderx.api",
+    "existing_classes_and_members_removed": 0,
+    "changes": "new typed scalar/schema/key/value/metadata/policy classes and extension methods; eight pilot companion getters; no interface/factory requirements",
+    "checkKotlinAbi": "passed",
+    "limitations": [
+      "JVM only; Android/Klib ABI checks and already-compiled consumer linkage remain open"
+    ]
+  },
+  "tests": {
+    "library_jvm": {
+      "tests": 492,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 36
+    },
+    "library_wasm_chrome": {
+      "tests": 434,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 25
+    },
+    "library_ios_simulator": {
+      "tests": 434,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 25
+    },
+    "sample_jvm": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 2
+    },
+    "development_consumer_jvm": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 3
+    },
+    "published_013_legacy_consumer": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "android_compile": "passed",
+      "wasm_compile": "passed",
+      "log": "/tmp/sx01-published-consumers.log"
+    },
+    "development_consumer_compile": {
+      "android_only": "passed",
+      "kmp_android": "passed",
+      "wasm": "passed",
+      "iosSimulatorArm64": "passed"
+    },
+    "physical_android": {
+      "device": "Pixel 9",
+      "os": "Android 17 / API 37",
+      "gpu": "Mali-G715; SX12 recorded Vulkan Graphite",
+      "viewport": "16x16 sRGB for new pilot test",
+      "results": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "xml_files": 1
+      },
+      "coverage": "typed/legacy Gradient pixel equality and alpha storage; typed Wave patterned-input displacement/equality; retained previous five SX12 tests",
+      "reports": "shaderx/build/validation-evidence/sx01/physical"
+    }
+  },
+  "commands": [
+    "./gradlew :shaderx:updateKotlinAbi",
+    "./gradlew :shaderx:jvmTest :shaderx:checkKotlinAbi :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :validation:kmp-consumer:jvmTest :samples:ShaderLab:composeApp:jvmTest",
+    "ANDROID_SERIAL=\"$SHADERX_PIXEL_SERIAL\" ./gradlew :shaderx:connectedAndroidDeviceTest :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin :validation:kmp-consumer:compileAndroidMain :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :shaderx:checkKotlinAbi",
+    "./gradlew :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin :validation:kmp-consumer:compileKotlinWasmJs -PshaderxConsumerVersion=0.1.3 -PshaderxConsumerLegacy=true",
+    ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+    ".venv-docs/bin/python scripts/check_docs.py",
+    ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+    ".venv-docs/bin/zensical build --strict",
+    ".venv-docs/bin/python scripts/package_playground.py",
+    ".venv-docs/bin/python scripts/check_site.py"
+  ],
+  "documentation": {
+    "python_tests": 24,
+    "guide_metadata": "passed",
+    "strict_build": "passed",
+    "site_check": "passed",
+    "showcase": "flower banner and four inline GIF recordings preserved",
+    "visual_preview": {
+      "browser": "Chrome via CUA",
+      "desktop": "default desktop browser viewport",
+      "mobile": "390x844",
+      "guides": [
+        "effects strict snapshot section",
+        "custom-effects strict schema section"
+      ],
+      "sample": "Wasm/Skia ShaderLab: translucent #807B2FF7, exact intensity 0.7010659, Wave spatial Frequency edit 11.816377 then reset to 5.0 with amplitude 10.0; mobile controls reachable by scroll",
+      "evidence": "in-session screenshots; responsive viewport reset after checks"
+    }
+  },
+  "initial_validation_corrections": [
+    "Session-refresh test initially assumed configuration refresh; corrected to create from edited configuration and refresh frame time only",
+    "Overlapping Gradle tests collided in report output; subsequent runs serialized",
+    "First strict docs build found the not-yet-written evidence anchor; final build passes"
+  ],
+  "remaining_gates": [
+    "SX02 public authoring/binding builders, descriptor generation and generated Kotlin",
+    "SX06 catalog-wide generated controls, presets/configuration reuse and export",
+    "SX03 playback/session identity and uninterrupted Compose clock after configuration edits",
+    "Android non-sRGB destination and final new color-binding conversion semantics",
+    "Physical iOS rendering/concurrency/resource stabilization",
+    "Already-compiled legacy consumer linkage and Android/Klib ABI baseline"
+  ],
+  "files_changed": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/contributing.md",
+    "docs/custom-effects.md",
+    "docs/effects.md",
+    "docs/roadmap/01-parameter-contract.md",
+    "docs/roadmap/index.md",
+    "docs/samples.md",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderControls.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderLabContent.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/viewmodel/ShaderLabViewModel.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/TypedParameterPilotTest.kt",
+    "shaderx/api/jvm/shaderx.api",
+    "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/AndroidShaderPixelTest.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl/GradientEffect.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/impl/WaveEffect.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/parameter/ParameterEffectAdapters.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/parameter/ParameterSchema.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/ParameterSchemaTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/ParameterSchemaRenderTest.kt",
+    "validation/consumer-contracts/development/TypedParameterConsumer.kt",
+    "validation/evidence/sx01-parameter-contract.json",
+    "validation/kmp-consumer/src/developmentTest/kotlin/TypedParameterConsumerTest.kt"
+  ],
+  "review_diff": "/tmp/sx01-review.patch (SX01 delta only; excludes preserved pre-existing SX12/research/toolchain changes)",
+  "logs": [
+    "/tmp/sx01-main-checks.log",
+    "/tmp/sx01-final-targets.log",
+    "/tmp/sx01-final-consumers-device.log",
+    "/tmp/sx01-published-consumers.log",
+    "/tmp/sx01-docs-build.log"
+  ]
+}

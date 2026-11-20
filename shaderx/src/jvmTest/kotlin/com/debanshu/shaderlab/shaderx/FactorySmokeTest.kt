@@ -43,19 +43,12 @@ class FactorySmokeTest {
     }
 
     @Test
-    fun jvmFactory_compositeOfTwoEffects_returnsUnsupportedError() {
+    fun jvmFactory_compositeOfTwoEffects_returnsCompleteFilter() {
         val factory = ShaderFactory.create()
         val composite = GrayscaleEffect() + VignetteEffect()
         val result = factory.createRenderEffect(composite, 200f, 200f)
 
-        assertTrue(
-            result is ShaderResult.Failure,
-            "Expected Failure for composite on JVM, got Success",
-        )
-        assertTrue(
-            (result as ShaderResult.Failure).error is ShaderError.UnsupportedEffect,
-            "Expected UnsupportedEffect error, got ${result.error::class.simpleName}",
-        )
+        assertTrue(result is ShaderResult.Success, "Expected complete Skia chain")
         factory.close()
     }
 

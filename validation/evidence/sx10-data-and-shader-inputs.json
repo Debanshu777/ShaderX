@@ -1,0 +1,255 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX10",
+  "status": "Bounded development slice implemented; physical GPU and listed residual gates remain",
+  "branch": "codex/developer-experience-research",
+  "availability": {
+    "published": "0.1.3 unchanged",
+    "development": "0.1.4"
+  },
+  "contracts": {
+    "numerical": "Immutable exact row-major RGBA8 UNORM snapshot; independent alpha, pixel centers, nearest/linear and independent axis tile modes; dimensions1..4096 and max16MiB before copy/native",
+    "native_raw": "Android setInputBuffer only; no native Skiko0.9.37.4 raw image API; never substitute Image.makeShader",
+    "portable_sampler": "Explicit ShaderNode.rgba8Sampler companion extension, at most64texels/256float components/1024uniform bytes; generated constant-index dispatch + fourtap bilinear; normal NESTED capability only",
+    "nested": "Immutable sourcefree ShaderNode.snapshot with explicit frozen values/time/dimensions(default1x1), no implicit parent clock/content/backdrop; max4levels32occurrences; same-source siblings independently bound; cycles impossible through public immutable construction and defensively diagnosed",
+    "declaration_check": "Narrow token-aware single uniform shader name; coverage rejects comma shader declarations, shader arrays, macros/preprocessor/quotes and unterminated comments; ordinary float/vector arrays retained",
+    "closed_owners": "Skia/Android native sessions and DefinitionShaderSession drop owned output/configuration references, reject closed getters and refresh; saved outputs survive owner and cache closure.",
+    "diagnostics": "Deepest child source and alias/definition path retained in existing CompilationError; parent alias/setter errors retain parent source",
+    "live": "Explicit FRAME_DATA/FRAME_NESTED kinds and retained provider reference identity; complete snapshot validation before native compile/bind; unchanged paused revision does not refresh, each actual data/child bind creates fresh native state; no uploadcache/performance claim",
+    "ownership": "No native shader allocations retained by reusable nodes/data; existing image handles borrowed. Skia temporary wrappers close after native retains; Android GC/native reference lifetime, no bitmap recycle under active snapshot. Active snapshots survive source eviction/session disposal; no native memory stabilization claim",
+    "tooling": "Descriptor metadata excludes payloads/callbacks; draftv3 bounded descriptions with v1/v2 compatibility; actual generated structural/live/portable caller-binding code compiled in separate consumers; stock UI requires host adapter for imported application data",
+    "migration": "Two new sealed Uniform subclasses and enum members require exhaustive source when updates; all old JVM signatures retained, no new sealed ShaderError subtype or mandatory factory member"
+  },
+  "results": {
+    "library_jvm": {
+      "tests": 604,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "shaderx/build/test-results/jvmTest/*.xml"
+    },
+    "library_wasm": {
+      "tests": 510,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "shaderx/build/test-results/wasmJsBrowserTest/*.xml"
+    },
+    "library_ios_simulator": {
+      "tests": 510,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "shaderx/build/test-results/iosSimulatorArm64Test/*.xml"
+    },
+    "sample_jvm": {
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "samples/ShaderLab/composeApp/build/test-results/jvmTest/*.xml"
+    },
+    "sample_wasm": {
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "samples/ShaderLab/composeApp/build/test-results/wasmJsBrowserTest/*.xml"
+    },
+    "consumer_jvm": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reports": "validation/kmp-consumer/build/test-results/jvmTest/*.xml"
+    }
+  },
+  "abi": {
+    "removed_existing_members": 0,
+    "new_classes": [
+      "public final class com/debanshu/shaderlab/shaderx/authoring/Rgba8SamplerKt {",
+      "public final class com/debanshu/shaderlab/shaderx/authoring/ShaderNode {",
+      "public final class com/debanshu/shaderlab/shaderx/authoring/ShaderNode$Companion {",
+      "public final class com/debanshu/shaderlab/shaderx/uniform/DataSampling : java/lang/Enum {",
+      "public final class com/debanshu/shaderlab/shaderx/uniform/DataUniform : com/debanshu/shaderlab/shaderx/uniform/Uniform {",
+      "public final class com/debanshu/shaderlab/shaderx/uniform/NestedUniform : com/debanshu/shaderlab/shaderx/uniform/Uniform {",
+      "public final class com/debanshu/shaderlab/shaderx/uniform/Rgba8Data {"
+    ]
+  },
+  "backend_evidence": [
+    "validation/evidence/sx10-android.json",
+    "validation/evidence/sx10-skia.json"
+  ],
+  "source_research": "See backend evidence for official/versioned AOSP sources, Skiko Image/RuntimeShaderBuilder sources and resolved jar javap/hash",
+  "docs": {
+    "requirements_install": "PASS .venv-docs/bin/python -m pip install -r requirements-docs.txt",
+    "check_docs": "PASS27guides30Markdown",
+    "unittest": "PASS24",
+    "zensical_strict": "PASS",
+    "check_site": "Checked 27 indexable pages and the playground: metadata, links, anchors, sitemap, search, structured data, and packaged assets.",
+    "production_package": "Packaged 11 playground files (15,553,800 bytes) at /Users/debanshud/Documents/Personal/ShaderX/site/playground"
+  },
+  "visual": {
+    "desktop": "1280x900 production app workbench/hints and rendered guide inspected",
+    "mobile": "390x844 guide sampler text wraps; workbench hints/source/controls wrap, actual Run promotes native Skia revision0 and original/result pixels plus caller-input Kotlin comments",
+    "screenshots": [
+      "/tmp/sx10-docs-desktop.jpg",
+      "/tmp/sx10-docs-mobile.jpg",
+      "/tmp/sx10-playground-desktop.jpg",
+      "/tmp/sx10-playground-mobile.jpg"
+    ],
+    "limits": "Desktop/mobile browser viewports, not physical mobile hardware. Stock UI cannot bind app payloads. Actual portable numerical sampling pixels verified independently by backend tests."
+  },
+  "remaining_gates": [
+    "Physical Android/iOS GPU and more API/OEM/destination families",
+    "Larger portable numeric data/native Skiko raw API; >64texel procedural sampler deliberately rejected",
+    "GPU performance and native memory stabilization; no uploadcache speedup established",
+    "Manual ImageProcessor default-size inputs decode before uniform provider validation; known unsupported declarative requirements reject before decode",
+    "Host-specific application rebinding UI, general graph editor/portable executable graph serialization",
+    "Float textures/cubemaps/compute, core audio capture, backdrop capture, arbitrary GLSL translation out of scope",
+    "Precompiled consumer linkage and Android/Klib ABI coverage remain SX15",
+    "Earlier default ADB transport use documented as an instruction deviation; final tests use explicit private transport"
+  ],
+  "commands": [
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:assembleAndroidDeviceTest :shaderx:updateKotlinAbi",
+      "outcome": "PASS",
+      "log": "/tmp/sx10-final-library-abi.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:wasmJsBrowserDistribution",
+      "outcome": "PASS",
+      "log": "/tmp/sx10-final-abi-package.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :shaderx:compileKotlinIosArm64",
+      "outcome": "PASS",
+      "log": "/tmp/sx10-final-sample-consumers-platforms.log"
+    },
+    {
+      "command": "JAVA_HOME=/Users/debanshud/.gradle/jdks/jetbrains_s_r_o_-21-aarch64-os_x.2/jbrsdk_jcef-21.0.10-osx-aarch64-b1163.108/Contents/Home ./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:checkKotlinAbi --no-daemon",
+      "outcome": "PASS JVM604/Wasm510/iOS510/ABI",
+      "log": "/tmp/sx10-skia-ownership-final.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :shaderx:compileKotlinIosArm64 :shaderx:checkKotlinAbi",
+      "outcome": "PASS37s,124tasks",
+      "log": "/tmp/sx10-final-consumers-production.log"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_docs.py; .venv-docs/bin/python -m unittest discover -s scripts/tests -v; .venv-docs/bin/zensical build --strict; .venv-docs/bin/python scripts/package_playground.py; .venv-docs/bin/python scripts/check_site.py",
+      "outcome": "AllPASS;24Python tests,27guides30Markdown,27indexablepages+freshproductionplayground",
+      "logs": [
+        "/tmp/sx10-doc-check.log",
+        "/tmp/sx10-doc-tests.log",
+        "/tmp/sx10-doc-build.log",
+        "/tmp/sx10-package.log",
+        "/tmp/sx10-site-check.log"
+      ]
+    }
+  ],
+  "files_changed": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/compose.md",
+    "docs/contributing.md",
+    "docs/custom-effects.md",
+    "docs/effects.md",
+    "docs/image-processing.md",
+    "docs/platforms.md",
+    "docs/roadmap/10-data-and-shader-inputs.md",
+    "docs/roadmap/index.md",
+    "docs/samples.md",
+    "docs/troubleshooting.md",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/DataRecipes.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/KotlinExport.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/PipelineKotlinExport.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchModel.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchProjectCodec.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/WorkbenchPanel.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/DataInputExportTest.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/WorkbenchModelTest.kt",
+    "samples/ShaderLab/composeApp/src/jvmTest/kotlin/com/debanshu/shaderlab/GeneratedSourceProducerTest.kt",
+    "shaderx/api/jvm/shaderx.api",
+    "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderInputsDeviceTest.kt",
+    "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderBackgroundSnapshot.android.kt",
+    "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderFactory.android.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/DefinitionShaderSession.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/Rgba8Sampler.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/ShaderBinding.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/ShaderDefinition.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/ShaderInputCompilationException.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/ShaderNode.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderBackgroundSnapshot.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderCapabilities.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderPipelineSession.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/uniform/DataInputs.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/uniform/Uniform.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/BackgroundContractTest.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/DataInputContractTest.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderCapabilitiesTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/ControlledPlaybackTest.kt",
+    "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderBackgroundSnapshot.skia.kt",
+    "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/SkiaImageProcessor.kt",
+    "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/SkiaShaderFactory.kt",
+    "shaderx/src/skiaTest/kotlin/com/debanshu/shaderlab/shaderx/NestedInputRenderTest.kt",
+    "shaderx/src/skiaTest/kotlin/com/debanshu/shaderlab/shaderx/NumericSamplerExperimentTest.kt",
+    "shaderx/src/skiaTest/kotlin/com/debanshu/shaderlab/shaderx/Rgba8SamplerRenderTest.kt",
+    "validation/evidence/sx10-android.json",
+    "validation/evidence/sx10-data-and-shader-inputs.json",
+    "validation/evidence/sx10-skia.json",
+    "validation/kmp-consumer/src/developmentTest/kotlin/GeneratedDataInputConsumerTest.kt"
+  ],
+  "review_patch": "/tmp/sx10-review.patch",
+  "logs": [
+    "/tmp/sx10-android-build.log",
+    "/tmp/sx10-android-checker-fixture-failure.log",
+    "/tmp/sx10-android-crash.log",
+    "/tmp/sx10-android-final-logcat.log",
+    "/tmp/sx10-android-final.log",
+    "/tmp/sx10-android-inputs.log",
+    "/tmp/sx10-android-private-final-logcat.log",
+    "/tmp/sx10-android-private-final.log",
+    "/tmp/sx10-android-regressions.log",
+    "/tmp/sx10-doc-build.log",
+    "/tmp/sx10-doc-check.log",
+    "/tmp/sx10-doc-install.log",
+    "/tmp/sx10-doc-tests.log",
+    "/tmp/sx10-final-abi-package.log",
+    "/tmp/sx10-final-consumers-production.log",
+    "/tmp/sx10-final-library-abi.log",
+    "/tmp/sx10-final-sample-consumers-platforms.log",
+    "/tmp/sx10-package.log",
+    "/tmp/sx10-sample-consumers.log",
+    "/tmp/sx10-site-check.log",
+    "/tmp/sx10-skia-diagnostics-final.log",
+    "/tmp/sx10-skia-diagnostics.log",
+    "/tmp/sx10-skia-jvm.log",
+    "/tmp/sx10-skia-ownership-final.log",
+    "/tmp/sx10-skia-targets.log"
+  ],
+  "integrity": {
+    "original_toolchain_preserved": true,
+    "readme_media_preserved": true,
+    "no_branch_switch_commit_merge_publish": true
+  },
+  "android": {
+    "tests": 26,
+    "failures": 0,
+    "skipped": 0,
+    "scope": "Task-owned API36 small_phone software emulator; no physicalGPUclaim",
+    "final_transport": "ADB_SERVER_SOCKET=tcp:localhost:5038, serial127.0.0.1:5555",
+    "deviation": "Earlier runs used defaultADBserver; final private rerun supersedes them. No shared ADB reset/kill or pairing. See sx10-android.json exactcommands.",
+    "cleanup": "Owned emulator and private5038server stopped",
+    "log": "/tmp/sx10-android-private-final.log"
+  },
+  "initial_corrections": [
+    "AGSL reserved input identifier fixture renamed bufferData",
+    "Destination contrast uses direct background FP16 to avoid content-layer color conversion",
+    "Narrow child-input checker rejects comma/macro forms while retaining float4arrays",
+    "Child source/path diagnostics and once-captured parent source hardened",
+    "Missing parent alias triggered Android CheckJNI native abort; new-kind aliaspreflight prevents setter call",
+    "Closed native+definition owners now drop output/configuration refs while caller-held snapshots remainvalid"
+  ],
+  "review_patch_check": "git apply --check --unsafe-paths --directory=/private/tmp/sx10-baseline /tmp/sx10-review.patch PASS"
+}

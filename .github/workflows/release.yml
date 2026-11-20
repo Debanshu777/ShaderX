@@ -3,17 +3,15 @@ name: Release ShaderX
 on:
   workflow_dispatch:
     inputs:
-      releaseType:
-        description: Release type (stable releases require main)
-        type: choice
+      confirmVersion:
+        description: Exact stable shaderxVersion in gradle.properties (main only)
+        type: string
         required: true
-        default: prerelease
-        options: [prerelease, patch, minor, major]
 
 permissions:
   contents: read
 
-# Serialize version allocation and publication across all source branches.
+# Serialize immutable stable publication and tag reservation.
 concurrency:
   group: shaderx-release
   cancel-in-progress: false
@@ -22,6 +20,8 @@ jobs:
   release:
     runs-on: macos-latest
     timeout-minutes: 90
+    env:
+      GRADLE_OPTS: -Dorg.gradle.workers.max=1
     permissions:
       contents: write
     steps:
@@ -32,10 +32,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - name: Select release version and check branch
+      - name: Validate configured stable release against tags and Maven Central
         id: version
         env:
-          RELEASE_TYPE: ${{ inputs.releaseType }}
+          CONFIRM_VERSION: ${{ inputs.confirmVersion }}
         run: python scripts/release_version.py
       - name: Check publishing credentials
         env:
@@ -54,13 +54,48 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+      - name: Install library and configured sample Android platforms
+        run: |
+          sdk_platform=$(python -c 'import tomllib; version = str(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["android-compileSdk"]); print(f"{version}.0" if version.isdigit() and int(version) >= 37 else version)')
+          sdkmanager "platforms;android-35" "platforms;android-$sdk_platform"
+      - name: Select and smoke-test sandboxed Chrome
+        id: browser
+        timeout-minutes: 1
+        run: bash scripts/select_ci_chrome.sh
       - uses: gradle/actions/setup-gradle@v4
       - name: Test release tooling
         run: python -m unittest discover -s scripts/tests -v
       - name: Build and test all library targets
         env:
           RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}
         run: ./gradlew :shaderx:build --no-daemon --no-configuration-cache "-PshaderxVersion=$RELEASE_VERSION"
+      - name: Prepare curated release notes
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          python - <<'PYNOTES'
+          import os
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "scripts")
+          from release_version import changelog_section, github_release_body
+          version = os.environ["RELEASE_VERSION"]
+          body = changelog_section(Path("CHANGELOG.md").read_text(encoding="utf-8"), version)
+          body = github_release_body(body, os.environ["GITHUB_REPOSITORY"], os.environ["GITHUB_SHA"])
+          notes = (
+              f"Built from `{os.environ['GITHUB_REF_NAME']}` (`{os.environ['GITHUB_SHA']}`).\n\n"
+              f'```kotlin\nimplementation("io.github.debanshu777:shaderx:{version}")\n```\n\n'
+              + body + "\n"
+          )
+          (Path(os.environ["RUNNER_TEMP"]) / "shaderx-release-notes.md").write_text(notes, encoding="utf-8")
+          PYNOTES
+      - name: Recheck coordinate before reserving the immutable tag
+        env:
+          CONFIRM_VERSION: ${{ inputs.confirmVersion }}
+        run: python scripts/release_version.py
       - name: Reserve release tag
         env:
           GH_TOKEN: ${{ github.token }}
@@ -85,22 +120,13 @@ jobs:
           RELEASE_VERSION: ${{ steps.version.outputs.version }}
           RELEASE_TAG: ${{ steps.version.outputs.tag }}
           PREVIOUS_TAG: ${{ steps.version.outputs.previous_tag }}
-          PRERELEASE: ${{ steps.version.outputs.prerelease }}
         run: |
           notes="$RUNNER_TEMP/shaderx-release-notes.md"
-          {
-            printf 'Built from `%s` (`%s`).\n\n' "$GITHUB_REF_NAME" "$GITHUB_SHA"
-            printf '```kotlin\nimplementation("io.github.debanshu777:shaderx:%s")\n```\n' "$RELEASE_VERSION"
-          } > "$notes"
           args=(--verify-tag --title "ShaderX $RELEASE_VERSION" --notes-file "$notes" --generate-notes)
           if [ -n "$PREVIOUS_TAG" ]; then
             args+=(--notes-start-tag "$PREVIOUS_TAG")
           fi
-          if [ "$PRERELEASE" = true ]; then
-            args+=(--prerelease --latest=false)
-          else
-            args+=(--latest)
-          fi
+          args+=(--latest)
           gh release create "$RELEASE_TAG" "${args[@]}"
           cat "$notes" >> "$GITHUB_STEP_SUMMARY"
       - name: Upload test reports
