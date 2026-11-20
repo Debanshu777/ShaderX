@@ -7,13 +7,22 @@ import com.debanshu.shaderlab.shaderx.result.ShaderResult
  * Interface for applying shader effects to image data.
  *
  * Use this for offline/batch processing of images, as opposed to
- * real-time rendering with [ShaderFactory].
+ * real-time rendering with [ShaderFactory]. Query the same factory with
+ * [querySupport] and [ShaderOperation.IMAGE_EXPORT] for known operation/effect requirements.
+ * A supported route does not validate source, image bytes, dimensions, or allocation. Skia's
+ * built-in processor requires the concrete factory returned by [ShaderFactory.Companion.create];
+ * a third-party factory's on-screen support does not establish processor compatibility.
  *
  * On supported Skia platforms, the processor reuses the provided [ShaderFactory]'s shader cache so that
  * processing N images with the same effect compiles the shader only once.
  * On Skia, keep the factory and processor on one thread. Background exports should create
  * their own factory on the worker and close it there. Sharing requires serializing all factory,
  * processor, and session operations, including cache clearing and disposal.
+ *
+ * Development bounded PNG output is additive: use [ImageExportOptions], [exportImage] and
+ * [ImageProcessor.queryImageExportSupport]. The legacy Float arguments below remain uniform-only.
+ * The top-level suspend exporter owns its worker factory; a processor extension borrows this one.
+ * Existing third-party processors need no additional interface methods.
  *
  * ## Usage
  * ```kotlin
@@ -38,7 +47,8 @@ public interface ImageProcessor {
      *
      * **Platform support:** Skia platforms support individual runtime effects and native blur;
      * [com.debanshu.shaderlab.shaderx.effect.CompositeEffect] returns
-     * [com.debanshu.shaderlab.shaderx.result.ShaderError.UnsupportedEffect]. Android's current
+     * [com.debanshu.shaderlab.shaderx.result.ShaderError.UnsupportedEffect] before decoding,
+     * including single-child composites. Android's current
      * software-bitmap path cannot render its hardware `RenderNode` and returns
      * [com.debanshu.shaderlab.shaderx.result.ShaderError.ProcessingError] before decoding input
      * or compiling shaders; use the Compose modifier for on-screen Android rendering.

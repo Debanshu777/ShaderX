@@ -1,0 +1,192 @@
+{
+  "experiment": "SX05 native Skia filter composition",
+  "versioned_source_revision": "84b34aa8bf3eea606464aba0cc9b12f94bc3554e",
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/jvmMain/cpp/common/ImageFilter.cc",
+      "sha256": "3294a582f6d7bac6b0eb4d8b67edfa3342abe3fe67d5a8556db803a1400966a5",
+      "local": "/tmp/sx05-ImageFilter.cc"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/jvmMain/cpp/common/RuntimeShaderBuilder.cc",
+      "sha256": "d0de62ec43f71eea749487aa15f5da018744ef2466f3cb52030dc623015b08f1",
+      "local": "/tmp/sx05-RuntimeShaderBuilder.cc"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/nativeJsMain/cpp/ImageFilter.cc",
+      "sha256": "860cee245d679591353d67168b0593204e6d6f7090fcd09021fa4fdfa2c8fd3b",
+      "local": "/tmp/sx05-native-ImageFilter.cc"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/nativeJsMain/cpp/RuntimeShaderBuilder.cc",
+      "sha256": "3013679e90cb1dbc6dd02d87011fc3f6b0451a27ba66ead0d991ad622b64629d",
+      "local": "/tmp/sx05-native-RuntimeShaderBuilder.cc"
+    }
+  ],
+  "ownership": {
+    "compose": "JVM and nativeJsMain both pass sk_ref_sp(outer) and sk_ref_sp(inner) to SkImageFilters::Compose. Native filter holds native references independently of Kotlin temporary Managed wrapper lifetime.",
+    "builder": "JVM and nativeJsMain both construct SkRuntimeShaderBuilder from sk_ref_sp(effect). Closing a cache-owned RuntimeEffect wrapper does not invalidate an active builder.",
+    "runtime_filter": "JVM/nativeJsMain pass builder by value/reference into SkImageFilters::RuntimeShader; tests must verify snapshots retain old values after builder mutation/closure.",
+    "wrapper": "Managed.close frees wrapper ownership and wrapper cannot be used afterwards. Do not close wrappers still borrowed by Compose; release only internal temporary child wrappers after composed native ownership established."
+  },
+  "target_resolution": {
+    "jvm": {
+      "configuration": "jvmRuntimeClasspath",
+      "selected": [
+        "org.jetbrains.skiko:skiko:0.9.37.4",
+        "org.jetbrains.skiko:skiko-awt:0.9.37.4",
+        "org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.9.37.4"
+      ],
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:dependencyInsight --dependency skiko --configuration jvmRuntimeClasspath --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx05-dependency-jvm.log"
+    },
+    "wasm": {
+      "configuration": "wasmJsCompileClasspath",
+      "selected": [
+        "org.jetbrains.skiko:skiko:0.9.37.4",
+        "org.jetbrains.skiko:skiko-wasm-js:0.9.37.4"
+      ],
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:dependencyInsight --dependency skiko --configuration wasmJsCompileClasspath --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx05-dependency-wasm.log"
+    },
+    "ios": {
+      "configuration": "iosSimulatorArm64CompileKlibraries",
+      "selected": [
+        "org.jetbrains.skiko:skiko:0.9.37.4",
+        "org.jetbrains.skiko:skiko-iossimulatorarm64:0.9.37.4"
+      ],
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:dependencyInsight --dependency skiko --configuration iosSimulatorArm64CompileKlibraries --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx05-dependency-ios.log"
+    }
+  },
+  "render_results": {
+    "iosSimulatorArm64Test": {
+      "raw_experiment_tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-11-19T17:02:02.352Z",
+      "report": "shaderx/build/test-results/iosSimulatorArm64Test/TEST-iosSimulatorArm64Test.com.debanshu.shaderlab.shaderx.PortableCompositionExperimentTest.xml",
+      "backend": "Actual Skia raster surface on iosSimulatorArm64Test; no physical GPU assertion"
+    },
+    "jvmTest": {
+      "raw_experiment_tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-11-19T17:01:28.283Z",
+      "report": "shaderx/build/test-results/jvmTest/TEST-com.debanshu.shaderlab.shaderx.PortableCompositionExperimentTest.xml",
+      "backend": "Actual Skia raster surface on jvmTest; no physical GPU assertion"
+    },
+    "wasmJsBrowserTest": {
+      "raw_experiment_tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-11-19T17:01:54.570Z",
+      "report": "shaderx/build/test-results/wasmJsBrowserTest/TEST-wasmJsBrowserTest.com.debanshu.shaderlab.shaderx.PortableCompositionExperimentTest.xml",
+      "backend": "Actual Skia raster surface on wasmJsBrowserTest; no physical GPU assertion"
+    }
+  },
+  "test_source": "shaderx/src/skiaTest/kotlin/com/debanshu/shaderlab/shaderx/PortableCompositionExperimentTest.kt",
+  "limitations": [
+    "CPU raster rendering does not establish physical GPU behavior.",
+    "Closing RuntimeEffect wrapper explicitly models cache eviction native reference behavior; factory cache eviction separately validated after enablement.",
+    "Managed wrapper isClosed flags do not measure GPU/native memory leaks or prove reference counts reach zero."
+  ],
+  "commands": [
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest --tests '*PortableCompositionExperimentTest' --console=plain",
+      "outcome": "PASS first5 raw experiment tests",
+      "log": "/tmp/sx05-experiment.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test --console=plain",
+      "outcome": "PASS first5 raw experiment tests on each target (before new public factory tests)",
+      "log": "/tmp/sx05-raw-targets.log"
+    }
+  ],
+  "spatial_scope": "Explicit left-to-right Compose and two separate raster passes agree within2 premultiplied channel units for3px blur+color and2px blur+4px horizontal runtime sampling at64px/96px. Transparent exterior preserved and blur expands alpha. This bounded fixture is not a proof of unrestricted sample radius or arbitrary out-of-layer spatial effects.",
+  "discovered_backend_difference": {
+    "source": "https://raw.githubusercontent.com/JetBrains/skiko/v0.9.37.4/skiko/src/nativeJsMain/kotlin/org/jetbrains/skia/RuntimeEffect.nativejs.kt",
+    "finding": "Native/Wasm compiler errors are thrown as exact kotlin.Error after native error Result destroyed; JVM uses a different error bridge. catch(Exception) alone fails required-child invalid-source handling.",
+    "first_extended_run": {
+      "jvm": "10/10 pass",
+      "wasm": "8/10 pass; invalid child and invalid pipeline replacement escaped as kotlin.Error",
+      "log": "/tmp/sx05-platform-tests.log"
+    },
+    "resolution": "Fixed in SkiaShaderFactory.getOrCreateEffect: normalize exact base kotlin.Error from RuntimeEffect.makeForShader to IllegalArgumentException; rethrow Error subclasses. Extended10/10 tests now PASS on JVM/Wasm/iOS simulator including both invalid-source whole-failure assertions."
+  },
+  "extended_render_results": {
+    "iosSimulatorArm64Test": {
+      "raw_plus_factory_plus_pipeline_tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-11-19T17:06:16.586Z",
+      "report": "shaderx/build/test-results/iosSimulatorArm64Test/TEST-iosSimulatorArm64Test.com.debanshu.shaderlab.shaderx.PortableCompositionExperimentTest.xml",
+      "backend": "Actual Skia CPU raster surface"
+    },
+    "jvmTest": {
+      "raw_plus_factory_plus_pipeline_tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-11-19T17:05:53.309Z",
+      "report": "shaderx/build/test-results/jvmTest/TEST-com.debanshu.shaderlab.shaderx.PortableCompositionExperimentTest.xml",
+      "backend": "Actual Skia CPU raster surface"
+    },
+    "wasmJsBrowserTest": {
+      "raw_plus_factory_plus_pipeline_tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-11-19T17:06:08.387Z",
+      "report": "shaderx/build/test-results/wasmJsBrowserTest/TEST-wasmJsBrowserTest.com.debanshu.shaderlab.shaderx.PortableCompositionExperimentTest.xml",
+      "backend": "Actual Skia CPU raster surface"
+    }
+  },
+  "extended_result_log": "/tmp/sx05-full-validation.log",
+  "factory_and_pipeline_coverage": [
+    "Public factory left-to-right noncommutative order, nested identity, independent values with same source after LRU size1 eviction and clearCache.",
+    "Invalid middle child fails whole static pipeline while old successful filter pixels remain unchanged.",
+    "Public factory blur+runtime spatial reference at64/96 with alpha transparency.",
+    "Two animated children receive identical externally supplied timestamp despite stored99s; separate pipeline session has independent position.",
+    "Paused unchanged timestamp plus explicit live refresh changes live channel only; old snapshots remain immutable after refresh/cache clear.",
+    "Required provider/source/invalid-size replacement fails transactionally, retains same currentRenderEffect object and exact prior pixels; valid96px replacement recovers.",
+    "Repeated session close; refresh after close yields Failure; caller-owned filter pixels survive owner/cache disposal. No deterministic native memory reclamation assertion."
+  ],
+  "dependency_resolution_note": "First attempted Wasm wasmJsCompileKlibraries configuration does not exist in this Kotlin setup; corrected to actual wasmJsCompileClasspath. All three final dependencyInsight commands succeeded. iOS resolution/rendered evidence is arm64 simulator; no physical iOS device or GPU claim.",
+  "source_capture_review": {
+    "contract": "Each runtime child source String is acquired before its uniform providers and passed explicitly to PipelineSnapshotEffect. Backend getter is the immutable stored String, never a delegate read.",
+    "tests": [
+      "sourceIsCapturedOnceBeforeUniformProvidersAndNativeCreation",
+      "throwingLaterSourceFailsBeforeAnyNativeChildCreation"
+    ],
+    "results": {
+      "iosSimulatorArm64Test": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "jvmTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "wasmJsBrowserTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "log": "/tmp/sx05-source-capture.log",
+    "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:wasmJsBrowserDistribution"
+  }
+}

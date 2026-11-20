@@ -59,8 +59,10 @@ jobs:
         with:
           # PR builds never write a cache consumed by the trusted publication job.
           cache-read-only: ${{ github.event_name == 'pull_request' }}
-      - name: Build the production ShaderLab playground
-        run: ./gradlew :samples:ShaderLab:composeApp:wasmJsBrowserDistribution --no-daemon
+      - name: Build the playground and visual sampler
+        run: >-
+          ./gradlew :samples:ShaderLab:composeApp:wasmJsBrowserDistribution
+          :samples:Sampler:composeApp:wasmJsBrowserDistribution --no-daemon --no-parallel
       - name: Build documentation
         run: zensical build --strict
       - name: Bundle and verify playground assets

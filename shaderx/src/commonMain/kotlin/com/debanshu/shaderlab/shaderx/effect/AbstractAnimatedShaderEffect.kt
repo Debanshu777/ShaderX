@@ -47,7 +47,7 @@ public abstract class AbstractAnimatedShaderEffect :
      */
     protected abstract fun copyWithTime(newTime: Float): AbstractAnimatedShaderEffect
 
-    final override fun withTime(newTime: Float): AnimatedShaderEffect = copyWithTime(newTime)
+    override fun withTime(newTime: Float): AnimatedShaderEffect = copyWithTime(newTime)
 
     /**
      * Structural equality — compare configuration only, **never** [time].
@@ -63,7 +63,7 @@ public abstract class AbstractAnimatedShaderEffect :
 
     final override fun hashCode(): Int = structuralHashCode()
 
-    final override fun withTypedParameter(
+    override fun withTypedParameter(
         parameterId: String,
         value: ParameterValue,
     ): AbstractAnimatedShaderEffect = super.withTypedParameter(parameterId, value) as AbstractAnimatedShaderEffect

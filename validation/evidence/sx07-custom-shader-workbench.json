@@ -1,0 +1,222 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX07",
+  "status": "Implemented development Skia workbench; residual gates explicitly below",
+  "branch": "codex/developer-experience-research",
+  "environment": {
+    "os": "macOS 27.0.1 aarch64",
+    "jdk": "Homebrew OpenJDK21.0.12.1",
+    "gradle": "9.6.0",
+    "kotlin": "2.3.21",
+    "compose": "1.10.3",
+    "skiko": "0.9.37.4",
+    "agp": "9.4.1",
+    "python": "existing .venv-docs Python3.13 pinned requirements",
+    "browser": "fresh IAB surfaces; production Wasm/Skia; desktop1280x720 and mobile390x844"
+  },
+  "availability": {
+    "new": "development0.1.4",
+    "published_install": "0.1.3 unchanged",
+    "actions": "No branch switch, commit, release, publish, deployment or merge"
+  },
+  "contract": {
+    "sdk": "No public library API or ABI changes; manual low-level binding behavior unchanged. Registry remains sample-local.",
+    "declarations": "Supported one-per-declaration float/half/int/float2/shader and layout(color) half4/float4. Lexer ignores comments and quoted strings; rejects macros, arrays, structs, multiple names and unsupported/ambiguous layouts. Native Skia remains source compiler. Skiko unmatched scalar setters alone cannot validate schema names.",
+    "diagnostics": "Native logs retained raw. No compiler location parsing or generated preamble; no fabricated offsets. Lexer declaration errors carry actual source lines; unknown backend formats remain readable raw text.",
+    "state": "Editable source/schema/bindings/current typed values separate from last-good source/schema/bindings/values/project/rendered bitmap. Run token captures exact candidate identity. Promotion only after ShaderX ImageProcessor and bounded native PNG decoding succeed. Late image/file/error/status results are discarded. UI busy ownership is revision guarded.",
+    "controls": "Generated validated controls render each new scalar revision. Source/form edits remain manual Run. Rename/type/default/remove clears only affected obsolete current value. Use form defaults clears all overrides explicitly after incompatible range edits, preserving source/form. Failures preserve last-good output and expose stale preview AND export labels.",
+    "starters": "Warm tint, static distortion, animated distortion, image-input blend. Resolution physical pixels, seconds, premultiplied alpha and layout(color) hints. SX03 retained playback for separate on-screen animation; original/result and SDK snapshot at time zero.",
+    "render": "Real ShaderX public definition/bindings and native ImageProcessor. Two separate composition-scoped bounded4 factories, at most8 programs across workbench caches; serial same-thread manual render, composition disposal. Animated preview separate controlled session.",
+    "bounds": "Source32KiB, project128KiB,32 parameters,256-character form fields, source/project UTF8 checks. Browser PNG<=1MiB and dimensions1..256 before native decode. Fixed256px original. Header checks not validation of image content; native decode still required.",
+    "storage": "Explicit Save/Restore/Reset; isolated workbench slot from existing gallery preset. Versioned .sxw/text source/form/exact scalar values only; no borrowed image/provider/native state or validation certificate. Broken drafts can be exported separately from last-good Kotlin. Restore never runs source; Reset overwrites local slot and resets bundled image input.",
+    "export": "Shared KotlinExport emits complete SDK imports/definition/schema/source/bindings/current values/Compose usage. ImageBitmap inputs required explicitly; structural names and REPEAT/MIRROR modes retained. FrameProvider plus inputRevision required for live examples; provider owns frame image modes. No fabricated images or borrowed-resource serialization. Builtin audio remains explicit unsupported integration.",
+    "execution": "No arbitrary Kotlin/scripts/binaries or server upload. Synchronous Wasm/GPU work has no guaranteed timeout or execution isolation. Visible reload/reset recovery guidance.",
+    "android": "ImageProcessor support preflight disables workbench Run on unsupported Android; Android target compiles but no new AGSL workbench or device-render claim."
+  },
+  "counts": {
+    "library_jvm": {
+      "report": "shaderx/build/test-results/jvmTest",
+      "tests": 536,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "library_browser": {
+      "report": "shaderx/build/test-results/wasmJsBrowserTest",
+      "tests": 456,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "library_ios_simulator": {
+      "report": "shaderx/build/test-results/iosSimulatorArm64Test",
+      "tests": 456,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "sample_jvm": {
+      "report": "samples/ShaderLab/composeApp/build/test-results/jvmTest",
+      "tests": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "sample_browser": {
+      "report": "samples/ShaderLab/composeApp/build/test-results/wasmJsBrowserTest",
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "consumer_jvm": {
+      "report": "validation/kmp-consumer/build/test-results/jvmTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "docs_tests": 24,
+  "commands": [
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :shaderx:jvmTest :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :samples:ShaderLab:composeApp:wasmJsBrowserTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:compileAndroidMain :samples:ShaderLab:composeApp:compileKotlinIosSimulatorArm64 --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx07-platforms.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :samples:ShaderLab:composeApp:wasmJsBrowserTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :samples:ShaderLab:composeApp:compileAndroidMain :samples:ShaderLab:composeApp:compileKotlinIosSimulatorArm64 --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx07-final-build.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:compileAndroidMain :samples:ShaderLab:composeApp:compileKotlinIosSimulatorArm64 --console=plain",
+      "outcome": "PASS final code, corrected bundled PNG and actual workbench exports",
+      "log": "/tmp/sx07-verified-final.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :samples:ShaderLab:composeApp:compileAndroidMain :samples:ShaderLab:composeApp:compileKotlinIosSimulatorArm64 :shaderx:checkKotlinAbi --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx07-final-package.log"
+    },
+    {
+      "command": ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+      "outcome": "PASS existing virtualenv pinned tools",
+      "log": "/tmp/sx07-doc-install.log"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_docs.py",
+      "outcome": "PASS 27 guides / 30 Markdown files"
+    },
+    {
+      "command": ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+      "outcome": "PASS 24 tests",
+      "log": "/tmp/sx07-doc-tests.log"
+    },
+    {
+      "command": ".venv-docs/bin/zensical build --strict",
+      "outcome": "PASS",
+      "log": "/tmp/sx07-doc-build.log"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/package_playground.py",
+      "outcome": "PASS 11 files / 15393351 bytes final fresh production bundle"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_site.py",
+      "outcome": "PASS 27 pages plus packaged playground metadata/links/anchors/assets"
+    },
+    {
+      "command": "git diff --check",
+      "outcome": "PASS"
+    }
+  ],
+  "generated_consumer": {
+    "sources": 24,
+    "method": "Actual generator outputs from all portable registered effects, adversarial fixture, structural image/live provider fixtures and all four WorkbenchStarters. Independent non-friend Android-only and KMP source compilation; German locale. External tests check exact source/values/metadata/modes/provider identity. No handwritten equivalent substitutes."
+  },
+  "visual": {
+    "desktop": "Actual final Warm tint .5 then1.0,12\u201313ms observed total native validation/render/PNG decode, current revision; badBinding Run names mismatch and preserves last-good1.0 images/Kotlin. Correction restores current output. Original/result visibly differ.",
+    "mobile": "390x844 source/forms layout, exact keyboard0.875 earlier, local save/reload/explicit Restore then Run retains0.875, mismatch/correction/current1.0 and explicit defaults action resets to.5. Last-good/stale diagnostic text readable and both actual images visible.",
+    "clipboard": "Copy requested status and bounded selectable complete code retained; actual OS clipboard success not asserted. Earlier inherited Chrome failure avoided with fresh IAB. No browser permission was granted/bypassed.",
+    "images": "Browser filechooser loaded corrected256px PNG in ordinary gallery; actual gallery visible checker image/thumbnail proves existing decode path works for this valid input. Workbench browser bounded image picker loaded2x2red fixture and displayed Image loaded. Run required; texture binding/native image rendering separately covered by JVM test and shared source generator. Uploaded browser texture final Run not repeated after successful picker completion.",
+    "guides": "Samples authoring section inspected desktop1280px and390px, document scrollWidth matches390; no layout overflow.",
+    "screenshots": [
+      "/tmp/sx07-desktop-current.jpg",
+      "/tmp/sx07-desktop-stale.jpg",
+      "/tmp/sx07-mobile-current.jpg",
+      "/tmp/sx07-mobile-stale.jpg"
+    ],
+    "timing_limit": "Observed per-run totals include schema validation, native work, PNG encoding/decoding. Not isolated compile-vs-refresh cost, GPU frame time or performance budget. Cache reuse follows retained factory; no FPS claim."
+  },
+  "corrected_findings": [
+    "Initial sandbox Gradle cache lock denied; reviewed escalation ran all checks.",
+    "Initial malformed codec test did not actually corrupt input; fixture corrected.",
+    "Documentation anchor mismatch fixed before final strict build.",
+    "Initial bundled PNG declared RGB while rows were RGBA, producing blank images. Corrected channel type/CRC; bundled-file regression checks full256px actual pixels. Native Compose bounded decoder/input/output pipeline tests pass JVM and browser. Legacy imagelib diagnostic valid2x2red pixels are ffff0000 on JVM and Wasm; actual gallery picked256px checker displays. No general decoder defect established."
+  ],
+  "abi": {
+    "baseline": "/private/tmp/shaderx-sx06-accepted.api",
+    "byte_identical": true,
+    "check": "PASS",
+    "limit": "No new public APIs; already-compiled/Android-Klib guarantees remain SX15"
+  },
+  "preservation": {
+    "accepted_unchanged_count": 353,
+    "accepted_snapshot": "/private/tmp/shaderx-sx06-accepted-files.json",
+    "readme_media": "Flower/banner image and all four inline video elements byte-identical to initial snapshot",
+    "toolchain": "Original user toolchain/build files and accepted library/backend sources unchanged"
+  },
+  "remaining_gates": [
+    "Android rendered-PNG workbench unavailable until future image-export backendSX13; no AGSL claim. Existing physical Pixel accepted SDK evidence retained but no new device command run.",
+    "Native Android/iOS image intake absent; native project-file dialogs and physical mobile OS keyboard/accessibility/device UI inspections remain separate.",
+    "Pathological synchronous shader execution cannot be interrupted reliably; reload/reset not a guaranteed sandbox.",
+    "Raw data textures/arbitrary arrays/nested shader inputs/richer completion/general GLSL parsing outside narrow workbench.",
+    "Live provider editing and animated pipeline editing remain future scope; generated live caller-input templates compile but browser does not execute arbitrary providers.",
+    "Successful Copy request is not proof of system clipboard delivery; selectable output is available. Browser/desktop draft file-dialog roundtrip not repeated here; codec/local explicit recovery tested.",
+    "SX15 already-compiled binary linkage/Android-Klib validation remains separate."
+  ],
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/contributing.md",
+    "docs/custom-effects.md",
+    "docs/effects.md",
+    "docs/getting-started.md",
+    "docs/maintaining.md",
+    "docs/roadmap/07-custom-shader-workbench.md",
+    "docs/roadmap/index.md",
+    "docs/samples.md",
+    "docs/troubleshooting.md",
+    "samples/ShaderLab/composeApp/src/androidMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.android.kt",
+    "samples/ShaderLab/composeApp/src/androidMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchImage.android.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/composeResources/files/workbench.png",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/KotlinExport.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchDeclarations.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchImage.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchModel.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchProjectCodec.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderLabContent.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/WorkbenchPanel.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/KotlinExportTest.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/WorkbenchDecodeTest.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/WorkbenchModelTest.kt",
+    "samples/ShaderLab/composeApp/src/iosMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.ios.kt",
+    "samples/ShaderLab/composeApp/src/iosMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchImage.ios.kt",
+    "samples/ShaderLab/composeApp/src/jvmMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.jvm.kt",
+    "samples/ShaderLab/composeApp/src/jvmMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchImage.jvm.kt",
+    "samples/ShaderLab/composeApp/src/jvmTest/kotlin/com/debanshu/shaderlab/GeneratedSourceProducerTest.kt",
+    "samples/ShaderLab/composeApp/src/jvmTest/kotlin/com/debanshu/shaderlab/WorkbenchRenderTest.kt",
+    "samples/ShaderLab/composeApp/src/wasmJsMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.wasm.kt",
+    "samples/ShaderLab/composeApp/src/wasmJsMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchImage.wasm.kt",
+    "validation/evidence/sx07-custom-shader-workbench.json",
+    "validation/kmp-consumer/src/developmentTest/kotlin/GeneratedPlaygroundConsumerTest.kt"
+  ],
+  "file_inventory": "/tmp/sx07-changed-files.json",
+  "review_diff": {
+    "path": "/tmp/sx07-review.patch",
+    "baseline": "/tmp/sx07-before",
+    "verify": "git -C /tmp/sx07-before apply --check /tmp/sx07-review.patch"
+  }
+}

@@ -1,11 +1,22 @@
 package com.debanshu.shaderlab.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.debanshu.shaderlab.shaderx.authoring.DefinedAnimatedShaderEffect
+import com.debanshu.shaderlab.shaderx.authoring.DefinedShaderEffect
 import com.debanshu.shaderlab.imagelib.PickResult
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.CompositeEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.AudioVisualizerEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.GrayscaleEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.GradientEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect
+import com.debanshu.shaderlab.shaderx.parameter.ParameterRangePolicy
+import com.debanshu.shaderlab.shaderx.parameter.BooleanParameterDefinition
+import com.debanshu.shaderlab.shaderx.parameter.ParameterSchema
+import com.debanshu.shaderlab.shaderx.parameter.ParameterValue
+import com.debanshu.shaderlab.shaderx.parameter.applyTo
+import com.debanshu.shaderlab.shaderx.parameter.valuesFrom
 import com.debanshu.shaderlab.shaderx.effect.withColorParameter
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
 import com.debanshu.shaderlab.shaderx.factory.create
@@ -39,7 +50,7 @@ sealed class ImageSource {
 
 data class ShaderLabUiState(
     val selectedImage: ImageSource = ImageSource.Bundled("sample_landscape"),
-    val activeEffect: ShaderEffect? = null,
+    val activeEffect: ShaderEffect? = GrayscaleEffect(),
     val selectedTab: ShaderLabTab = ShaderLabTab.STATIC,
     val showBeforeAfter: Boolean = false,
     val isDarkTheme: Boolean = true,
@@ -60,7 +71,9 @@ class ShaderLabViewModel : ViewModel() {
     private val _uiState =
         MutableStateFlow(
             ShaderLabUiState(
-                shadersSupported = ShaderFactory.create().isSupported(),
+                shadersSupported = ShaderFactory.create().let { factory ->
+                    try { factory.isSupported() } finally { factory.close() }
+                },
             ),
         )
     val uiState: StateFlow<ShaderLabUiState> = _uiState.asStateFlow()
@@ -79,6 +92,10 @@ class ShaderLabViewModel : ViewModel() {
                 else -> effect
             }
         _uiState.update { it.copy(activeEffect = resolved) }
+    }
+
+    fun loadPreset(effect: ShaderEffect) {
+        _uiState.update { it.copy(activeEffect = effect, selectedTab = if (effect is AnimatedShaderEffect) ShaderLabTab.ANIMATED else ShaderLabTab.STATIC) }
     }
 
     fun selectTab(
@@ -137,21 +154,36 @@ class ShaderLabViewModel : ViewModel() {
     fun toggleAnimation() {
         _uiState.update { state ->
             val current = state.activeEffect as? AnimatedShaderEffect ?: return@update state
-            val updated = current.withParameter("animate", if (current.isAnimating) 0f else 1f)
+            val updated =
+                if (current is DefinedAnimatedShaderEffect) {
+                    current.withPlayback(!current.isAnimating)
+                } else if (current is WaveEffect) {
+                    WaveEffect.SCHEMA.valuesFrom(current)
+                        .withValue(WaveEffect.ANIMATE.key, !current.animate)
+                        .applyTo(current)
+                } else {
+                    current.withParameter("animate", if (current.isAnimating) 0f else 1f)
+                }
             state.copy(activeEffect = updated)
         }
     }
 
-    fun updateEffectParameter(
-        parameterId: String,
-        value: Float,
-    ) {
+    fun updateTypedParameter(parameterId: String, value: ParameterValue) {
         _uiState.update { state ->
-            val currentEffect = state.activeEffect ?: return@update state
-            val updatedEffect = currentEffect.withParameter(parameterId, value)
-            state.copy(activeEffect = updatedEffect)
+            val effect = state.activeEffect ?: return@update state
+            val schema = com.debanshu.shaderlab.playground.parameterSchema(effect)
+            state.copy(activeEffect = schema.valuesFrom(effect).withValue(parameterId, value).applyTo(effect))
         }
     }
+
+    // Existing sample callers retain their numeric convenience entry point.
+    fun updateEffectParameter(parameterId: String, value: Float): Unit =
+        updateTypedParameter(parameterId, ParameterValue.FloatValue(value.let { number ->
+            require(number.isFinite()) { "Numeric edit requires a finite value" }
+            val schema = com.debanshu.shaderlab.playground.parameterSchema(_uiState.value.activeEffect ?: return)
+            val definition = schema.definition(parameterId) as? com.debanshu.shaderlab.shaderx.parameter.FloatParameterDefinition
+            definition?.range?.let { number.coerceIn(it) } ?: number
+        }))
 
     fun updateEffectColorParameter(
         parameterId: String,
@@ -159,7 +191,25 @@ class ShaderLabViewModel : ViewModel() {
     ) {
         _uiState.update { state ->
             val currentEffect = state.activeEffect ?: return@update state
-            state.copy(activeEffect = currentEffect.withColorParameter(parameterId, colorArgb))
+            val schema = currentEffect.pilotParameterSchema()
+            val updatedEffect =
+                if (schema != null) {
+                    schema.valuesFrom(currentEffect)
+                        .withValue(parameterId, ParameterValue.ColorValue(colorArgb))
+                        .applyTo(currentEffect)
+                } else {
+                    currentEffect.withColorParameter(parameterId, colorArgb)
+                }
+            state.copy(activeEffect = updatedEffect)
+        }
+    }
+
+    fun resetEffectParameters() {
+        _uiState.update { state ->
+            val current = state.activeEffect ?: return@update state
+            val schema = com.debanshu.shaderlab.playground.parameterSchema(current)
+            // Reapply defaults to the current instance, preserving playback and current frame time.
+            state.copy(activeEffect = schema.defaults().applyTo(current))
         }
     }
 
@@ -199,3 +249,12 @@ class ShaderLabViewModel : ViewModel() {
         _uiState.update { it.copy(shadersSupported = supported) }
     }
 }
+
+private fun ShaderEffect.pilotParameterSchema(): ParameterSchema? =
+    when (this) {
+        is GradientEffect -> GradientEffect.SCHEMA
+        is WaveEffect -> WaveEffect.SCHEMA
+        is DefinedShaderEffect -> definition.schema
+        is DefinedAnimatedShaderEffect -> definition.schema
+        else -> null
+    }

@@ -30,7 +30,7 @@ def fingerprint(directory):
     }
 
 
-def validate_distribution(directory):
+def validate_distribution(directory, sample_images=SAMPLE_IMAGES):
     directory = Path(directory)
     errors = []
     for name in ("index.html", "composeApp.js"):
@@ -52,16 +52,16 @@ def validate_distribution(directory):
                 errors.append(f"Invalid WebAssembly binary: {file.relative_to(directory)}")
     resources = directory / "composeResources"
     image_names = {file.name for file in resources.rglob("*.xml") if file.stat().st_size > 0}
-    for name in sorted(SAMPLE_IMAGES - image_names):
+    for name in sorted(set(sample_images) - image_names):
         errors.append(f"Missing playground Compose resource: {name}")
     if any(file.is_symlink() for file in directory.rglob("*")):
         errors.append("Playground distribution must contain files, not symbolic links")
     return errors
 
 
-def validate_package(directory):
+def validate_package(directory, sample_images=SAMPLE_IMAGES):
     directory = Path(directory)
-    errors = validate_distribution(directory)
+    errors = validate_distribution(directory, sample_images)
     try:
         manifest = json.loads((directory / MANIFEST).read_text(encoding="utf-8"))
         files = manifest["files"]

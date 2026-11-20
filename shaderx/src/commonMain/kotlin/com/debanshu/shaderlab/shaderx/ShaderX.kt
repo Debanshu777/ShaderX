@@ -7,6 +7,7 @@ import com.debanshu.shaderlab.shaderx.effect.impl.AnimatedGradientEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.AudioDistortionEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.AudioVisualizerEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.ChromaticAberrationEffect
+import com.debanshu.shaderlab.shaderx.effect.impl.EffectCollection
 import com.debanshu.shaderlab.shaderx.effect.impl.GradientEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.GrayscaleEffect
 import com.debanshu.shaderlab.shaderx.effect.impl.InvertEffect
@@ -75,6 +76,10 @@ public object ShaderX {
             AudioDistortionEffect(),
             AudioVisualizerEffect(),
             NativeBlurEffect(),
+            EffectCollection.colorAdjustment.effect(),
+            EffectCollection.colorMatrix.effect(),
+            EffectCollection.orderedDither.effect(),
+            EffectCollection.halftone.effect(),
         )
     }
 

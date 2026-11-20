@@ -1,0 +1,327 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX08",
+  "status": "Development source-free background workflow implemented; public brush deferred by bounded experiment and ownership evidence",
+  "branch": "codex/developer-experience-research",
+  "baseline": "/private/tmp/shaderx-sx05-accepted-files.json and /private/tmp/shaderx-sx05-accepted.api; all previous/user changes preserved",
+  "environment": {
+    "java": "Homebrew OpenJDK21.0.12.1",
+    "gradle": "9.6.0",
+    "agp": "9.4.1",
+    "kotlin": "2.3.21",
+    "compose_multiplatform": "1.10.3",
+    "skiko": "0.9.37.4",
+    "os": "macOS27.0.1 aarch64",
+    "androidx_compose_ui_graphics": "1.10.5 resolved Android; MP1.10.3 unchanged"
+  },
+  "availability": {
+    "published": "0.1.3 unchanged",
+    "development": "0.1.4 only; no commit/release/publish/deploy/merge"
+  },
+  "public_contract": {
+    "api": [
+      "ShaderBackground.definition",
+      "ShaderDefinition.proceduralBackground()",
+      "Modifier.shaderBackground(background,values,playback?,inputRevision,frameProvider?,fallback?,factory,onError?,onReady?)",
+      "ShaderFactory.queryBackgroundSupport(background,inputs)"
+    ],
+    "compatibility": "Every existing JVM declaration and constructor retained in original class; no appended constructor parameter, required factory member, sealed error variant, or public native type.",
+    "source": "Explicit immutable declaration conservatively rejects reserved content identifier after comments stripped; native compiler validates source. Reuses ShaderProgram/ShaderDefinition/ParameterSchema. Explicit image bindings borrowed. No backdrop capture or implicit dummy child.",
+    "identity": "Wrappers compare by definition reference; provider/factory/playback replacement keyed by reference even if equals overridden. Values validated against exact schema. Nullable playback reference participates even when phase stays0.",
+    "preflight": "Built-in factory/API support checked before values/uniforms/frame providers. Third-party builtins-only renderer unavailable; query metadata UNKNOWN unless provider opted in. Effect=null BACKGROUND general route supported Skia/Android33+; any ShaderEffect rejected for wrong output; RAW/NESTED remain unsupported.",
+    "drawing": "Draw own rectangular pixel bounds behind drawContent in otherwise empty sized Box. Premultiplied alpha preserved. Outer clip shapes background+foreground. Padding before excludes/after includes draw bounds. Actual measured density/resize feeds resolution. Zero size no providers. First layout can precede snapshot.",
+    "playback": "External ShaderPlayback required only for time bindings; frameProvider required exactly for frame declarations. Explicit inputRevision while paused. No polling/continuous frames without external advancing owner. Host lifecycle/reduced-motion inputs remain external.",
+    "fallback": "Any failed whole replacement clears previous background and draws supplied ordinary Brush or transparent default; foreground retained, onError observed. No partial/missing-input success. onReady only native snapshot creation, not GPU presentation.",
+    "ownership": "Composition owns per-consumer snapshots; Skia uses compiled LRU with temporary builder closed and owned shader closed idempotently on replacement/disposal. Android fresh RuntimeShader per snapshot, colors structural/bound once; can compile every frame. Factory/playback/images remain caller-owned; no throughput/memory stabilization claim.",
+    "workbench": "Shared project/schema/codec/generator, explicit valid Content/Background choices, premultiplied .65 procedural starter, format2 output with format1 CONTENT backward read, exact-run last-good promotion after native creation+matching draw invocation. Failed/stale candidates retain last-good preview/export. Actual generated static/animated/image/live complete background Kotlin compiled in external consumer and retains .375 edited values, source/inputs/tile modes."
+  },
+  "abi": {
+    "removed_existing_declarations": 0,
+    "new_blocks": [
+      "public final class com/debanshu/shaderlab/shaderx/authoring/ShaderBackground {",
+      "public final class com/debanshu/shaderlab/shaderx/authoring/ShaderBackgroundKt {",
+      "public final class com/debanshu/shaderlab/shaderx/compose/ShaderBackgroundModifierKt {"
+    ],
+    "checkKotlinAbi": "passed",
+    "limitations": "JVM additive review; precompiled linkage and Android/Klib ABI remain SX15"
+  },
+  "commands": [
+    "./gradlew :shaderx:compileKotlinJvm",
+    "./gradlew :shaderx:jvmTest --tests \"*Background*\" :shaderx:assembleAndroidDeviceTest",
+    "./gradlew :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin",
+    "./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:testAndroidHostTest :shaderx:updateKotlinAbi :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :shaderx:assembleAndroidDeviceTest",
+    "./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:testAndroidHostTest :shaderx:updateKotlinAbi :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution",
+    "./gradlew :shaderx:connectedAndroidDeviceTest :shaderx:checkKotlinAbi",
+    "./gradlew :shaderx:jvmTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :shaderx:connectedAndroidDeviceTest :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution",
+    "./gradlew :shaderx:dependencies",
+    "./gradlew :shaderx:dependencyInsight --dependency ui-graphics-android --configuration androidCompileClasspath",
+    ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+    ".venv-docs/bin/python scripts/check_docs.py",
+    ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+    ".venv-docs/bin/zensical build --strict",
+    ".venv-docs/bin/python scripts/package_playground.py",
+    ".venv-docs/bin/python scripts/check_site.py",
+    "git diff --check"
+  ],
+  "command_environment": "All Gradle uses JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home; physical device selected privately with ANDROID_SERIAL. No ADB reset/restart/pairing; serial omitted.",
+  "results": {
+    "library_jvm": {
+      "tests": 568,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/test-results/jvmTest/*.xml",
+      "xml_files": 49
+    },
+    "library_wasm": {
+      "tests": 476,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/test-results/wasmJsBrowserTest/*.xml",
+      "xml_files": 32
+    },
+    "library_ios_simulator": {
+      "tests": 476,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/test-results/iosSimulatorArm64Test/*.xml",
+      "xml_files": 32
+    },
+    "android_host": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/test-results/testAndroidHostTest/*.xml",
+      "xml_files": 1
+    },
+    "sample_jvm": {
+      "tests": 44,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "samples/ShaderLab/composeApp/build/test-results/jvmTest/*.xml",
+      "xml_files": 12
+    },
+    "sample_wasm": {
+      "tests": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "samples/ShaderLab/composeApp/build/test-results/wasmJsBrowserTest/*.xml",
+      "xml_files": 10
+    },
+    "external_consumer_jvm": {
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "validation/kmp-consumer/build/test-results/jvmTest/*.xml",
+      "xml_files": 8
+    },
+    "physical_pixel9": {
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_glob": "shaderx/build/outputs/androidTest-results/connected/androidMain/*.xml",
+      "xml_files": 1
+    }
+  },
+  "backend_scope": {
+    "jvm": "Real Compose ImageComposeScene+Skia raster;7 Compose background tests including identity and null/paused0/null;5 shared raster background tests plus2 common contracts.",
+    "wasm_ios": "5 shared actual native raster tests and2 common contracts each; browser Wasm vs iOS simulator distinctly labelled.",
+    "android": "Physical Pixel9 Android17/API37;2 new HWUI/AGSL CanvasDrawScope RenderNode tests. Empty/translucent/foreground independent colors+time/live, no polling,32\u219264 resolution, failures and old snapshot independence. Does not establish Android Compose runtime modifier lifecycle.",
+    "brush_experiment": "Internal circle via native Compose ShaderBrush in shared JVM/Wasm/iOS raster; remembered TextStyle brush+DisposableEffect disposal on JVM Compose. Public brush deferred: mutable ShaderBrush size cache/transform, missing explicit resource/revision owner and multi-text-run/multisize/Android/iOS/Wasm lifecycle gates."
+  },
+  "brush_sources": {
+    "sources": [
+      {
+        "module": "org.jetbrains.compose.ui/ui-graphics-desktop",
+        "version": "1.10.3",
+        "artifact": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-desktop/1.10.3/c2da20250370555417ec1e9d6d03ed6a6ae9e584/ui-graphics-desktop-1.10.3-sources.jar",
+        "sha256": "50227fd0ed80dc7fe06558a50d2afb0b0bf8cd71ce1dae0a124a398f62993818",
+        "sources": {
+          "commonMain/androidx/compose/ui/graphics/Brush.kt": {
+            "sha256": "bbc4159dd45372543e06a3d2fdd03f322b6c93afb5a4639c6bc34c20c20b026d",
+            "shader_typealias": false
+          },
+          "skikoMain/androidx/compose/ui/graphics/SkiaShader.skiko.kt": {
+            "sha256": "d9672b81c2dd59b5f66c55ca50f01b08f155447aea9d9ed9f3ccaea0801453d1",
+            "shader_typealias": true
+          }
+        }
+      },
+      {
+        "module": "org.jetbrains.compose.ui/ui-graphics-wasm-js",
+        "version": "1.10.3",
+        "artifact": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-wasm-js/1.10.3/c384fc33535701b7776ef2ae3e3b3aacf836b8d5/ui-graphics-wasm-js-1.10.3-sources.jar",
+        "sha256": "527bdf459e3aef7b03c26904df0b7f46e5dd7386d42d0584ae8aac66dcf9e2f4",
+        "sources": {
+          "commonMain/androidx/compose/ui/graphics/Brush.kt": {
+            "sha256": "bbc4159dd45372543e06a3d2fdd03f322b6c93afb5a4639c6bc34c20c20b026d",
+            "shader_typealias": false
+          },
+          "skikoMain/androidx/compose/ui/graphics/SkiaShader.skiko.kt": {
+            "sha256": "d9672b81c2dd59b5f66c55ca50f01b08f155447aea9d9ed9f3ccaea0801453d1",
+            "shader_typealias": true
+          }
+        }
+      },
+      {
+        "module": "org.jetbrains.compose.ui/ui-graphics-uikitarm64",
+        "version": "1.10.3",
+        "artifact": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-uikitarm64/1.10.3/f559c923c32fa6a25a50462a911867b568f6f83d/ui-graphics-uikitarm64-1.10.3-sources.jar",
+        "sha256": "6b702b033e6b40ef4ff727ff3a3863c5b615639ce8ee57f5f7999355ee04bccf",
+        "sources": {
+          "commonMain/androidx/compose/ui/graphics/Brush.kt": {
+            "sha256": "bbc4159dd45372543e06a3d2fdd03f322b6c93afb5a4639c6bc34c20c20b026d",
+            "shader_typealias": false
+          },
+          "skikoMain/androidx/compose/ui/graphics/SkiaShader.skiko.kt": {
+            "sha256": "d9672b81c2dd59b5f66c55ca50f01b08f155447aea9d9ed9f3ccaea0801453d1",
+            "shader_typealias": true
+          }
+        }
+      },
+      {
+        "module": "org.jetbrains.skiko/skiko-awt",
+        "version": "0.9.37.4",
+        "artifact": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt/0.9.37.4/46269fc1884283022cb7ba4e312f926cbeb8718a/skiko-awt-0.9.37.4-sources.jar",
+        "sha256": "aaccf5f76d5a2ea3a08d9f42b710473d2d5b97c9ff13a0b05a0bbccaae2dca20",
+        "sources": {
+          "commonMain/org/jetbrains/skia/RuntimeShaderBuilder.kt": {
+            "sha256": "edc02f77d1ccf66637f1ded818201d068b8d6c5479127f9217e54971dac68a20",
+            "shader_typealias": false
+          }
+        }
+      },
+      {
+        "module": "androidx.compose.ui/ui-graphics-android",
+        "version": "1.10.5",
+        "resolution_status": "Resolved androidCompileClasspath verified by dependencyInsight; AndroidX1.10.5 maps from Compose Multiplatform1.10.3",
+        "artifact": "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.ui/ui-graphics-android/1.10.5/48c4ad08581d4f7786396763bc87e24bc10b1510/ui-graphics-android-1.10.5-sources.jar",
+        "sha256": "963de783dc1a7f8274e9eb9e3125092238cd784d4470e78a34d01fcf1624c0e7",
+        "sources": {
+          "androidMain/androidx/compose/ui/graphics/AndroidShader.android.kt": {
+            "sha256": "19de4666a8f08bcdbbf7592214ed0ae1b5e423134f6c4a92736010956ee70c69"
+          },
+          "commonMain/androidx/compose/ui/graphics/Brush.kt": {
+            "sha256": "bbc4159dd45372543e06a3d2fdd03f322b6c93afb5a4639c6bc34c20c20b026d"
+          }
+        }
+      }
+    ],
+    "findings": [
+      "Compose1.10.3 actual Shader is Skia typealias on desktop, wasm-js, uikitarm64 source jars.",
+      "ShaderBrush caches created shader by size, has mutable transform state and no close contract.",
+      "RuntimeShaderBuilder is Managed and emits Shader snapshots; native wrappers must remain private.",
+      "No general ShaderX shape/text brush ships without backend rendering/disposal/invalidation evidence.",
+      "Resolved AndroidX ui-graphics-android1.10.5 primary source aliases Compose Shader to android.graphics.Shader; ShaderBrush ownership source matches audited MP brush. Exact library Android classpath verified."
+    ]
+  },
+  "docs": {
+    "metadata": "27 guides/30 Markdown passed",
+    "python_unit_tests": 24,
+    "strict_build": "passed",
+    "site_check": "27 indexable pages+production playground passed",
+    "showcase": "README flower/banner/all four GIF recording lines identical to SX05 accepted baseline",
+    "production_package": {
+      "files": 11,
+      "bytes": 15522214
+    }
+  },
+  "visual_preview": {
+    "host": "Actual production Wasm/Skia on localhost via IAB CUA",
+    "desktop": "1280x900",
+    "mobile": "390x844",
+    "observed": [
+      "Background starter Run draws gradient without placeholder and foreground text stays white",
+      "Complete generated SDK output uses shaderBackground with exact values",
+      "Mobile invalid source/form draft diagnostic retains explicitly STALE last-good preview/export",
+      "Restored starter Run recovers current revision",
+      "Compose guide desktop/mobile readable; code horizontally scrolls on narrow viewport"
+    ],
+    "screenshots": [
+      "/tmp/sx08-background-desktop.png",
+      "/tmp/sx08-background-mobile.png",
+      "/tmp/sx08-background-mobile-recovered.png",
+      "/tmp/sx08-docs-desktop.png",
+      "/tmp/sx08-docs-mobile.png"
+    ],
+    "viewport": "Temporary override reset; no screenshot claim of physical mobile UI."
+  },
+  "initial_corrections": [
+    "Initial sandbox Gradle cache lock denied; authorized escalation used existing cache/JDK21.",
+    "Shared native test Canvas adapter fixed to asComposeCanvas; owned Skia snapshot close made idempotent after deliberate double-close regression.",
+    "Sample missing valuesFrom import corrected; generated source compiled.",
+    "Supervisor preflight/provider reference identity/stable wrapper regressions added.",
+    "Supervisor nullable clock0 identity edge corrected and rendered null\u2192paused0\u2192null test passed."
+  ],
+  "remaining_gates": [
+    "Public shape/text brush lifecycle+invalidation across all claimed targets deferred",
+    "Physical iOS GPU; broader Android devices/API/colorspaces and actual Android Compose modifier lifecycle beyond HWUI data route",
+    "GPU throughput/native memory stabilization; Android fresh snapshot may compile each animated frame",
+    "Already-compiled binary linkage and Android/Klib ABI SX15",
+    "Automatic captured-backdrop/glass, raw/nested data inputs, image export backgrounds not introduced",
+    "Native Android/iOS host UI/file-picker/accessibility/mobile OS keyboard not inferred from browser viewport or compilation"
+  ],
+  "review_diff": "/tmp/sx08-review.patch",
+  "files_changed": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/compose.md",
+    "docs/contributing.md",
+    "docs/custom-effects.md",
+    "docs/getting-started.md",
+    "docs/platforms.md",
+    "docs/roadmap/02-custom-effect-authoring.md",
+    "docs/roadmap/04-capabilities-and-fallback.md",
+    "docs/roadmap/08-background-and-brush.md",
+    "docs/samples.md",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/KotlinExport.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchModel.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/WorkbenchProjectCodec.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/WorkbenchPanel.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/KotlinExportTest.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/WorkbenchModelTest.kt",
+    "samples/ShaderLab/composeApp/src/jvmTest/kotlin/com/debanshu/shaderlab/GeneratedSourceProducerTest.kt",
+    "shaderx/api/jvm/shaderx.api",
+    "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/BackgroundDeviceTest.kt",
+    "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderBackgroundSnapshot.android.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/ShaderBackground.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/compose/ShaderBackgroundModifier.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderBackgroundSnapshot.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderCapabilities.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/BackgroundContractTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/BackgroundComposeTest.kt",
+    "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderBackgroundSnapshot.skia.kt",
+    "shaderx/src/skiaTest/kotlin/com/debanshu/shaderlab/shaderx/BackgroundRasterTest.kt",
+    "validation/evidence/sx08-background-and-brush.json",
+    "validation/kmp-consumer/src/developmentTest/kotlin/GeneratedBackgroundConsumerTest.kt"
+  ],
+  "logs": [
+    "/tmp/sx08-compile.log",
+    "/tmp/sx08-background-tests.log",
+    "/tmp/sx08-sample-consumer.log",
+    "/tmp/sx08-full-validation.log",
+    "/tmp/sx08-final-validation.log",
+    "/tmp/sx08-final-playback-validation.log",
+    "/tmp/sx08-device.log",
+    "/tmp/sx08-dependencies.log",
+    "/tmp/sx08-doc-install.log",
+    "/tmp/sx08-doc-tests.log",
+    "/tmp/sx08-doc-build.log",
+    "/tmp/sx08-site-check.log",
+    "/tmp/sx08-android-dependency.log"
+  ],
+  "integrity": {
+    "readme_media_preserved": true,
+    "accepted_baseline_bytes_verified_for_all_modified_files": true,
+    "all_other_accepted_file_hashes_unchanged": true,
+    "changed_file_count": 31,
+    "patch_apply_check": "passed against isolated accepted original file copies"
+  }
+}

@@ -9,6 +9,9 @@ from urllib.parse import unquote, urlsplit
 import markdown
 import yaml
 
+from package_playground import EXAMPLES
+from release_version import check_release_versions
+
 ROOT = Path(__file__).resolve().parents[1]
 REPO_PATH = "/Debanshu777/ShaderX/"
 
@@ -25,8 +28,9 @@ class Links(HTMLParser):
                 self.urls.append((tag, key, attrs[key]))
 
 
+
 def check():
-    errors = []
+    errors = check_release_versions(ROOT)
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     for asset in ("assets/shader_lab.gif", "assets/shader_lab_web.gif",
                   "assets/ASCIICamera.gif", "assets/vertical_carousal.gif",
@@ -75,6 +79,9 @@ def check():
             # The production browser app is assembled into the site after Zensical.
             if target.resolve() == (ROOT / "docs/playground").resolve():
                 target = ROOT / "samples/ShaderLab/composeApp/src/wasmJsMain/resources/index.html"
+            for slug, (module, _) in EXAMPLES.items():
+                if target.resolve() == (ROOT / "docs" / slug).resolve():
+                    target = ROOT / f"samples/{module}/composeApp/src/wasmJsMain/resources/index.html"
             if not target.exists():
                 errors.append(f"{file.relative_to(ROOT)}: missing link target {url}")
 
@@ -82,7 +89,7 @@ def check():
         print(error, file=sys.stderr)
     if errors:
         return 1
-    print(f"Checked metadata for {len(guides)} guides and file links in {len(files)} Markdown files.")
+    print(f"Checked release version pins, metadata for {len(guides)} guides and file links in {len(files)} Markdown files.")
     return 0
 
 

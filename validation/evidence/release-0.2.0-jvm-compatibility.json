@@ -1,0 +1,603 @@
+{
+  "release_version": "0.2.0",
+  "validation_date": "2026-11-20",
+  "scope": "Published JVM binary calls with supplied current resolved dependencies/JDK21; not an all-platform binary or behavior guarantee",
+  "git_head_before_release_commit": "9cee35c9cb92d4f2ca0bc3688917c09ab0f055b4",
+  "worktree_state": "Release preparation remains uncommitted at validation time; artifact and fixture hashes identify tested inputs",
+  "current_artifact": {
+    "path": "shaderx/build/libs/shaderx-jvm-0.2.0.jar",
+    "sha256": "fc1ba7a0dcc10dbe3b2589b5222a0341a3371cbb27f1cca30df9f05ee95e09de"
+  },
+  "tool_sha256": "6e13bfe9b81639f37e7e662e131f03ab34f671ab76a895c4f67cb9f3bdcca5de",
+  "toolchain": {
+    "java_home": "/opt/homebrew/opt/openjdk@21",
+    "java_version": "openjdk version \"21.0.12.1\" 2026-08-18\nOpenJDK Runtime Environment Homebrew (build 21.0.12.1)\nOpenJDK 64-Bit Server VM Homebrew (build 21.0.12.1, mixed mode, sharing)\n",
+    "compiler_classpath_file": "/private/tmp/sx15-binary-compiler-classpath.txt",
+    "compiler_classpath_sha256": "b4a611ae06da8fa0eb6709954be302ff546b55274bcff667c6583dad25ba2b7a",
+    "compiler_classpath_hashes": {
+      "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.3.21/c4b47f8e33cdbeedd8c1415ab9f9ade870388162/kotlin-compiler-embeddable-2.3.21.jar": "d3e70fb011675e77ef00f1a68918d3cd91eed26058977d1e3ea2a37a293233af",
+      "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.3.21/a2ee2c4e220fee522f0451b723bab2a43f3481a7/kotlin-stdlib-2.3.21.jar": "6f64eac736db9434dd6925b4a518b9d1d17177652320c37916cf9ba3ce7d7d7a",
+      "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-script-runtime/2.3.21/8dafd7f0eb5efef35a446683a2774fef61c68aeb/kotlin-script-runtime-2.3.21.jar": "ec61bf1229c837fa9f4255f34ca69816138b73158e7ae9b8d964cf92ca6dfd2e",
+      "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.6.10/1cbe9c92c12a94eea200d23c2bbaedaf3daf5132/kotlin-reflect-1.6.10.jar": "3277ac102ae17aad10a55abec75ff5696c8d109790396434b496e75087854203",
+      "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-daemon-embeddable/2.3.21/384c12222b10aaa06fdd2163435709efdade5a02/kotlin-daemon-embeddable-2.3.21.jar": "222fc10a3c22e74d30369bf8a0ca6c4f9372eac7d4a0081e290c256fa4d30fb2",
+      "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.8.0/ac1dc37a30a93150b704022f8d895ee1bd3a36b3/kotlinx-coroutines-core-jvm-1.8.0.jar": "9860906a1937490bf5f3b06d2f0e10ef451e65b95b269f22daf68a3d1f5065c5",
+      "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/23.0.0/8cc20c07506ec18e0834947b84a864bfc094484e/annotations-23.0.0.jar": "7b0f19724082cbfcbc66e5abea2b9bc92cf08a1ea11e191933ed43801eb3cd05"
+    }
+  },
+  "baselines": [
+    {
+      "baseline_version": "0.1.4",
+      "status": "PASS",
+      "old_artifact": {
+        "url": "https://repo.maven.apache.org/maven2/io/github/debanshu777/shaderx-jvm/0.1.4/shaderx-jvm-0.1.4.jar",
+        "sha256": "51423374156dad5e745fa718a4baa832d2c6d7a7214321f639c8ecd694925af4"
+      },
+      "current_artifact_sha256": "fc1ba7a0dcc10dbe3b2589b5222a0341a3371cbb27f1cca30df9f05ee95e09de",
+      "descriptor_inventory": {
+        "old_public_protected_classes": 108,
+        "old_public_protected_members": 963,
+        "changed_class_declarations": [
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "old": "public final class com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect extends com.debanshu.shaderlab.shaderx.effect.AbstractRuntimeShaderEffect implements com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect {",
+            "current": "public final class com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect extends com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect {"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.factory.SkiaImageProcessor",
+            "old": "public final class com.debanshu.shaderlab.shaderx.factory.SkiaImageProcessor implements com.debanshu.shaderlab.shaderx.factory.ImageProcessor {",
+            "current": "public final class com.debanshu.shaderlab.shaderx.factory.SkiaImageProcessor implements com.debanshu.shaderlab.shaderx.factory.ImageProcessor,com.debanshu.shaderlab.shaderx.factory.ImageExportProvider {"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.factory.SkiaShaderFactory",
+            "old": "public final class com.debanshu.shaderlab.shaderx.factory.SkiaShaderFactory extends com.debanshu.shaderlab.shaderx.factory.BaseShaderFactory {",
+            "current": "public final class com.debanshu.shaderlab.shaderx.factory.SkiaShaderFactory extends com.debanshu.shaderlab.shaderx.factory.BaseShaderFactory implements com.debanshu.shaderlab.shaderx.factory.ShaderCapabilityProvider,com.debanshu.shaderlab.shaderx.factory.ShaderPipelineProvider {"
+          }
+        ],
+        "changed_member_declarations": [
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect",
+            "name": "withTime",
+            "descriptor": "(F)Lcom/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect;",
+            "old": "public final com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect withTime(float);",
+            "current": "public com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect withTime(float);"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect",
+            "name": "withTypedParameter",
+            "descriptor": "(Ljava/lang/String;Lcom/debanshu/shaderlab/shaderx/parameter/ParameterValue;)Lcom/debanshu/shaderlab/shaderx/effect/AbstractAnimatedShaderEffect;",
+            "old": "public final com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect withTypedParameter(java.lang.String, com.debanshu.shaderlab.shaderx.parameter.ParameterValue);",
+            "current": "public com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect withTypedParameter(java.lang.String, com.debanshu.shaderlab.shaderx.parameter.ParameterValue);"
+          }
+        ],
+        "missing_declared_descriptors": [
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "equals",
+            "descriptor": "(Ljava/lang/Object;)Z",
+            "declaration": "public boolean equals(java.lang.Object);"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "hashCode",
+            "descriptor": "()I",
+            "declaration": "public int hashCode();"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "buildFrameUniforms",
+            "descriptor": "()Ljava/util/List;",
+            "declaration": "public java.util.List<com.debanshu.shaderlab.shaderx.uniform.Uniform> buildFrameUniforms();"
+          }
+        ],
+        "inherited_resolutions": [
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "equals",
+            "descriptor": "(Ljava/lang/Object;)Z",
+            "declaration": "public boolean equals(java.lang.Object);",
+            "resolved_in": "com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "hashCode",
+            "descriptor": "()I",
+            "declaration": "public int hashCode();",
+            "resolved_in": "com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "buildFrameUniforms",
+            "descriptor": "()Ljava/util/List;",
+            "declaration": "public java.util.List<com.debanshu.shaderlab.shaderx.uniform.Uniform> buildFrameUniforms();",
+            "resolved_in": "com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect"
+          }
+        ],
+        "reviewed_noncontract_changes": [],
+        "unresolved_consumer_descriptors": []
+      },
+      "frozen_manifest": {
+        "mode": "freeze",
+        "scope": "JVM only; source and Android/Klib ABI are separate gates",
+        "baseline_version": "0.1.4",
+        "old_jar": "/private/tmp/shaderx-central-0.1.4-jvm.jar",
+        "old_jar_sha256": "51423374156dad5e745fa718a4baa832d2c6d7a7214321f639c8ecd694925af4",
+        "frozen_hashes": {
+          "META-INF/main.kotlin_module": "e871d64c498617a57844801a5921b0eb078931ca7429f57b863de02b58cbb2a0",
+          "shaderx/binary/FrozenBaseFactory.class": "fc7de75f40bc49b41f3836d850b0c702deb706589d0af41eaa4212a34281202c",
+          "shaderx/binary/FrozenConsumer.class": "535c52db3b5ed3e59858ac62d368a93a645e109da97e4030db5a1fd43bdc8527",
+          "shaderx/binary/FrozenDirectFactory.class": "3b5542cd817dbee5590755f05e5c690483b816f581545dbbe9bd710bb6efae90",
+          "shaderx/binary/FrozenJavaCaller.class": "ad7de8f081f8dc77b2d1a76bacd4143f885d4259f3ac19f71226bb99c63e4ace",
+          "shaderx/binary/FrozenPublishedFeatures.class": "702a8429f676a1987a52da446e4a91f13058711cc98563e2b3dc2e5c94c81923"
+        },
+        "source_hashes": {
+          "validation/binary-compatibility/old/FrozenComposeConsumer.kt": "a403661d615fcc1c7aa0d7a170ec242ca1897429d921bf5b1926d3ab42312ee7",
+          "validation/binary-compatibility/old/FrozenConsumer.kt": "10bca83cf6f3d38bcf3c5ffbf0dc1932820edc7bf566ede267d07e6a4ae42b6c",
+          "validation/binary-compatibility/old/FrozenJavaCaller.java": "d0bda5b73b75ef451f35a67b50d4c24fee0677e335f442b67ceabb6e69466964",
+          "validation/binary-compatibility/old-0.1.4/FrozenPublishedFeatures.kt": "c90eddffae83f160f28adfe7e2d7cb50c7ba3c0bd8e0b303d42ebf8c3983b22b"
+        }
+      },
+      "frozen_compose_manifest": {
+        "mode": "freeze-compose",
+        "scope": "JVM only; source and Android/Klib ABI are separate gates",
+        "baseline_version": "0.1.4",
+        "old_jar": "/private/tmp/shaderx-central-0.1.4-jvm.jar",
+        "old_jar_sha256": "51423374156dad5e745fa718a4baa832d2c6d7a7214321f639c8ecd694925af4",
+        "frozen_hashes": {
+          "META-INF/main.kotlin_module": "c93b65932aad130705b1f13d9adbded3494ddd9fba7223108ad56234ef017d15",
+          "shaderx/binary/FrozenComposeConsumerKt.class": "4f22ea0dbde82c8671afb6b01b1b79fff934e2d8ce3eee57186eb3507735bf7e"
+        },
+        "source_sha256": "a403661d615fcc1c7aa0d7a170ec242ca1897429d921bf5b1926d3ab42312ee7"
+      },
+      "runner_source_hashes": {
+        "validation/binary-compatibility/current/CurrentRunner.kt": "06cb6ccb484cb95afd8f27a411c1a2b736cb494c29edc80faff2b94079245efd",
+        "validation/binary-compatibility/current/CurrentSourceFixture.kt": "0d1510c39a58c4b23fa5122b7b05b3ced93e2e9ed1d8a8d9e213b55b3d31ce79"
+      },
+      "runtime_stdout": "ShaderFactory-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nBaseShaderFactory-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nGradientEffect-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nWaveEffect-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nShaderResult-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nUniform-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nShaderFactory-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nShaderFactory-resources=[jar:file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar!/com/debanshu/shaderlab/shaderx/factory/ShaderFactory.class]\nFrozenDirectFactory-new-session-default=PASS\nFrozenBaseFactory-new-session-default=PASS\nfrozen-java-caller=PASS\nfrozen-published-session-texture-and-tile-mode-calls=PASS\nfrozen-compose-old-modifier-descriptors=PASS (composition only; no UI pixels)\nJVM-BINARY-COMPATIBILITY=PASS\n",
+      "current_source_overload_calls": {
+        "shaderEffect-OTbkHQo": 4,
+        "shaderEffect-PaVRBUA": 1,
+        "shaderEffectWithResult-OTbkHQo": 4,
+        "shaderEffectWithResult-PaVRBUA": 1
+      },
+      "runtime_classpath": [
+        "/private/tmp/shaderx-release-0.1.4-binary-proof-v2/runner",
+        "/private/tmp/shaderx-release-0.1.4-binary-proof-v2/frozen",
+        "/private/tmp/shaderx-release-0.1.4-binary-proof-v2/frozen-compose",
+        "/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.desktop/desktop-jvm/1.10.3/42facd9840309ac4eb841a986c5d1b97d2780471/desktop-jvm-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.material/material-desktop/1.10.3/63e1c3c6705d111bf84e41110e7729df5b85163e/material-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.material/material-ripple-desktop/1.10.3/74a14824f086339703264689c5a7cf4ceb39ed40/material-ripple-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.foundation/foundation-desktop/1.10.3/d9ba57abee3527886ea640d3b390a70ba9e28af/foundation-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.animation/animation-desktop/1.10.3/52a17b8bd5f608cdb60f01c64eee2830b8484ca7/animation-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.foundation/foundation-layout-desktop/1.10.3/149192cb271d4c11905104b9180d5d648b3591f2/foundation-layout-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.animation/animation-core-desktop/1.10.3/5dd98c5745e548644b7657901bbcc4c2c8f9ec59/animation-core-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-desktop/1.10.3/73a6b1e10434fb11bae82daa68c205c71af03c55/ui-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.runtime/runtime-desktop/1.10.3/edbd39fc9691f4ba1e29c6690341148db4272752/runtime-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-backhandler-desktop/1.10.3/ed725f86a0fdff73fb37561ffb606166725e4b6f/ui-backhandler-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.navigationevent/navigationevent-desktop/1.0.2/ddb1e7fe97ed51c3d35bba493f97fcf12398719/navigationevent-desktop-1.0.2.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-text-desktop/1.10.3/7babd6e2dea601e74bed24b4017350e1acf4569c/ui-text-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.runtime/runtime-saveable-desktop/1.10.3/9b0e2a8ce3ae7d2b1a40307bc9271933b238cfd4/runtime-saveable-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-saveable-desktop/1.10.5/f6903c683c07ba479659ba4eb55bc7c80a7c433e/runtime-saveable-desktop-1.10.5.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-annotation-jvm/1.10.5/ea491da34ba40ae9bd340c393566753ddfd95a76/runtime-annotation-jvm-1.10.5.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-retain-desktop/1.10.5/879812e3cd2c6151f5d91f515a35952b1be07a76/runtime-retain-desktop-1.10.5.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose-desktop/2.9.6/7b6b6793f3c4c5996b20d1d99cf728e5fac00364/lifecycle-runtime-compose-desktop-2.9.6.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-savedstate-desktop/2.9.4/72a1919b08c5a4da224d8a65ce1589aa69934e8a/lifecycle-viewmodel-savedstate-desktop-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-desktop/2.9.4/93fee6d78f0df0e38f36e0fa2eff74f8da6d5481/lifecycle-viewmodel-desktop-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-desktop/2.9.4/1cc820319ec0139e76b8a2fe4be0b356b4e624c4/lifecycle-runtime-desktop-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.savedstate/savedstate-compose-desktop/1.3.6/63692375ffe667f12cb3ea8aa1e605d659ed2add/savedstate-compose-desktop-1.3.6.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate-compose-desktop/1.3.3/cd60b543d5722a8b5e6cea1e4ccdec8b4375a22b/savedstate-compose-desktop-1.3.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate-desktop/1.3.3/1c5bfc3fb56614538528060a06f2c03e34fa5188/savedstate-desktop-1.3.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-common-jvm/2.9.4/ab739bccdb3541983385af169565c7c035d897e7/lifecycle-common-jvm-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-compose-desktop/2.9.4/86a4ffec845d4e488078118a0b5095bd1fabcafe/lifecycle-runtime-compose-desktop-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-desktop/1.10.5/b1705e2087f06395622b784aa88e2e738043459/runtime-desktop-1.10.5.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-desktop/1.10.3/1fd5d0189d75eca10163a1f07842627519399337/ui-graphics-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-unit-desktop/1.10.3/aeeb2f31358ab5abf0bafa0828de2faba7189db5/ui-unit-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-geometry-desktop/1.10.3/779ddaadbc03720f7bb2507f6ed6dc4ffc9e7f3e/ui-geometry-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-tooling-preview-desktop/1.10.3/6d464d6c6d654d45aecdfaff7a08d64af62217e2/ui-tooling-preview-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt-runtime-macos-arm64/0.9.37.4/a21a251e5695f2b8da63842e9e8a5ecb2f219dce/skiko-awt-runtime-macos-arm64-0.9.37.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt/0.9.37.4/fc7470cca1041a52b182a921205c5c224e7709ad/skiko-awt-0.9.37.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.10.2/4a9f78ef49483748e2c129f3d124b8fa249dafbf/kotlinx-coroutines-core-jvm-1.10.2.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/2.2.20/57c4d839a6e5ad105d61ffc5cc0bf4de649c1714/kotlin-stdlib-jdk8-2.2.20.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-util-desktop/1.10.3/fe41825dccacb792ded7df579736a0ed919ee270/ui-util-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/atomicfu-jvm/0.23.2/a4601dc42dceb031a586058e8356ff778a57dea0/atomicfu-jvm-0.23.2.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/2.2.20/bdbe3b5d872fa3b74d8fcd4e7ca3193f4abc9cc8/kotlin-stdlib-jdk7-2.2.20.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.collection/collection-jvm/1.5.0/7ba2c69414d46ebc2dd76598bdd0a75c54281a57/collection-jvm-1.5.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.arch.core/core-common/2.2.0/5e1b8b81dfd5f52c56a8d53b18ca759c19a301f3/core-common-2.2.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.annotation/annotation-jvm/1.9.1/b17951747e38bf3986a24431b9ba0d039958aa5f/annotation-jvm-1.9.1.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-serialization-core-jvm/1.7.3/1f226780b845ff9206474c05159245d861556249/kotlinx-serialization-core-jvm-1.7.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.3.21/a2ee2c4e220fee522f0451b723bab2a43f3481a7/kotlin-stdlib-2.3.21.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/23.0.0/8cc20c07506ec18e0834947b84a864bfc094484e/annotations-23.0.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.runtime/jbr-api/1.5.0/4158e485a7a4ecfd521e03095d81e0225529e8d2/jbr-api-1.5.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.0/7425a601c1c7ec76645a78d22b8c6a627edee507/jspecify-1.0.0.jar"
+      ],
+      "dependency_hashes": {
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.desktop/desktop-jvm/1.10.3/42facd9840309ac4eb841a986c5d1b97d2780471/desktop-jvm-1.10.3.jar": "fdb63de4c9bdc6570c5355eeb0f013d4635effda42907c2d084acc77e08d4f8a",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.material/material-desktop/1.10.3/63e1c3c6705d111bf84e41110e7729df5b85163e/material-desktop-1.10.3.jar": "ee4afa33a2411e06cf1bec689667767ffb991ff02269e040a4ef64e76e392119",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.material/material-ripple-desktop/1.10.3/74a14824f086339703264689c5a7cf4ceb39ed40/material-ripple-desktop-1.10.3.jar": "3257697a1a58188ec3dc31f31867f1c38209900b87df1261ebac9e6a1387db83",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.foundation/foundation-desktop/1.10.3/d9ba57abee3527886ea640d3b390a70ba9e28af/foundation-desktop-1.10.3.jar": "3a9b7bfae72f1a92a8123d3290bb7d7f61d92e5cde877af5373c3e5c2caceb2b",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.animation/animation-desktop/1.10.3/52a17b8bd5f608cdb60f01c64eee2830b8484ca7/animation-desktop-1.10.3.jar": "1881c5575440055d54a679418f7ad7e86c0349743389360bed0f6a36af16ba34",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.foundation/foundation-layout-desktop/1.10.3/149192cb271d4c11905104b9180d5d648b3591f2/foundation-layout-desktop-1.10.3.jar": "8d8e00062a83a147409f42f91798394c3c221d22877953eff7d0a81767b5d0fc",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.animation/animation-core-desktop/1.10.3/5dd98c5745e548644b7657901bbcc4c2c8f9ec59/animation-core-desktop-1.10.3.jar": "41c0220ddbc55cb897feb0d5816b748f9c11162171f12743c04b50d0d84db628",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-desktop/1.10.3/73a6b1e10434fb11bae82daa68c205c71af03c55/ui-desktop-1.10.3.jar": "ec8887c03a333fa374d0b4c46bb9fb700937857f4088eaea4c4cc0ec835f7498",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.runtime/runtime-desktop/1.10.3/edbd39fc9691f4ba1e29c6690341148db4272752/runtime-desktop-1.10.3.jar": "05f5570c0a7ea8addd6fe9507a70f293efa7f1450d8b9b16dc3c8fee21cc6127",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-backhandler-desktop/1.10.3/ed725f86a0fdff73fb37561ffb606166725e4b6f/ui-backhandler-desktop-1.10.3.jar": "1babf68f5a05cbe1ba8cf934f0e575bb0d0b184444514e6aa7ec1f8004c9ce33",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.navigationevent/navigationevent-desktop/1.0.2/ddb1e7fe97ed51c3d35bba493f97fcf12398719/navigationevent-desktop-1.0.2.jar": "43deeb5774fd737fa945e09a47f93b6f1a508d17fac8f3b65f1c863e7f7d0660",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-text-desktop/1.10.3/7babd6e2dea601e74bed24b4017350e1acf4569c/ui-text-desktop-1.10.3.jar": "fbca4db945be286b84f75c0c9c784218470bebefa831f73f08edfb3294b6c8e8",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.runtime/runtime-saveable-desktop/1.10.3/9b0e2a8ce3ae7d2b1a40307bc9271933b238cfd4/runtime-saveable-desktop-1.10.3.jar": "eb7132b55de2b0913736fdff4705022803e455810f018efecc9eb3230936520a",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-saveable-desktop/1.10.5/f6903c683c07ba479659ba4eb55bc7c80a7c433e/runtime-saveable-desktop-1.10.5.jar": "ef24e24cc8c9c3b9871007fbdf589ed9aaaecf95979a66b7484806f9f0e24d91",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-annotation-jvm/1.10.5/ea491da34ba40ae9bd340c393566753ddfd95a76/runtime-annotation-jvm-1.10.5.jar": "f89dda8bcd73876d0fc16568844b2bd79443ee7ca62810874d25c7dcaa394bd6",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-retain-desktop/1.10.5/879812e3cd2c6151f5d91f515a35952b1be07a76/runtime-retain-desktop-1.10.5.jar": "463ee9c1e93d1b913458bfecc96d128a3574a802f41c8c9781d7320c3b55ed8b",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose-desktop/2.9.6/7b6b6793f3c4c5996b20d1d99cf728e5fac00364/lifecycle-runtime-compose-desktop-2.9.6.jar": "31c3c4b6dea38f078c46829dee2c43abba2bf8757b7ee8a0f660f31217364898",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-savedstate-desktop/2.9.4/72a1919b08c5a4da224d8a65ce1589aa69934e8a/lifecycle-viewmodel-savedstate-desktop-2.9.4.jar": "3e0b44e2514eafdd6938d5457d9f46e4785077c45d3b4364b5c23c4dcb93efd3",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-desktop/2.9.4/93fee6d78f0df0e38f36e0fa2eff74f8da6d5481/lifecycle-viewmodel-desktop-2.9.4.jar": "98f816be6869407c87d46058756f97780fa6c6cf61acdba97216f413731af15d",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-desktop/2.9.4/1cc820319ec0139e76b8a2fe4be0b356b4e624c4/lifecycle-runtime-desktop-2.9.4.jar": "2fb49f76d1021792fb359e0a9246c1509f2f5b555f0a46591d24d58deb68bd5c",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.savedstate/savedstate-compose-desktop/1.3.6/63692375ffe667f12cb3ea8aa1e605d659ed2add/savedstate-compose-desktop-1.3.6.jar": "0f3d045c5fd7e1301ab6c38cd0778067b0484cf39acac1233be71a723a6a8075",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate-compose-desktop/1.3.3/cd60b543d5722a8b5e6cea1e4ccdec8b4375a22b/savedstate-compose-desktop-1.3.3.jar": "4a94787a6e5bcfe143390a4f2737d4425d2ea867f2b34a847de6cda3c6ccc58a",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate-desktop/1.3.3/1c5bfc3fb56614538528060a06f2c03e34fa5188/savedstate-desktop-1.3.3.jar": "c5c89062ba8402b8f8657efd54db1ff192f91ca95fae59c3b418fbc477c3e3ea",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-common-jvm/2.9.4/ab739bccdb3541983385af169565c7c035d897e7/lifecycle-common-jvm-2.9.4.jar": "37d89b2101f074ac6c260917dabb185607645ee200aa3018c7c5bde70edcf184",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-compose-desktop/2.9.4/86a4ffec845d4e488078118a0b5095bd1fabcafe/lifecycle-runtime-compose-desktop-2.9.4.jar": "d25c083df93da718a1876a3293bd15f7dc7a811e998735943bce590683a57835",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-desktop/1.10.5/b1705e2087f06395622b784aa88e2e738043459/runtime-desktop-1.10.5.jar": "b195860542f612de0512b54a75353e0f6d58815f0c9530a03bc5b0e734474829",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-desktop/1.10.3/1fd5d0189d75eca10163a1f07842627519399337/ui-graphics-desktop-1.10.3.jar": "9fa604364dc4de23d3f8101f2f5968afa742d847105a5e2c41b6a0aa9123f11b",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-unit-desktop/1.10.3/aeeb2f31358ab5abf0bafa0828de2faba7189db5/ui-unit-desktop-1.10.3.jar": "f0f3439928b3d9132f07cb2d7a86091696372ebc8354d16b48830b6ce15e8161",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-geometry-desktop/1.10.3/779ddaadbc03720f7bb2507f6ed6dc4ffc9e7f3e/ui-geometry-desktop-1.10.3.jar": "cdbfdabccac8abef2d9bc0420ec0c4be7a880f6d26b2d1cc4e2317c0d252ee27",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-tooling-preview-desktop/1.10.3/6d464d6c6d654d45aecdfaff7a08d64af62217e2/ui-tooling-preview-desktop-1.10.3.jar": "b5fa6fbbeea5f896ad2a8e7703bd7eb574d3a1b5ab6d44dbe0a07536bd6af6c4",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt-runtime-macos-arm64/0.9.37.4/a21a251e5695f2b8da63842e9e8a5ecb2f219dce/skiko-awt-runtime-macos-arm64-0.9.37.4.jar": "5d4d47555313d387d742e5225b3f9daffcffd61cb9c3f1db56fc10963cf4280b",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt/0.9.37.4/fc7470cca1041a52b182a921205c5c224e7709ad/skiko-awt-0.9.37.4.jar": "9e859aeb982623fab156ba6671c78255f7f5e1b73334f3de7932440fed6455df",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.10.2/4a9f78ef49483748e2c129f3d124b8fa249dafbf/kotlinx-coroutines-core-jvm-1.10.2.jar": "5ca175b38df331fd64155b35cd8cae1251fa9ee369709b36d42e0a288ccce3fd",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/2.2.20/57c4d839a6e5ad105d61ffc5cc0bf4de649c1714/kotlin-stdlib-jdk8-2.2.20.jar": "c314177935d8dc2eda879507117f25d6de56f6c57ede99416b14cd622bb9e09d",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-util-desktop/1.10.3/fe41825dccacb792ded7df579736a0ed919ee270/ui-util-desktop-1.10.3.jar": "7bfc93a8cad2974cdfd5a2c817e3083e0e3c48ef99e4dbba51eb98a14c92ed2d",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/atomicfu-jvm/0.23.2/a4601dc42dceb031a586058e8356ff778a57dea0/atomicfu-jvm-0.23.2.jar": "101ff43ff563fca167af5ade98c3b69bf569010eab745013b84d8955034d3b3c",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/2.2.20/bdbe3b5d872fa3b74d8fcd4e7ca3193f4abc9cc8/kotlin-stdlib-jdk7-2.2.20.jar": "3bd26ecb6d12978c5c4e0b41f76c9ff551fac2a5e6268427a9d2a0cdf8a5ad91",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.collection/collection-jvm/1.5.0/7ba2c69414d46ebc2dd76598bdd0a75c54281a57/collection-jvm-1.5.0.jar": "70b35924e4babcdffa37d0e575ee039c56a2d97123342624c48b603233704341",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.arch.core/core-common/2.2.0/5e1b8b81dfd5f52c56a8d53b18ca759c19a301f3/core-common-2.2.0.jar": "65308a06b1c00ee186cb9e19321383f043b993813f1522c47f4a3e3303bdba41",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.annotation/annotation-jvm/1.9.1/b17951747e38bf3986a24431b9ba0d039958aa5f/annotation-jvm-1.9.1.jar": "1e343917ebf27ba96fe4dc52b1cad7fd32b738fbc6355bb6cd5b3b305d7212d0",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-serialization-core-jvm/1.7.3/1f226780b845ff9206474c05159245d861556249/kotlinx-serialization-core-jvm-1.7.3.jar": "f0adde45864144475385cf4aa7e0b7feb27f61fcf9472665ed98cc971b06b1eb",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.3.21/a2ee2c4e220fee522f0451b723bab2a43f3481a7/kotlin-stdlib-2.3.21.jar": "6f64eac736db9434dd6925b4a518b9d1d17177652320c37916cf9ba3ce7d7d7a",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/23.0.0/8cc20c07506ec18e0834947b84a864bfc094484e/annotations-23.0.0.jar": "7b0f19724082cbfcbc66e5abea2b9bc92cf08a1ea11e191933ed43801eb3cd05",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.runtime/jbr-api/1.5.0/4158e485a7a4ecfd521e03095d81e0225529e8d2/jbr-api-1.5.0.jar": "657ede7d7f8e175c909b23caa10fcd4d4a511304fd938aa9cc8457b4378950d5",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.0/7425a601c1c7ec76645a78d22b8c6a627edee507/jspecify-1.0.0.jar": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab"
+      },
+      "run_command": [
+        "python3",
+        "scripts/check_jvm_binary_compatibility.py",
+        "run",
+        "--old-jar",
+        "/private/tmp/shaderx-central-0.1.4-jvm.jar",
+        "--current-jar",
+        "/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar",
+        "--dependencies",
+        "/private/tmp/sx15-binary-runtime-classpath.txt",
+        "--compiler-classpath",
+        "/private/tmp/sx15-binary-compiler-classpath.txt",
+        "--compose-compiler-plugin",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.3.21/96eb34ab9364f1c4291f35b38b1b98d0fc70170c/kotlin-compose-compiler-plugin-embeddable-2.3.21.jar",
+        "--java-home",
+        "/opt/homebrew/opt/openjdk@21",
+        "--work",
+        "/private/tmp/shaderx-release-0.1.4-binary-proof-v2",
+        "--baseline-version",
+        "0.1.4"
+      ],
+      "local_report": "/private/tmp/shaderx-release-0.1.4-binary-proof-v2/run-report.json",
+      "local_report_sha256": "db21ae16c5c3326ce07ec2c9e9750f1e60f69e573a4305bb51f43c92f27d5406"
+    },
+    {
+      "baseline_version": "0.1.3",
+      "status": "PASS",
+      "old_artifact": {
+        "url": "https://repo.maven.apache.org/maven2/io/github/debanshu777/shaderx-jvm/0.1.3/shaderx-jvm-0.1.3.jar",
+        "sha256": "f80ea6959a4fc12d5d985f4adc8c8b7e6c42b645df18f4f4c9dccadccb4f41ff"
+      },
+      "current_artifact_sha256": "fc1ba7a0dcc10dbe3b2589b5222a0341a3371cbb27f1cca30df9f05ee95e09de",
+      "descriptor_inventory": {
+        "old_public_protected_classes": 87,
+        "old_public_protected_members": 733,
+        "changed_class_declarations": [
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "old": "public final class com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect extends com.debanshu.shaderlab.shaderx.effect.AbstractRuntimeShaderEffect implements com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect {",
+            "current": "public final class com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect extends com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect {"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.factory.SkiaImageProcessor",
+            "old": "public final class com.debanshu.shaderlab.shaderx.factory.SkiaImageProcessor implements com.debanshu.shaderlab.shaderx.factory.ImageProcessor {",
+            "current": "public final class com.debanshu.shaderlab.shaderx.factory.SkiaImageProcessor implements com.debanshu.shaderlab.shaderx.factory.ImageProcessor,com.debanshu.shaderlab.shaderx.factory.ImageExportProvider {"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.factory.SkiaShaderFactory",
+            "old": "public final class com.debanshu.shaderlab.shaderx.factory.SkiaShaderFactory extends com.debanshu.shaderlab.shaderx.factory.BaseShaderFactory {",
+            "current": "public final class com.debanshu.shaderlab.shaderx.factory.SkiaShaderFactory extends com.debanshu.shaderlab.shaderx.factory.BaseShaderFactory implements com.debanshu.shaderlab.shaderx.factory.ShaderCapabilityProvider,com.debanshu.shaderlab.shaderx.factory.ShaderPipelineProvider {"
+          }
+        ],
+        "changed_member_declarations": [],
+        "missing_declared_descriptors": [
+          {
+            "class": "com.debanshu.shaderlab.shaderx.compose.ShaderModifierKt",
+            "name": "access$shaderEffect_OTbkHQo$lambda$5",
+            "descriptor": "(Landroidx/compose/runtime/MutableState;Landroidx/compose/ui/graphics/RenderEffect;)V",
+            "declaration": "public static final void access$shaderEffect_OTbkHQo$lambda$5(androidx.compose.runtime.MutableState, androidx.compose.ui.graphics.RenderEffect);"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.compose.ShaderModifierKt",
+            "name": "access$shaderEffectWithResult_OTbkHQo$lambda$5",
+            "descriptor": "(Landroidx/compose/runtime/MutableState;Landroidx/compose/ui/graphics/RenderEffect;)V",
+            "declaration": "public static final void access$shaderEffectWithResult_OTbkHQo$lambda$5(androidx.compose.runtime.MutableState, androidx.compose.ui.graphics.RenderEffect);"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.compose.ShaderModifierKt",
+            "name": "access$rememberShaderEffect$lambda$1",
+            "descriptor": "(Landroidx/compose/runtime/MutableState;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;",
+            "declaration": "public static final com.debanshu.shaderlab.shaderx.effect.ShaderEffect access$rememberShaderEffect$lambda$1(androidx.compose.runtime.MutableState);"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.compose.ShaderModifierKt",
+            "name": "access$rememberShaderEffect$lambda$2",
+            "descriptor": "(Landroidx/compose/runtime/MutableState;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)V",
+            "declaration": "public static final void access$rememberShaderEffect$lambda$2(androidx.compose.runtime.MutableState, com.debanshu.shaderlab.shaderx.effect.ShaderEffect);"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "equals",
+            "descriptor": "(Ljava/lang/Object;)Z",
+            "declaration": "public boolean equals(java.lang.Object);"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "hashCode",
+            "descriptor": "()I",
+            "declaration": "public int hashCode();"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.factory.LruCache",
+            "name": "<init>",
+            "descriptor": "(I)V",
+            "declaration": "public com.debanshu.shaderlab.shaderx.factory.LruCache(int);"
+          }
+        ],
+        "inherited_resolutions": [
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "equals",
+            "descriptor": "(Ljava/lang/Object;)Z",
+            "declaration": "public boolean equals(java.lang.Object);",
+            "resolved_in": "com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect",
+            "name": "hashCode",
+            "descriptor": "()I",
+            "declaration": "public int hashCode();",
+            "resolved_in": "com.debanshu.shaderlab.shaderx.effect.AbstractAnimatedShaderEffect"
+          }
+        ],
+        "reviewed_noncontract_changes": [
+          {
+            "class": "com.debanshu.shaderlab.shaderx.compose.ShaderModifierKt",
+            "name": "access$shaderEffect_OTbkHQo$lambda$5",
+            "descriptor": "(Landroidx/compose/runtime/MutableState;Landroidx/compose/ui/graphics/RenderEffect;)V",
+            "declaration": "public static final void access$shaderEffect_OTbkHQo$lambda$5(androidx.compose.runtime.MutableState, androidx.compose.ui.graphics.RenderEffect);",
+            "reason": "Compiler-generated accessor for a private implementation lambda; not consumer API"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.compose.ShaderModifierKt",
+            "name": "access$shaderEffectWithResult_OTbkHQo$lambda$5",
+            "descriptor": "(Landroidx/compose/runtime/MutableState;Landroidx/compose/ui/graphics/RenderEffect;)V",
+            "declaration": "public static final void access$shaderEffectWithResult_OTbkHQo$lambda$5(androidx.compose.runtime.MutableState, androidx.compose.ui.graphics.RenderEffect);",
+            "reason": "Compiler-generated accessor for a private implementation lambda; not consumer API"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.compose.ShaderModifierKt",
+            "name": "access$rememberShaderEffect$lambda$1",
+            "descriptor": "(Landroidx/compose/runtime/MutableState;)Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;",
+            "declaration": "public static final com.debanshu.shaderlab.shaderx.effect.ShaderEffect access$rememberShaderEffect$lambda$1(androidx.compose.runtime.MutableState);",
+            "reason": "Compiler-generated accessor for a private implementation lambda; not consumer API"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.compose.ShaderModifierKt",
+            "name": "access$rememberShaderEffect$lambda$2",
+            "descriptor": "(Landroidx/compose/runtime/MutableState;Lcom/debanshu/shaderlab/shaderx/effect/ShaderEffect;)V",
+            "declaration": "public static final void access$rememberShaderEffect$lambda$2(androidx.compose.runtime.MutableState, com.debanshu.shaderlab.shaderx.effect.ShaderEffect);",
+            "reason": "Compiler-generated accessor for a private implementation lambda; not consumer API"
+          },
+          {
+            "class": "com.debanshu.shaderlab.shaderx.factory.LruCache",
+            "name": "<init>",
+            "descriptor": "(I)V",
+            "declaration": "public com.debanshu.shaderlab.shaderx.factory.LruCache(int);",
+            "reason": "Kotlin internal cache implementation; JVM-public visibility is not a supported consumer contract"
+          }
+        ],
+        "unresolved_consumer_descriptors": []
+      },
+      "frozen_manifest": {
+        "mode": "freeze",
+        "scope": "JVM only; source and Android/Klib ABI are separate gates",
+        "old_jar": "/private/tmp/sx15-central/shaderx-jvm-0.1.3.jar",
+        "old_jar_sha256": "f80ea6959a4fc12d5d985f4adc8c8b7e6c42b645df18f4f4c9dccadccb4f41ff",
+        "frozen_hashes": {
+          "META-INF/main.kotlin_module": "e871d64c498617a57844801a5921b0eb078931ca7429f57b863de02b58cbb2a0",
+          "shaderx/binary/FrozenBaseFactory.class": "fc7de75f40bc49b41f3836d850b0c702deb706589d0af41eaa4212a34281202c",
+          "shaderx/binary/FrozenConsumer.class": "535c52db3b5ed3e59858ac62d368a93a645e109da97e4030db5a1fd43bdc8527",
+          "shaderx/binary/FrozenDirectFactory.class": "591d9812b4069aac233b1b93efe9d1efc36a011f9fb51db364f3f4806e57857c",
+          "shaderx/binary/FrozenJavaCaller.class": "ad7de8f081f8dc77b2d1a76bacd4143f885d4259f3ac19f71226bb99c63e4ace"
+        },
+        "source_hashes": {
+          "validation/binary-compatibility/old/FrozenConsumer.kt": "10bca83cf6f3d38bcf3c5ffbf0dc1932820edc7bf566ede267d07e6a4ae42b6c",
+          "validation/binary-compatibility/old/FrozenJavaCaller.java": "d0bda5b73b75ef451f35a67b50d4c24fee0677e335f442b67ceabb6e69466964"
+        }
+      },
+      "frozen_compose_manifest": {
+        "mode": "freeze-compose",
+        "scope": "JVM only; source and Android/Klib ABI are separate gates",
+        "old_jar": "/private/tmp/sx15-central/shaderx-jvm-0.1.3.jar",
+        "old_jar_sha256": "f80ea6959a4fc12d5d985f4adc8c8b7e6c42b645df18f4f4c9dccadccb4f41ff",
+        "frozen_hashes": {
+          "META-INF/main.kotlin_module": "c93b65932aad130705b1f13d9adbded3494ddd9fba7223108ad56234ef017d15",
+          "shaderx/binary/FrozenComposeConsumerKt.class": "4f22ea0dbde82c8671afb6b01b1b79fff934e2d8ce3eee57186eb3507735bf7e"
+        },
+        "source_sha256": "a403661d615fcc1c7aa0d7a170ec242ca1897429d921bf5b1926d3ab42312ee7"
+      },
+      "runner_source_hashes": {
+        "validation/binary-compatibility/current/CurrentRunner.kt": "06cb6ccb484cb95afd8f27a411c1a2b736cb494c29edc80faff2b94079245efd",
+        "validation/binary-compatibility/current/CurrentSourceFixture.kt": "0d1510c39a58c4b23fa5122b7b05b3ced93e2e9ed1d8a8d9e213b55b3d31ce79"
+      },
+      "runtime_stdout": "ShaderFactory-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nBaseShaderFactory-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nGradientEffect-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nWaveEffect-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nShaderResult-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nUniform-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nShaderFactory-CodeSource=file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar\nShaderFactory-resources=[jar:file:/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar!/com/debanshu/shaderlab/shaderx/factory/ShaderFactory.class]\nFrozenDirectFactory-new-session-default=PASS\nFrozenBaseFactory-new-session-default=PASS\nfrozen-java-caller=PASS\nfrozen-compose-old-modifier-descriptors=PASS (composition only; no UI pixels)\nJVM-BINARY-COMPATIBILITY=PASS\n",
+      "current_source_overload_calls": {
+        "shaderEffect-OTbkHQo": 4,
+        "shaderEffect-PaVRBUA": 1,
+        "shaderEffectWithResult-OTbkHQo": 4,
+        "shaderEffectWithResult-PaVRBUA": 1
+      },
+      "runtime_classpath": [
+        "/private/tmp/shaderx-release-historical-0.1.3-binary-proof/runner",
+        "/private/tmp/shaderx-release-historical-0.1.3-binary-proof/frozen",
+        "/private/tmp/shaderx-release-historical-0.1.3-binary-proof/frozen-compose",
+        "/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.desktop/desktop-jvm/1.10.3/42facd9840309ac4eb841a986c5d1b97d2780471/desktop-jvm-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.material/material-desktop/1.10.3/63e1c3c6705d111bf84e41110e7729df5b85163e/material-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.material/material-ripple-desktop/1.10.3/74a14824f086339703264689c5a7cf4ceb39ed40/material-ripple-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.foundation/foundation-desktop/1.10.3/d9ba57abee3527886ea640d3b390a70ba9e28af/foundation-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.animation/animation-desktop/1.10.3/52a17b8bd5f608cdb60f01c64eee2830b8484ca7/animation-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.foundation/foundation-layout-desktop/1.10.3/149192cb271d4c11905104b9180d5d648b3591f2/foundation-layout-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.animation/animation-core-desktop/1.10.3/5dd98c5745e548644b7657901bbcc4c2c8f9ec59/animation-core-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-desktop/1.10.3/73a6b1e10434fb11bae82daa68c205c71af03c55/ui-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.runtime/runtime-desktop/1.10.3/edbd39fc9691f4ba1e29c6690341148db4272752/runtime-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-backhandler-desktop/1.10.3/ed725f86a0fdff73fb37561ffb606166725e4b6f/ui-backhandler-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.navigationevent/navigationevent-desktop/1.0.2/ddb1e7fe97ed51c3d35bba493f97fcf12398719/navigationevent-desktop-1.0.2.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-text-desktop/1.10.3/7babd6e2dea601e74bed24b4017350e1acf4569c/ui-text-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.runtime/runtime-saveable-desktop/1.10.3/9b0e2a8ce3ae7d2b1a40307bc9271933b238cfd4/runtime-saveable-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-saveable-desktop/1.10.5/f6903c683c07ba479659ba4eb55bc7c80a7c433e/runtime-saveable-desktop-1.10.5.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-annotation-jvm/1.10.5/ea491da34ba40ae9bd340c393566753ddfd95a76/runtime-annotation-jvm-1.10.5.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-retain-desktop/1.10.5/879812e3cd2c6151f5d91f515a35952b1be07a76/runtime-retain-desktop-1.10.5.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose-desktop/2.9.6/7b6b6793f3c4c5996b20d1d99cf728e5fac00364/lifecycle-runtime-compose-desktop-2.9.6.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-savedstate-desktop/2.9.4/72a1919b08c5a4da224d8a65ce1589aa69934e8a/lifecycle-viewmodel-savedstate-desktop-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-desktop/2.9.4/93fee6d78f0df0e38f36e0fa2eff74f8da6d5481/lifecycle-viewmodel-desktop-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-desktop/2.9.4/1cc820319ec0139e76b8a2fe4be0b356b4e624c4/lifecycle-runtime-desktop-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.savedstate/savedstate-compose-desktop/1.3.6/63692375ffe667f12cb3ea8aa1e605d659ed2add/savedstate-compose-desktop-1.3.6.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate-compose-desktop/1.3.3/cd60b543d5722a8b5e6cea1e4ccdec8b4375a22b/savedstate-compose-desktop-1.3.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate-desktop/1.3.3/1c5bfc3fb56614538528060a06f2c03e34fa5188/savedstate-desktop-1.3.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-common-jvm/2.9.4/ab739bccdb3541983385af169565c7c035d897e7/lifecycle-common-jvm-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-compose-desktop/2.9.4/86a4ffec845d4e488078118a0b5095bd1fabcafe/lifecycle-runtime-compose-desktop-2.9.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-desktop/1.10.5/b1705e2087f06395622b784aa88e2e738043459/runtime-desktop-1.10.5.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-desktop/1.10.3/1fd5d0189d75eca10163a1f07842627519399337/ui-graphics-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-unit-desktop/1.10.3/aeeb2f31358ab5abf0bafa0828de2faba7189db5/ui-unit-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-geometry-desktop/1.10.3/779ddaadbc03720f7bb2507f6ed6dc4ffc9e7f3e/ui-geometry-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-tooling-preview-desktop/1.10.3/6d464d6c6d654d45aecdfaff7a08d64af62217e2/ui-tooling-preview-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt-runtime-macos-arm64/0.9.37.4/a21a251e5695f2b8da63842e9e8a5ecb2f219dce/skiko-awt-runtime-macos-arm64-0.9.37.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt/0.9.37.4/fc7470cca1041a52b182a921205c5c224e7709ad/skiko-awt-0.9.37.4.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.10.2/4a9f78ef49483748e2c129f3d124b8fa249dafbf/kotlinx-coroutines-core-jvm-1.10.2.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/2.2.20/57c4d839a6e5ad105d61ffc5cc0bf4de649c1714/kotlin-stdlib-jdk8-2.2.20.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-util-desktop/1.10.3/fe41825dccacb792ded7df579736a0ed919ee270/ui-util-desktop-1.10.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/atomicfu-jvm/0.23.2/a4601dc42dceb031a586058e8356ff778a57dea0/atomicfu-jvm-0.23.2.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/2.2.20/bdbe3b5d872fa3b74d8fcd4e7ca3193f4abc9cc8/kotlin-stdlib-jdk7-2.2.20.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.collection/collection-jvm/1.5.0/7ba2c69414d46ebc2dd76598bdd0a75c54281a57/collection-jvm-1.5.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.arch.core/core-common/2.2.0/5e1b8b81dfd5f52c56a8d53b18ca759c19a301f3/core-common-2.2.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.annotation/annotation-jvm/1.9.1/b17951747e38bf3986a24431b9ba0d039958aa5f/annotation-jvm-1.9.1.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-serialization-core-jvm/1.7.3/1f226780b845ff9206474c05159245d861556249/kotlinx-serialization-core-jvm-1.7.3.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.3.21/a2ee2c4e220fee522f0451b723bab2a43f3481a7/kotlin-stdlib-2.3.21.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/23.0.0/8cc20c07506ec18e0834947b84a864bfc094484e/annotations-23.0.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.runtime/jbr-api/1.5.0/4158e485a7a4ecfd521e03095d81e0225529e8d2/jbr-api-1.5.0.jar",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.0/7425a601c1c7ec76645a78d22b8c6a627edee507/jspecify-1.0.0.jar"
+      ],
+      "dependency_hashes": {
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.desktop/desktop-jvm/1.10.3/42facd9840309ac4eb841a986c5d1b97d2780471/desktop-jvm-1.10.3.jar": "fdb63de4c9bdc6570c5355eeb0f013d4635effda42907c2d084acc77e08d4f8a",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.material/material-desktop/1.10.3/63e1c3c6705d111bf84e41110e7729df5b85163e/material-desktop-1.10.3.jar": "ee4afa33a2411e06cf1bec689667767ffb991ff02269e040a4ef64e76e392119",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.material/material-ripple-desktop/1.10.3/74a14824f086339703264689c5a7cf4ceb39ed40/material-ripple-desktop-1.10.3.jar": "3257697a1a58188ec3dc31f31867f1c38209900b87df1261ebac9e6a1387db83",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.foundation/foundation-desktop/1.10.3/d9ba57abee3527886ea640d3b390a70ba9e28af/foundation-desktop-1.10.3.jar": "3a9b7bfae72f1a92a8123d3290bb7d7f61d92e5cde877af5373c3e5c2caceb2b",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.animation/animation-desktop/1.10.3/52a17b8bd5f608cdb60f01c64eee2830b8484ca7/animation-desktop-1.10.3.jar": "1881c5575440055d54a679418f7ad7e86c0349743389360bed0f6a36af16ba34",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.foundation/foundation-layout-desktop/1.10.3/149192cb271d4c11905104b9180d5d648b3591f2/foundation-layout-desktop-1.10.3.jar": "8d8e00062a83a147409f42f91798394c3c221d22877953eff7d0a81767b5d0fc",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.animation/animation-core-desktop/1.10.3/5dd98c5745e548644b7657901bbcc4c2c8f9ec59/animation-core-desktop-1.10.3.jar": "41c0220ddbc55cb897feb0d5816b748f9c11162171f12743c04b50d0d84db628",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-desktop/1.10.3/73a6b1e10434fb11bae82daa68c205c71af03c55/ui-desktop-1.10.3.jar": "ec8887c03a333fa374d0b4c46bb9fb700937857f4088eaea4c4cc0ec835f7498",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.runtime/runtime-desktop/1.10.3/edbd39fc9691f4ba1e29c6690341148db4272752/runtime-desktop-1.10.3.jar": "05f5570c0a7ea8addd6fe9507a70f293efa7f1450d8b9b16dc3c8fee21cc6127",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-backhandler-desktop/1.10.3/ed725f86a0fdff73fb37561ffb606166725e4b6f/ui-backhandler-desktop-1.10.3.jar": "1babf68f5a05cbe1ba8cf934f0e575bb0d0b184444514e6aa7ec1f8004c9ce33",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.navigationevent/navigationevent-desktop/1.0.2/ddb1e7fe97ed51c3d35bba493f97fcf12398719/navigationevent-desktop-1.0.2.jar": "43deeb5774fd737fa945e09a47f93b6f1a508d17fac8f3b65f1c863e7f7d0660",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-text-desktop/1.10.3/7babd6e2dea601e74bed24b4017350e1acf4569c/ui-text-desktop-1.10.3.jar": "fbca4db945be286b84f75c0c9c784218470bebefa831f73f08edfb3294b6c8e8",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.runtime/runtime-saveable-desktop/1.10.3/9b0e2a8ce3ae7d2b1a40307bc9271933b238cfd4/runtime-saveable-desktop-1.10.3.jar": "eb7132b55de2b0913736fdff4705022803e455810f018efecc9eb3230936520a",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-saveable-desktop/1.10.5/f6903c683c07ba479659ba4eb55bc7c80a7c433e/runtime-saveable-desktop-1.10.5.jar": "ef24e24cc8c9c3b9871007fbdf589ed9aaaecf95979a66b7484806f9f0e24d91",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-annotation-jvm/1.10.5/ea491da34ba40ae9bd340c393566753ddfd95a76/runtime-annotation-jvm-1.10.5.jar": "f89dda8bcd73876d0fc16568844b2bd79443ee7ca62810874d25c7dcaa394bd6",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-retain-desktop/1.10.5/879812e3cd2c6151f5d91f515a35952b1be07a76/runtime-retain-desktop-1.10.5.jar": "463ee9c1e93d1b913458bfecc96d128a3574a802f41c8c9781d7320c3b55ed8b",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.lifecycle/lifecycle-runtime-compose-desktop/2.9.6/7b6b6793f3c4c5996b20d1d99cf728e5fac00364/lifecycle-runtime-compose-desktop-2.9.6.jar": "31c3c4b6dea38f078c46829dee2c43abba2bf8757b7ee8a0f660f31217364898",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-savedstate-desktop/2.9.4/72a1919b08c5a4da224d8a65ce1589aa69934e8a/lifecycle-viewmodel-savedstate-desktop-2.9.4.jar": "3e0b44e2514eafdd6938d5457d9f46e4785077c45d3b4364b5c23c4dcb93efd3",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-desktop/2.9.4/93fee6d78f0df0e38f36e0fa2eff74f8da6d5481/lifecycle-viewmodel-desktop-2.9.4.jar": "98f816be6869407c87d46058756f97780fa6c6cf61acdba97216f413731af15d",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-desktop/2.9.4/1cc820319ec0139e76b8a2fe4be0b356b4e624c4/lifecycle-runtime-desktop-2.9.4.jar": "2fb49f76d1021792fb359e0a9246c1509f2f5b555f0a46591d24d58deb68bd5c",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.savedstate/savedstate-compose-desktop/1.3.6/63692375ffe667f12cb3ea8aa1e605d659ed2add/savedstate-compose-desktop-1.3.6.jar": "0f3d045c5fd7e1301ab6c38cd0778067b0484cf39acac1233be71a723a6a8075",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate-compose-desktop/1.3.3/cd60b543d5722a8b5e6cea1e4ccdec8b4375a22b/savedstate-compose-desktop-1.3.3.jar": "4a94787a6e5bcfe143390a4f2737d4425d2ea867f2b34a847de6cda3c6ccc58a",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate-desktop/1.3.3/1c5bfc3fb56614538528060a06f2c03e34fa5188/savedstate-desktop-1.3.3.jar": "c5c89062ba8402b8f8657efd54db1ff192f91ca95fae59c3b418fbc477c3e3ea",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-common-jvm/2.9.4/ab739bccdb3541983385af169565c7c035d897e7/lifecycle-common-jvm-2.9.4.jar": "37d89b2101f074ac6c260917dabb185607645ee200aa3018c7c5bde70edcf184",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-compose-desktop/2.9.4/86a4ffec845d4e488078118a0b5095bd1fabcafe/lifecycle-runtime-compose-desktop-2.9.4.jar": "d25c083df93da718a1876a3293bd15f7dc7a811e998735943bce590683a57835",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-desktop/1.10.5/b1705e2087f06395622b784aa88e2e738043459/runtime-desktop-1.10.5.jar": "b195860542f612de0512b54a75353e0f6d58815f0c9530a03bc5b0e734474829",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-desktop/1.10.3/1fd5d0189d75eca10163a1f07842627519399337/ui-graphics-desktop-1.10.3.jar": "9fa604364dc4de23d3f8101f2f5968afa742d847105a5e2c41b6a0aa9123f11b",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-unit-desktop/1.10.3/aeeb2f31358ab5abf0bafa0828de2faba7189db5/ui-unit-desktop-1.10.3.jar": "f0f3439928b3d9132f07cb2d7a86091696372ebc8354d16b48830b6ce15e8161",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-geometry-desktop/1.10.3/779ddaadbc03720f7bb2507f6ed6dc4ffc9e7f3e/ui-geometry-desktop-1.10.3.jar": "cdbfdabccac8abef2d9bc0420ec0c4be7a880f6d26b2d1cc4e2317c0d252ee27",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-tooling-preview-desktop/1.10.3/6d464d6c6d654d45aecdfaff7a08d64af62217e2/ui-tooling-preview-desktop-1.10.3.jar": "b5fa6fbbeea5f896ad2a8e7703bd7eb574d3a1b5ab6d44dbe0a07536bd6af6c4",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt-runtime-macos-arm64/0.9.37.4/a21a251e5695f2b8da63842e9e8a5ecb2f219dce/skiko-awt-runtime-macos-arm64-0.9.37.4.jar": "5d4d47555313d387d742e5225b3f9daffcffd61cb9c3f1db56fc10963cf4280b",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-awt/0.9.37.4/fc7470cca1041a52b182a921205c5c224e7709ad/skiko-awt-0.9.37.4.jar": "9e859aeb982623fab156ba6671c78255f7f5e1b73334f3de7932440fed6455df",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.10.2/4a9f78ef49483748e2c129f3d124b8fa249dafbf/kotlinx-coroutines-core-jvm-1.10.2.jar": "5ca175b38df331fd64155b35cd8cae1251fa9ee369709b36d42e0a288ccce3fd",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/2.2.20/57c4d839a6e5ad105d61ffc5cc0bf4de649c1714/kotlin-stdlib-jdk8-2.2.20.jar": "c314177935d8dc2eda879507117f25d6de56f6c57ede99416b14cd622bb9e09d",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-util-desktop/1.10.3/fe41825dccacb792ded7df579736a0ed919ee270/ui-util-desktop-1.10.3.jar": "7bfc93a8cad2974cdfd5a2c817e3083e0e3c48ef99e4dbba51eb98a14c92ed2d",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/atomicfu-jvm/0.23.2/a4601dc42dceb031a586058e8356ff778a57dea0/atomicfu-jvm-0.23.2.jar": "101ff43ff563fca167af5ade98c3b69bf569010eab745013b84d8955034d3b3c",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/2.2.20/bdbe3b5d872fa3b74d8fcd4e7ca3193f4abc9cc8/kotlin-stdlib-jdk7-2.2.20.jar": "3bd26ecb6d12978c5c4e0b41f76c9ff551fac2a5e6268427a9d2a0cdf8a5ad91",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.collection/collection-jvm/1.5.0/7ba2c69414d46ebc2dd76598bdd0a75c54281a57/collection-jvm-1.5.0.jar": "70b35924e4babcdffa37d0e575ee039c56a2d97123342624c48b603233704341",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.arch.core/core-common/2.2.0/5e1b8b81dfd5f52c56a8d53b18ca759c19a301f3/core-common-2.2.0.jar": "65308a06b1c00ee186cb9e19321383f043b993813f1522c47f4a3e3303bdba41",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/androidx.annotation/annotation-jvm/1.9.1/b17951747e38bf3986a24431b9ba0d039958aa5f/annotation-jvm-1.9.1.jar": "1e343917ebf27ba96fe4dc52b1cad7fd32b738fbc6355bb6cd5b3b305d7212d0",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-serialization-core-jvm/1.7.3/1f226780b845ff9206474c05159245d861556249/kotlinx-serialization-core-jvm-1.7.3.jar": "f0adde45864144475385cf4aa7e0b7feb27f61fcf9472665ed98cc971b06b1eb",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.3.21/a2ee2c4e220fee522f0451b723bab2a43f3481a7/kotlin-stdlib-2.3.21.jar": "6f64eac736db9434dd6925b4a518b9d1d17177652320c37916cf9ba3ce7d7d7a",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/23.0.0/8cc20c07506ec18e0834947b84a864bfc094484e/annotations-23.0.0.jar": "7b0f19724082cbfcbc66e5abea2b9bc92cf08a1ea11e191933ed43801eb3cd05",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.runtime/jbr-api/1.5.0/4158e485a7a4ecfd521e03095d81e0225529e8d2/jbr-api-1.5.0.jar": "657ede7d7f8e175c909b23caa10fcd4d4a511304fd938aa9cc8457b4378950d5",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.0/7425a601c1c7ec76645a78d22b8c6a627edee507/jspecify-1.0.0.jar": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab"
+      },
+      "run_command": [
+        "python3",
+        "scripts/check_jvm_binary_compatibility.py",
+        "run",
+        "--old-jar",
+        "/private/tmp/sx15-central/shaderx-jvm-0.1.3.jar",
+        "--current-jar",
+        "/Users/debanshud/Documents/Personal/ShaderX/shaderx/build/libs/shaderx-jvm-0.2.0.jar",
+        "--dependencies",
+        "/private/tmp/sx15-binary-runtime-classpath.txt",
+        "--compiler-classpath",
+        "/private/tmp/sx15-binary-compiler-classpath.txt",
+        "--compose-compiler-plugin",
+        "/Users/debanshud/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.3.21/96eb34ab9364f1c4291f35b38b1b98d0fc70170c/kotlin-compose-compiler-plugin-embeddable-2.3.21.jar",
+        "--java-home",
+        "/opt/homebrew/opt/openjdk@21",
+        "--work",
+        "/private/tmp/shaderx-release-historical-0.1.3-binary-proof",
+        "--baseline-version",
+        "0.1.3"
+      ],
+      "local_report": "/private/tmp/shaderx-release-historical-0.1.3-binary-proof/run-report.json",
+      "local_report_sha256": "c4b2babc08036c12369c1b048049f6a4f57f19d53c20651d1b903afc32a90e9a"
+    }
+  ],
+  "negative_checks": [
+    {
+      "case": "changed-baseline",
+      "expected_error": "Frozen baseline version changed",
+      "exit_code": 1,
+      "report": "/private/tmp/shaderx-release-negative-changed-baseline/run-report.json"
+    },
+    {
+      "case": "changed-old-artifact",
+      "expected_error": "Old artifact changed",
+      "exit_code": 1,
+      "report": "/private/tmp/shaderx-release-negative-changed-old-artifact/run-report.json"
+    }
+  ],
+  "interpretation": [
+    "All old public/protected raw JVM descriptors resolve directly or through reviewed inheritance; declaration differences remain listed explicitly.",
+    "0.1.4 baseline newly compiled and frozen against the actual Central jar; subsequent run used those unchanged class bytes with the current jar only.",
+    "0.1.3 baseline retained previous frozen class bytes and manifests; copied into a separate work directory rather than recompiled.",
+    "The current jar is the unique ShaderFactory resource and CodeSource for representative factory, effect, result and uniform classes.",
+    "0.1.4 additional fixture exercised real Skia session create/refresh/close and published texture default/copy/tile-mode calls.",
+    "Frozen Compose fixture invokes old entry points in a runtime Composition with null effects; this is not a UI pixel test.",
+    "Wrong baseline and changed old-artifact hashes are rejected before native runtime execution."
+  ],
+  "limitations": [
+    "No Android DEX/ART, Kotlin Native or Wasm Klib binary compatibility proof.",
+    "Old exhaustive handlers receiving new Uniform subtypes or enum values require source review and recompilation.",
+    "No physical Android/iOS GPU, rendering performance, long-running native memory or arbitrary dependency-matrix guarantee.",
+    "Reflective Kotlin data-class metadata and every behavioral semantic are outside JVM descriptor/linkage proof."
+  ]
+}

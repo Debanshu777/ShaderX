@@ -2,82 +2,107 @@
   <img src="docs/assets/shaderx-banner.png" width="100%" alt="ShaderX — GPU shader effects for Kotlin and Compose Multiplatform, illustrated by a blue halftone flower" />
 </p>
 
-# ShaderX — GPU shader effects for Compose Multiplatform
+# ShaderX — shaders for Compose Multiplatform
 
-ShaderX is a **Kotlin Multiplatform shader library** for **Jetpack Compose and Compose Multiplatform**. Apply grayscale, blur, gradients, pixelation, and custom AGSL/SkSL effects to your UI on **Android, iOS, desktop, and WebAssembly** with `Modifier.shaderEffect`.
+Turn images, text, and Compose UI into print textures, moving surfaces, or your own AGSL/SkSL effects. Shared Kotlin API for **Android, iOS, desktop, and WebAssembly**.
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.debanshu777/shaderx?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.debanshu777/shaderx)
 [![CI](https://github.com/Debanshu777/ShaderX/actions/workflows/ci.yml/badge.svg)](https://github.com/Debanshu777/ShaderX/actions/workflows/ci.yml)
 [![Apache 2.0 license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-[Documentation](https://debanshu777.github.io/ShaderX/) · [Live playground](https://debanshu777.github.io/ShaderX/playground/) · [Quickstart](#quickstart) · [Effects](https://debanshu777.github.io/ShaderX/effects/) · [Samples](https://debanshu777.github.io/ShaderX/samples/) · [Contributing](CONTRIBUTING.md)
+[Gallery](#gallery) · [Get started](#get-started) · [Live app demos](#live-app-demos) · [Documentation](https://debanshu777.github.io/ShaderX/)
 
-## See it in motion
+<a id="19-ways-to-use-a-shader"></a>
 
-Explore live effect controls, transform a camera preview into ASCII art, or make a movie carousel respond to every scroll. These recordings show the sample apps built with ShaderX.
+## Gallery
+
+Custom materials, animated type, grain and motion—then the tools to make them your own. Open a preview for a closer look, or follow its effect link for the recipe.
+
+[Effect recipes and platform limits](https://debanshu777.github.io/ShaderX/effects/#applied-ui-recipes).
 
 <table>
   <tr>
-    <th width="50%">ShaderLab · Android</th>
-    <th width="50%">ShaderLab · WebAssembly</th>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-membership.gif"><img src="docs/assets/showcase/ui-membership.gif" width="480" alt="A black-and-gold membership interface with an original moving gold foil surface and serif lettering" /></a><br />
+      <strong>Gold foil membership</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/custom-effects/#foil-and-scan-recipes">Custom foil</a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-headline.gif"><img src="docs/assets/showcase/ui-headline.gif" width="480" alt="A pale type-design interface with blue and magenta scan bands masked to large monospaced FORM FREQ glyphs" /></a><br />
+      <strong>Chromatic type specimen</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/custom-effects/#foil-and-scan-recipes">Custom scan</a>
+    </td>
   </tr>
   <tr>
-    <td align="center"><img src="assets/shader_lab.gif" width="320" alt="Animated Android ShaderLab demo with adjustable GPU shader effects" /></td>
-    <td align="center"><img src="assets/shader_lab_web.gif" width="420" alt="Animated ShaderLab browser demo running Compose Multiplatform on WebAssembly" /></td>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-ripple-product.gif"><img src="docs/assets/showcase/ui-ripple-product.gif" width="480" alt="A coral hand-wash bottle ripples over a blue water illustration beside an editorial product description" /></a><br />
+      <strong>Skincare product preview</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/effects/#recipe-ripple-product">Ripple</a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-noise-flow.gif"><img src="docs/assets/showcase/ui-noise-flow.gif" width="480" alt="An emerald focus interface with softly flowing green and amber layers of procedural noise" /></a><br />
+      <strong>Atmospheric focus</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/custom-effects/#noise-recipes">Animated layered noise</a>
+    </td>
   </tr>
   <tr>
-    <td align="center">An effect playground with live parameter controls.<br /><a href="samples/ShaderLab">Explore ShaderLab</a></td>
-    <td align="center">The same shared Compose UI in the browser.<br /><a href="https://debanshu777.github.io/ShaderX/playground/">Try it in your browser</a></td>
+    <td width="50%" valign="top">
+      <a id="two-kinds-of-noise"></a><a href="docs/assets/showcase/ui-stipple.png"><img src="docs/assets/showcase/ui-stipple.png" width="480" alt="A static ivory-and-navy botanical print with fine stochastic ink grain and large Wild forms lettering" /></a><br />
+      <strong>Stippled botanical print</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/custom-effects/#noise-recipes">Static stochastic noise</a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-poster.gif"><img src="docs/assets/showcase/ui-poster.gif" width="480" alt="A red-and-blue editorial art print develops halftone dots over an original geometric portrait" /></a><br />
+      <strong>Halftone art print</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/effects/#recipe-poster">Halftone</a>
+    </td>
   </tr>
   <tr>
-    <th>ASCIICamera</th>
-    <th>VerticalCarousel</th>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-liquid-button.gif"><img src="docs/assets/showcase/ui-liquid-button.gif" width="480" alt="A cobalt arcade interface with a pink controller motif and a waving yellow Start a round button" /></a><br />
+      <strong>Arcade call to action</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/effects/#recipe-liquid-button">Wave distortion</a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-game.gif"><img src="docs/assets/showcase/ui-game.gif" width="480" alt="A purple pixel-platformer scene changes dither intensity behind a separate yellow title and game controls" /></a><br />
+      <strong>Dithered platformer</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/effects/#recipe-game">Ordered dither</a>
+    </td>
   </tr>
   <tr>
-    <td align="center"><img src="assets/ASCIICamera.gif" width="320" alt="Animated CameraX preview transformed into ASCII characters with a custom ShaderX shader" /></td>
-    <td align="center"><img src="assets/vertical_carousal.gif" width="320" alt="Animated movie carousel applying shader effects as cards scroll" /></td>
-  </tr>
-  <tr>
-    <td align="center">Custom shaders on a live Android camera feed.<br /><a href="samples/ASCIICamera">Explore ASCIICamera</a></td>
-    <td align="center">Scroll-driven effects on movie cards.<br /><a href="samples/VerticalCarousel">Explore VerticalCarousel</a></td>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-album.gif"><img src="docs/assets/showcase/ui-album.gif" width="480" alt="A red-and-black listening room pulses chromatic separation on an original vinyl cover illustration" /></a><br />
+      <strong>Chromatic record player</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/effects/#recipe-album">Chromatic aberration</a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-editor.gif"><img src="docs/assets/showcase/ui-editor.gif" width="480" alt="A graphite image editor adjusts a citrus illustration with synchronized numeric values and sliders" /></a><br />
+      <strong>Citrus color editor</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/effects/#recipe-editor">Color adjustment</a>
+    </td>
   </tr>
 </table>
 
-[Run the samples →](https://debanshu777.github.io/ShaderX/samples/)
 
-## Installation
+[More effect comparisons](https://debanshu777.github.io/ShaderX/effects/#additional-effect-studies): gradients, plasma, grayscale, blur, sepia and pixelation. [Try the apps below](#live-app-demos).
 
-Add Maven Central to your repositories in `settings.gradle.kts`:
 
-```kotlin
-dependencyResolutionManagement {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-```
+<a id="installation"></a>
+<a id="quickstart"></a>
 
-Add ShaderX to your shared module's `build.gradle.kts`:
+## Get started
+
+This commit targets **0.2.0** for direct stable publication. [Publication status](https://debanshu777.github.io/ShaderX/#releases-and-development-docs).
+
+Add Maven Central to your repositories, then add ShaderX to `commonMain.dependencies` in your shared module:
 
 ```kotlin
-kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            implementation("io.github.debanshu777:shaderx:0.1.3")
-        }
-    }
-}
+implementation("io.github.debanshu777:shaderx:0.2.0")
 ```
 
-For an Android-only Compose app, use the same dependency inside `dependencies { ... }`.
-Use **JDK 21**, **Kotlin 2.3.21**, and **Compose Multiplatform 1.10.3** as the starting toolchain. Android requires **minSdk 33**. See [installation and version catalogs](https://debanshu777.github.io/ShaderX/getting-started/).
+Android requires **API 31+ for native blur, API 33+ for AGSL, compile SDK 35+, and Java 17 bytecode**; iOS, JVM desktop, and Wasm use Skia. Contributor builds use **JDK 21**; the current checkout uses **Kotlin 2.3.21 / Compose Multiplatform 1.10.3**. [Setup and version catalogs](https://debanshu777.github.io/ShaderX/getting-started/).
 
-> **Release status:** `0.1.3` is the published Maven Central release. This branch develops `0.1.4`; session-driven animation, texture uniforms, and the new audio effects are development features. Guides identify those features explicitly. The quickstart below works with `0.1.3`.
-
-## Quickstart
-
-This complete composable takes your app's existing `Painter`, so it works with Compose resources or an image loader without relying on a particular resource name.
+Pass your existing Compose resource or image-loader `Painter`:
 
 ```kotlin
 import androidx.compose.foundation.Image
@@ -91,75 +116,120 @@ import com.debanshu.shaderlab.shaderx.effect.impl.GrayscaleEffect
 fun GrayscalePhoto(painter: Painter, modifier: Modifier = Modifier) {
     Image(
         painter = painter,
-        contentDescription = "Photo with a grayscale effect",
+        contentDescription = "Grayscale photo",
         modifier = modifier.shaderEffect(GrayscaleEffect(intensity = 1f)),
     )
 }
 ```
 
-Replace `GrayscaleEffect()` with `SepiaEffect()`, `NativeBlurEffect(radius = 8f)`, or `PixelateEffect(pixelSize = 12f)` from the same `effect.impl` package. The modifier can also transform text, cards, and other Compose content.
+Swap in `SepiaEffect()`, `NativeBlurEffect(radius = 8f)`, or `PixelateEffect(pixelSize = 12f)`. The same modifier works on text, cards, and other Compose content.
 
-## Why use ShaderX?
+**Gradle repository setup**
 
-- **Shared Kotlin API:** AGSL `RuntimeShader` on Android and Skia `RuntimeEffect` on iOS, JVM desktop, and Wasm.
-- **Configurable effects:** immutable effect values, typed parameters, and reusable shader compilation caches.
-- **Custom shaders:** implement the public `RuntimeShaderEffect` interface to bring your own AGSL/SkSL source.
-- **Explicit failures:** handle shader compilation and platform limitations with `ShaderResult` or the modifier's `onError` callback.
-- **Examples to explore:** an effect gallery, CameraX ASCII preview, and scroll-driven carousel.
+Add Maven Central to your repositories in `settings.gradle.kts`:
 
-## Platform support
-
-| Platform | Kotlin target / requirement | Backend | Multiple effects with `+` |
-| --- | --- | --- | --- |
-| Android | API 33+ | AGSL / `RuntimeShader` | Supported |
-| iOS | `iosArm64`, `iosSimulatorArm64` | Skia / `RuntimeEffect` | Unsupported |
-| Desktop | JVM; Windows, macOS, Linux | Skia / `RuntimeEffect` | Unsupported |
-| Web | `wasmJs`; browser with Wasm GC support | Skia / `RuntimeEffect` | Unsupported |
-
-Multi-effect chains on Skia return `ShaderError.UnsupportedEffect`. Android's current offline `ImageProcessor` path returns a processing failure; use the Compose modifier for Android rendering. See the [platform and feature matrix](https://debanshu777.github.io/ShaderX/platforms/) before choosing an API.
-
-## Built-in shader effects
-
-| Available in | Effects |
-| --- | --- |
-| **0.1.3** | `GrayscaleEffect`, `SepiaEffect`, `GradientEffect`, `VignetteEffect`, `PixelateEffect`, `ChromaticAberrationEffect`, `InvertEffect`, `NativeBlurEffect`, `WaveEffect` |
-| **main / 0.1.4 development** | All of the above, plus `AnimatedGradientEffect`, `PlasmaEffect`, `RippleEffect`, `VortexEffect`, `AudioVisualizerEffect`, `AudioDistortionEffect` |
-
-The [effect catalog](https://debanshu777.github.io/ShaderX/effects/) covers parameters and examples. The [Compose guide](https://debanshu777.github.io/ShaderX/compose/) explains animation, Android effect chaining, and cache ownership.
-
-## Samples
-
-| Sample | What it demonstrates | Run / preview |
-| --- | --- | --- |
-| [ShaderLab](samples/ShaderLab) | Effect gallery, live controls, image loading, and development audio effects | [Playground](https://debanshu777.github.io/ShaderX/playground/) · [Setup](https://debanshu777.github.io/ShaderX/samples/#shaderlab) · [Android recording](assets/shader_lab.gif) · [Web recording](assets/shader_lab_web.gif) |
-| [ASCIICamera](samples/ASCIICamera) | Custom shaders on an Android CameraX preview | [Setup](https://debanshu777.github.io/ShaderX/samples/#asciicamera) · [Recording](assets/ASCIICamera.gif) |
-| [VerticalCarousel](samples/VerticalCarousel) | Scroll-driven shader parameters on movie cards | [Setup and TMDB token](https://debanshu777.github.io/ShaderX/samples/#verticalcarousel) · [Recording](assets/vertical_carousal.gif) |
-
-Run the desktop gallery from a checkout with JDK 21 and the [Android SDK configured](https://debanshu777.github.io/ShaderX/contributing/#local-setup):
-
-```shell
-./gradlew :samples:ShaderLab:composeApp:run
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
 ```
 
-## Documentation and contribution
 
-- [Installation and quickstart](https://debanshu777.github.io/ShaderX/getting-started/)
-- [Platform support and limitations](https://debanshu777.github.io/ShaderX/platforms/)
-- [Custom AGSL/SkSL shaders](https://debanshu777.github.io/ShaderX/custom-effects/)
-- [Offline image processing](https://debanshu777.github.io/ShaderX/image-processing/)
-- [Troubleshooting](https://debanshu777.github.io/ShaderX/troubleshooting/)
-- [Contributor setup and test commands](https://debanshu777.github.io/ShaderX/contributing/)
-- [Building GPU Shader Effects for Compose Multiplatform: From Scratch to ShaderX](https://medium.com/gitconnected/building-gpu-shader-effects-for-compose-multiplatform-from-scratch-to-shaderx-326659c4f47b) — the companion article
-- [Release history](CHANGELOG.md)
+**Pause, seek and respect reduced motion**
 
-Performance checks cover native-resource disposal, rendered animation, bounded sample-image decoding, and reusable audio processing. Optional allocation diagnostics and the Android export host tests are documented in [performance validation](https://debanshu777.github.io/ShaderX/contributing/#performance-validation). The docs preview bundles the production Wasm playground; see [local validation](https://debanshu777.github.io/ShaderX/contributing/#preview-and-check-documentation).
+<a id="animate-with-a-retained-clock"></a>
 
-Bug reports, documentation fixes, and new effects are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), then [open an issue](https://github.com/Debanshu777/ShaderX/issues/new/choose) with a reproducible example.
+The ordinary modifier animates built-ins with `Modifier.shaderEffect(WaveEffect(amplitude = 5f, frequency = 9f))`.
 
-Every code change includes updates to this README and the affected documentation guides. [Agent instructions](AGENTS.md) map changes to guides, and CI checks that both are updated. The [documentation site](https://debanshu777.github.io/ShaderX/) publishes automatically only after a pull request merges into `main` and its documentation build passes; see the [maintainer guide](https://debanshu777.github.io/ShaderX/maintaining/) for the workflow.
+For retained pause/seek/speed control, keep playback outside changing effect values. The host supplies lifecycle and reduced-motion preferences.
 
-Maintainers publish from **Actions → Release ShaderX → Run workflow**, choosing `prerelease`, `patch`, `minor`, or `major`. The workflow calculates the version, tests the library, publishes to Maven Central, and creates a GitHub release with the dependency snippet. Stable releases require `main`; betas can use a feature branch. See the [release workflow guide](https://debanshu777.github.io/ShaderX/maintaining/#release-workflow) for setup and recovery. CI retains platform test reports, and browser tests wait for Skia initialization before running.
+```kotlin
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import com.debanshu.shaderlab.shaderx.compose.controlledShaderEffect
+import com.debanshu.shaderlab.shaderx.compose.rememberShaderPlayback
+import com.debanshu.shaderlab.shaderx.effect.impl.WaveEffect
 
-## License
+@Composable
+fun WavePhoto(painter: Painter, active: Boolean, reducedMotion: Boolean) {
+    val playback = rememberShaderPlayback(active = active, reducedMotion = reducedMotion)
+    Image(
+        painter, "Image with wave distortion",
+        modifier = Modifier.controlledShaderEffect(
+            WaveEffect(amplitude = 5f, frequency = 9f), playback,
+        ),
+    )
+}
+```
 
-ShaderX is released under the [Apache License 2.0](LICENSE).
+Optional controls use `playback.isPlaying = false`, `playback.seekTo(2.5)`, and `playback.speed = 0.5`. [Playback, live inputs, and ownership](https://debanshu777.github.io/ShaderX/compose/#controlled-playback-in-development).
+
+
+**Effects and custom authoring**
+
+| Family | Effects |
+| --- | --- |
+| Color and image | Grayscale, sepia, gradient, vignette, pixelation, chromatic aberration, invert, native blur |
+| Motion and audio | Wave, animated gradient, plasma, ripple, vortex, audio visualizer/distortion |
+| Color and print collection | Color adjustment/matrix, ordered dither, halftone |
+
+ShaderX provides editable custom definitions, controlled playback, procedural backgrounds, explicit data/child inputs, ordered Skia chains, support/fallback reports, and bounded Skia PNG export. [Platform limits](https://debanshu777.github.io/ShaderX/platforms/) · [Upgrade guide](https://debanshu777.github.io/ShaderX/migration/) · [Release history](CHANGELOG.md).
+
+
+## Live app demos
+
+Try the controls yourself in [ShaderX Sampler](https://debanshu777.github.io/ShaderX/sampler/) or [ShaderLab](https://debanshu777.github.io/ShaderX/playground/). Sampler walks through Basic, Custom, Animation and Chain; ShaderLab lets you tune effects, edit shader source and build ordered pipelines.
+
+Prefer running locally? [Download the source ZIP](https://github.com/Debanshu777/ShaderX/archive/refs/heads/main.zip) and follow the [desktop and Android setup](https://debanshu777.github.io/ShaderX/samples/#run-the-apps-locally). See separate run instructions for [ASCII camera](https://debanshu777.github.io/ShaderX/samples/#asciicamera) and [movie carousel](https://debanshu777.github.io/ShaderX/samples/#verticalcarousel).
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="docs/assets/demos/sampler.gif"><img src="docs/assets/demos/sampler.gif" width="480" alt="Current ShaderX Sampler browser app demonstrating Basic, Custom, Animation and Chain tabs, live wave playback and effect reordering" /></a><br />
+      <strong>ShaderX Sampler</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/sampler/">Four playable examples</a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="assets/shader_lab_web.gif"><img src="assets/shader_lab_web.gif" width="480" alt="Current ShaderLab desktop browser app demonstrating Gallery animation, a successful custom source run, and ordered pipeline editing" /></a><br />
+      <strong>ShaderLab playground</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/playground/">Gallery · Source · Pipeline</a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="docs/assets/showcase/ui-pipeline.gif"><img src="docs/assets/showcase/ui-pipeline.gif" width="480" alt="A pale-blue print tool compares two effect orders on an original concentric-ring optical illustration" /></a><br />
+      <strong>Optical print proof</strong><br />
+      <a href="https://debanshu777.github.io/ShaderX/effects/#recipe-pipeline">Blur → dots / dots → blur</a> · <a href="https://debanshu777.github.io/ShaderX/playground/">Try in ShaderLab</a>
+    </td>
+    <td width="50%" align="center" valign="top">
+      <a href="assets/shader_lab.gif"><img src="assets/shader_lab.gif" width="220" alt="Current ShaderLab WebAssembly app at a 390 by 844 browser viewport, demonstrating grayscale, wave playback, effect selection and plasma" /></a><br />
+      <strong>ShaderLab · narrow browser</strong><br />
+      <a href="samples/ShaderLab">Explore the playground</a> · <sub>Sample app</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <a href="assets/ASCIICamera.gif"><img src="assets/ASCIICamera.gif" width="220" alt="Animated CameraX preview transformed into ASCII characters with a custom ShaderX shader" /></a><br />
+      <strong>Live ASCII camera</strong><br />
+      <a href="samples/ASCIICamera">CameraX + custom shader</a> · <sub>Sample app</sub>
+    </td>
+    <td width="50%" align="center" valign="top">
+      <a href="assets/vertical_carousal.gif"><img src="assets/vertical_carousal.gif" width="220" alt="Animated movie carousel applying shader effects as cards scroll" /></a><br />
+      <strong>Scroll-driven movie cards</strong><br />
+      <a href="samples/VerticalCarousel">Scroll + shader parameters</a> · <sub>Sample app</sub>
+    </td>
+  </tr>
+</table>
+
+## Reference
+
+[Custom shaders](https://debanshu777.github.io/ShaderX/custom-effects/) · [Compose and animation](https://debanshu777.github.io/ShaderX/compose/) · [Image processing](https://debanshu777.github.io/ShaderX/image-processing/) · [Coil and Haze](https://debanshu777.github.io/ShaderX/ecosystem/) · [Troubleshooting](https://debanshu777.github.io/ShaderX/troubleshooting/)
+
+Contribute through [CONTRIBUTING.md](CONTRIBUTING.md) and the [setup and validation guide](https://debanshu777.github.io/ShaderX/contributing/). Every code change updates this README and affected guides. Release checks keep the build version, install snippets and changelog aligned. [Gallery recipes and capture provenance](https://debanshu777.github.io/ShaderX/effects/#applied-ui-recipes) record effect boundaries and validation limits. [Release plan](docs/release-plan.md) · [Changelog](CHANGELOG.md) · [Publishing and release workflow](https://debanshu777.github.io/ShaderX/maintaining/).
+
+[Apache License 2.0](LICENSE).

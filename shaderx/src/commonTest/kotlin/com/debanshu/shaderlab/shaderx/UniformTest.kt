@@ -85,6 +85,19 @@ class UniformTest {
     // ColorUniform tests
 
     @Test
+    fun colorUniform_fromWideGamutColor_currentlyCopiesComponentsWithoutConversion() {
+        val color = Color(0.7f, 0.2f, 0.4f, 0.5f, androidx.compose.ui.graphics.colorspace.ColorSpaces.DisplayP3)
+        val uniform = ColorUniform.fromColor("tint", color)
+        assertEquals(color.red, uniform.red)
+        assertEquals(color.green, uniform.green)
+        assertEquals(color.blue, uniform.blue)
+        assertEquals(color.alpha, uniform.alpha)
+        val converted = ColorUniform.fromColor("tint", color.convert(androidx.compose.ui.graphics.colorspace.ColorSpaces.Srgb))
+        assertNotEquals(uniform, converted, "Callers must convert explicitly until the legacy contract is migrated")
+    }
+
+
+    @Test
     fun colorUniform_componentConstructor_storesValues() {
         val uniform = ColorUniform("tint", 1f, 0.5f, 0.25f, 0.8f)
         assertEquals("tint", uniform.name)

@@ -17,12 +17,9 @@ Start with grayscale, blur, gradients, or pixelation, then write a custom AGSL/S
 
 ## See ShaderX in action
 
-<video class="shaderx-demo" width="400" height="224" controls loop muted playsinline preload="none" poster="assets/demos/shader_lab_web-poster.jpg" aria-label="ShaderLab gallery running in a browser with live effect controls">
-  <source src="assets/demos/shader_lab_web.mp4" type="video/mp4">
-  <a href="https://raw.githubusercontent.com/Debanshu777/ShaderX/main/assets/shader_lab_web.gif">Watch the ShaderLab browser recording</a>.
-</video>
+[![Current ShaderLab browser walkthrough: Gallery, Source and Pipeline](assets/demos/shader_lab_web_current.gif){ .shaderx-demo width=640 height=480 loading=lazy }](playground/)
 
-The [sample gallery](samples.md) includes Android and WebAssembly ShaderLab recordings, a live ASCII camera, and a scroll-driven movie carousel, with source code and run commands for each.
+The [sample gallery](samples.md) includes current Sampler and ShaderLab browser walkthroughs, a live ASCII camera, and a scroll-driven movie carousel, with source code and run commands for each.
 
 For the project's background, read the companion article, [Building GPU Shader Effects for Compose Multiplatform: From Scratch to ShaderX](https://medium.com/gitconnected/building-gpu-shader-effects-for-compose-multiplatform-from-scratch-to-shaderx-326659c4f47b). Use these guides for the current API and platform limitations.
 
@@ -38,13 +35,27 @@ For the project's background, read the companion article, [Building GPU Shader E
 | Process image bytes | [Image processing](image-processing.md) |
 | Run an example | [Sample applications](samples.md) |
 | Fix a setup problem | [Troubleshooting](troubleshooting.md) |
+| Upgrade an existing integration | [Migration and readiness](migration.md) |
 | Contribute a change | [Contributor guide](contributing.md) |
 
-## Releases and development docs
+## Release documentation { #releases-and-development-docs }
 
-The published Maven Central version is **0.1.3**. The repository's `main` branch is developing **0.1.4**. The installation and static quickstart examples work with 0.1.3; session animation, texture inputs, and audio effects are marked as development features throughout these guides.
+These guides document **ShaderX 0.2.0**, including editable custom definitions, strict schemas,
+controlled playback, collection effects, ordered Skia chains, procedural backgrounds,
+data/child inputs, operation capabilities/fallback and bounded Skia export. Android native blur
+works from API 31; AGSL effects require API 33. The library AAR requires minCompileSdk 35 and
+uses Java 17 bytecode; contributors use JDK 21.
 
-Check the [release notes](https://github.com/Debanshu777/ShaderX/releases) before using a newer API. Do not change your dependency to `0.1.4` until that version is published, or [build the development version locally](contributing.md#try-the-library-in-another-project).
+**Publication status:** this release is prepared in source for direct stable publication after
+the release commit. Maven Central's latest verified artifact is **0.1.4**, checked on
+20 November 2026 against [official metadata](https://repo.maven.apache.org/maven2/io/github/debanshu777/shaderx/maven-metadata.xml).
+The `0.2.0` dependency examples are the release coordinate and become resolvable when publication
+completes. Verify the artifacts before marking publication complete. Remote `main` and the hosted
+playground may still reflect an earlier deployment.
+
+[Stable release checklist](release-plan.md) · [Upgrade guide](migration.md) ·
+[Changelog and earlier releases](https://github.com/Debanshu777/ShaderX/blob/main/CHANGELOG.md).
+Feature history belongs in the changelog; upgrade differences belong in migration.
 
 ## Source and API reference
 

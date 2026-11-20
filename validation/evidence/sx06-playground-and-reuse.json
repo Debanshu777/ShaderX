@@ -1,0 +1,230 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX06",
+  "status": "Implemented development sample workflow; explicit residual/future gates below",
+  "branch": "codex/developer-experience-research",
+  "environment": {
+    "os": "macOS 27.0.1 aarch64",
+    "java": "Homebrew OpenJDK 21.0.12.1",
+    "gradle": "9.6.0",
+    "kotlin": "2.3.21",
+    "agp": "9.4.1",
+    "compose": "1.10.3",
+    "skiko": "0.9.37.4",
+    "python": "existing .venv-docs with pinned requirements",
+    "device": "No Android device commands, ADB resets or pairing changes; descriptor/sample-only change, accepted backend evidence retained"
+  },
+  "availability": {
+    "published": "0.1.3 unchanged",
+    "new_contracts": "development 0.1.4; no commit/release/publish/deploy/merge"
+  },
+  "public_contract": {
+    "additions": [
+      "ShaderBinding.descriptor concrete read-only getter",
+      "ShaderBindingDescriptor(name, kind, parameterId, defensive constant, nullable tileModeX/tileModeY)",
+      "ShaderBindingKind"
+    ],
+    "compatibility": "No existing signatures, constructor or abstract requirements removed; no reflection/global registry. Snapshot scalar/vector/matrix constants defensively; IMAGE excludes bitmap handles and preserves exact structural sampling modes; frame image modes remain runtime-owned and null.",
+    "sample_model": "PlaygroundRegistry/Entry/Project and parameterSchema are shared sample-local base for SX07. Rich definition.schema is editor truth; Gradient/Wave keep rich schemas, other legacy builtins use explicit adapter.",
+    "controls": "Search/category discovery, exact finite numeric text Apply/Done, useful finite slider only, arbitrary AARRGGBB alpha, strict BooleanValue, units/roles/help/precision/step, reset. Formatting never quantizes values.",
+    "generator": "Complete imports/custom schema/defaults/source/bindings/current exact typed values/Compose usage for portable builtins and definitions; indexed names avoid keyword/collision IDs, quoted strings escape interpolation/backslash/newline/triple quotes, finite literals locale-independent. Output clears when effect changes; failed generation clears previous output. Image/live/audio exports explicitly reject with named rebinding instructions, never substitute CLAMP or borrowed resources.",
+    "presets": "Version1 UTF-8 ShaderLab-Preset line format, hex UTF-8 identities, schemaVersion, ordered complete typed scalar rows; 65536 bytes/128 parameters/2048 identifier characters. Complete validation rejects unknown definition/version/schema, malformed UTF8/types/rows, duplicate/missing/unknown keys, nonfinite/out of bounds before replacement. No executable source, image, provider, native handle or playback state.",
+    "storage": "One local slot: browser localStorage shaderlab.preset.v1, desktop ~/.shaderlab/preset.sxp, Android app-private SharedPreferences, iOS NSUserDefaults. Browser .sxp downloads/import file size preflight; desktop modal chooser and bounded reader. Android/iOS selectable preset text fallback, no native dialogs.",
+    "playback": "Retained SX03 owner for regular previews and before/after; manual play/pause/finite signed seek (seek pauses)/finite speed>=0; parameter edits retain phase. Audio keeps dedicated legacy input path. Lifecycle/reduced-motion integration remains host-supplied."
+  },
+  "commands": [
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:compileAndroidMain :samples:ShaderLab:composeApp:compileKotlinIosSimulatorArm64 :samples:ShaderLab:composeApp:wasmJsBrowserDistribution :shaderx:updateKotlinAbi --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx06-platforms.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:checkKotlinAbi :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserTest :samples:ShaderLab:composeApp:compileAndroidMain :samples:ShaderLab:composeApp:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:wasmJsBrowserDistribution --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx06-final-platforms.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest :shaderx:updateKotlinAbi :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:compileAndroidMain :samples:ShaderLab:composeApp:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:jvmTest :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :validation:kmp-consumer:compileAndroidMain :validation:android-consumer:compileDebugKotlin :samples:ShaderLab:composeApp:wasmJsBrowserDistribution --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx06-reviewed-platforms.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:checkKotlinAbi :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx06-final-abi.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :samples:ShaderLab:composeApp:jvmTest :validation:kmp-consumer:jvmTest :samples:ShaderLab:composeApp:compileAndroidMain :samples:ShaderLab:composeApp:compileKotlinIosSimulatorArm64 :samples:ShaderLab:composeApp:wasmJsBrowserDistribution --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx06-final-sample.log"
+    },
+    {
+      "command": ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+      "outcome": "PASS",
+      "log": "/tmp/sx06-docs-install.log"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_docs.py",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+      "outcome": "PASS",
+      "log": "/tmp/sx06-doc-tests.log"
+    },
+    {
+      "command": ".venv-docs/bin/zensical build --strict",
+      "outcome": "PASS",
+      "log": "/tmp/sx06-doc-build.log"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/package_playground.py",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_site.py",
+      "outcome": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "outcome": "PASS"
+    }
+  ],
+  "counts": {
+    "library_jvm": {
+      "tests": 536,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "library_browser": {
+      "tests": 456,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "library_ios_simulator": {
+      "tests": 456,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "sample_jvm": {
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "sample_browser": {
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "consumer_jvm": {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "docs_tests": 24,
+  "generated_consumer": {
+    "sources": 18,
+    "producer": "GeneratedSourceProducerTest writes exact generator output into sample build/generated-playground-consumer; declares output and cleans stale generated .kt only",
+    "consumer": "Android-only and KMP non-friend sources include generated directory; development compile tasks depend on producer JVM tests. Legacy0.1.3 mode excludes these sources. All portable starters plus adversarial fixture compile; external test invokes generated effect and checks escaped source/schema metadata/exact bits, alpha, Boolean, uniforms, constants, resolution/time.",
+    "locale": "Producer uses Locale.GERMANY and compares US output",
+    "limits": "Kotlin compilation and runtime declaration equality do not validate arbitrary AGSL/SkSL source; no arbitrary Kotlin execution in UI."
+  },
+  "visual_preview": {
+    "app": "Actual packaged Wasm/Skia at desktop1728x1084 and mobile390x844: registered custom float unbounded numeric edit0.12345679->0.9876543 via keyboard+Apply, Boolean changes visible rendered tint, local save persists across reload/mobile load, complete exported exact values and bounded scrollable code, Boolean edit clears stale code.",
+    "clipboard": "Actual browser NotAllowedError writeText Document is not focused during local iframe inspection; generated text remained visible and drag-selected. Status says request, not falsely confirmed copy. Snapshot /tmp/sx06-clipboard-fallback.jpg.",
+    "docs": "Samples reuse section desktop and390x844; mobile document scrollWidth390, code/text stays within layout. Snapshot /tmp/sx06-guide-mobile.jpg.",
+    "inspection_limit": "Chrome extension panel later blocked automation; stopped rather than changing user browser UI. Final code-status-only refinement compiled/packaged but final refreshed interaction and file dialog roundtrip not repeated. Browser keyboard Apply inspected; actual mobile OS keyboards/Android/iOS native file dialogs not tested.",
+    "temporary_test_host": "Local output-only iframe harness removed before final site checks; no shipped test page."
+  },
+  "abi": {
+    "baseline": "/private/tmp/shaderx-sx03-accepted.api",
+    "removed_blocks": [],
+    "removed_old_members": [],
+    "added_blocks": [
+      "ShaderBindingDescriptor",
+      "ShaderBindingKind"
+    ],
+    "existing_block_additions": [
+      "ShaderBinding.getDescriptor"
+    ],
+    "check": "PASS after reviewed update; synthetic original constructor retained",
+    "limit": "JVM only, no already-compiled linkage/Android-Klib ABI guarantee (SX15)"
+  },
+  "preservation": {
+    "snapshot": "/tmp/sx06-before matches every accepted baseline hash",
+    "unchanged_accepted_files": 335,
+    "hashes": "/tmp/sx06-preserved-files.json",
+    "media": "README flower banner and all four inline recordings identical to accepted baseline",
+    "toolchain": "All original toolchain/build edits outside explicit sample/consumer test wiring unchanged"
+  },
+  "corrected_findings": [
+    "Initial Gradle wrapper denied cache lock in sandbox; approved escalation then all checks ran.",
+    "Nullable legacy read made explicit after compile finding.",
+    "Existing sample toggle tests moved to BooleanValue; old finite numeric convenience retains explicit clamp, while schema UI rejects invalid text.",
+    "Malformed UTF8 decode normalized to clear IllegalArgumentException.",
+    "Review fixes: stale Kotlin invalidation/status, image sampling descriptors, bounded code view, bounded desktop file reader."
+  ],
+  "remaining_gates": [
+    "SX07 complete nonportable image/live rebinding templates, including preserved tile settings; source/schema workbench and compiler feedback.",
+    "SX05 animated pipeline editing/stable pipeline instance keys (not implemented by scalar presets).",
+    "Android/iOS native file dialogs absent; local storage and selectable text are supported fallback. Browser/desktop native file UI roundtrip and mobile OS keyboard inspection remain manual gates.",
+    "Physical iOS and Android Compose-layer UI rendering not inferred from compilation/browser; no core backend changes made here.",
+    "Host lifecycle/reduced-motion wiring remains explicit; phase/speed are not preset data.",
+    "SX15 already-compiled binary/Android-Klib guarantees remain separate.",
+    "Final Chrome extension-panel block limits last refreshed UI check; no implementation/build blocker remains."
+  ],
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/contributing.md",
+    "docs/custom-effects.md",
+    "docs/effects.md",
+    "docs/maintaining.md",
+    "docs/roadmap/06-playground-and-reuse.md",
+    "docs/roadmap/index.md",
+    "docs/samples.md",
+    "samples/ShaderLab/composeApp/build.gradle.kts",
+    "samples/ShaderLab/composeApp/src/androidMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.android.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/authoring/CustomDefinitions.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/KotlinExport.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/PlaygroundProject.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/PresetCodec.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/BeforeAfterView.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ReusePanel.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/SchemaParameterControl.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderControls.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderLabContent.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderPreview.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/viewmodel/ShaderLabViewModel.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/CustomDefinitionsTest.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/KotlinExportTest.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/PresetCodecTest.kt",
+    "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/SchemaControlsTest.kt",
+    "samples/ShaderLab/composeApp/src/iosMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.ios.kt",
+    "samples/ShaderLab/composeApp/src/jvmMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.jvm.kt",
+    "samples/ShaderLab/composeApp/src/jvmTest/kotlin/com/debanshu/shaderlab/GeneratedSourceProducerTest.kt",
+    "samples/ShaderLab/composeApp/src/wasmJsMain/kotlin/com/debanshu/shaderlab/playground/PresetStorage.wasm.kt",
+    "shaderx/api/jvm/shaderx.api",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/ShaderBinding.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderBindingDescriptorTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderBindingImageDescriptorTest.kt",
+    "validation/android-consumer/build.gradle.kts",
+    "validation/evidence/sx06-playground-and-reuse.json",
+    "validation/kmp-consumer/build.gradle.kts",
+    "validation/kmp-consumer/src/developmentTest/kotlin/GeneratedPlaygroundConsumerTest.kt"
+  ],
+  "review_diff": {
+    "path": "/tmp/sx06-review.patch",
+    "baseline": "/tmp/sx06-before",
+    "verify": "patch --dry-run -p1 -d /tmp/sx06-before -i /tmp/sx06-review.patch"
+  },
+  "file_inventory": "/tmp/sx06-changed-files.json"
+}

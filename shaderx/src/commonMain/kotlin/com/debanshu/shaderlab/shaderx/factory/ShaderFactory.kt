@@ -1,6 +1,7 @@
 package com.debanshu.shaderlab.shaderx.factory
 
 import androidx.compose.ui.graphics.RenderEffect
+import com.debanshu.shaderlab.shaderx.authoring.definedContentError
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.CompositeEffect
 import com.debanshu.shaderlab.shaderx.effect.NativeEffect
@@ -64,6 +65,10 @@ public interface ShaderFactory : AutoCloseable {
      * without recompilation: a separate runtime shader on Android, or a builder retaining
      * the cached compiled effect on Skia.
      *
+     * Third-party JVM factories compiled against 0.1.3 inherit an unsupported result by default.
+     * Newly compiled multiplatform implementors can also use this default; precompiled Android
+     * and Klib compatibility is unproved. Built-in backends override with owned native sessions.
+     *
      * @param effect The animated effect to create a session for
      * @param width Render target width in pixels
      * @param height Render target height in pixels
@@ -73,12 +78,20 @@ public interface ShaderFactory : AutoCloseable {
         effect: AnimatedShaderEffect,
         width: Float,
         height: Float,
-    ): ShaderResult<ShaderSession>
+    ): ShaderResult<ShaderSession> = ShaderResult.failure(
+        ShaderError.UnsupportedEffect("Animated sessions are not supported by this factory", effect.id),
+    )
 
     /**
-     * Checks if shaders are supported on the current platform/device.
+     * Legacy convenience indicating general on-screen shader availability.
      *
-     * @return true if shader effects can be created and applied
+     * Built-in Android factories offer native blur from API 31; runtime
+     * effects require API 33. Skia returns true even
+     * when chains or export are unsupported. This Boolean does not validate an effect, shader
+     * source, inputs, resource allocation, export, or animation. Prefer [querySupport] for known
+     * operation requirements; third-party implementations retain their own Boolean semantics.
+     *
+     * @return whether this factory generally offers on-screen effects
      */
     public fun isSupported(): Boolean
 
@@ -110,6 +123,11 @@ public interface ShaderFactory : AutoCloseable {
  * Use a shared factory instance when applying effects across multiple composables
  * to benefit from a shared shader cache. Each call creates a new factory with its
  * own cache.
+ *
+ * Android installation requires API 31. Native blur and blur-only chains
+ * work on API 31–32; runtime shaders, inputs, backgrounds and animated sessions require API 33.
+ * [isSupported] means some rendering is available; use [querySupport] for the requested operation.
+ * Contributor JDK 21 is separate from Android artifact bytecode (Java 17).
  *
  * @param maxCacheSize Maximum number of compiled shaders to cache (default: 50).
  *   Must be positive. Reduce for memory-constrained environments.
@@ -149,8 +167,15 @@ public abstract class BaseShaderFactory(
         width: Float,
         height: Float,
     ): ShaderResult<RenderEffect> {
+        definedContentError(effect)?.let { return ShaderResult.failure(it) }
         if (!isSupported()) {
             return ShaderResult.failure(platformNotSupportedError())
+        }
+
+        // Only opt-in providers participate: inherited third-party factories retain their routing.
+        val support = querySupport(ShaderOperation.CONTENT_RENDER, effect)
+        if (support.status == ShaderSupportStatus.UNSUPPORTED) {
+            return ShaderResult.failure(support.asError(ShaderOperation.CONTENT_RENDER, effect))
         }
 
         return when (effect) {
@@ -214,7 +239,7 @@ public abstract class BaseShaderFactory(
      * Chains two render effects together.
      *
      * Only called when [supportsChaining] is true. Override in platforms that
-     * support composing [RenderEffect] instances (e.g. this library's Android API 33+ backend).
+     * support composing [RenderEffect] instances (e.g. this library's Android API 31+ native backend).
      *
      * @param inner The effect applied to the content first (input layer)
      * @param outer The effect applied on top of [inner]'s output

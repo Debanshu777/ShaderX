@@ -1,0 +1,231 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX04",
+  "status": "capability/static-fallback/sample slice implemented; dependent backend and generated-output gates remain",
+  "branch": "codex/developer-experience-research",
+  "toolchain": {
+    "gradle": "9.6.0",
+    "kotlin": "2.3.21",
+    "launcher_java": "Homebrew OpenJDK 21.0.12.1",
+    "daemon_criteria": "Java 21 from gradle-daemon-jvm.properties",
+    "os": "macOS 27.0.1 aarch64",
+    "compose": "1.10.3",
+    "skiko": "0.9.37.4"
+  },
+  "availability": {
+    "published_baseline": "0.1.3; capability/fallback APIs unavailable",
+    "checkout": "0.1.4 development; not published"
+  },
+  "public_contract": {
+    "capabilities": "Optional ShaderCapabilityProvider plus ShaderFactory.querySupport extension; no ShaderFactory, ShaderSession, ImageProcessor or modifier signature changes",
+    "operations": [
+      "CONTENT_RENDER (static snapshot)",
+      "ANIMATED_SESSION (standalone AnimatedShaderEffect)",
+      "IMAGE_EXPORT",
+      "BACKGROUND_RENDER (unsupported)"
+    ],
+    "inputs": [
+      "IMAGE_TEXTURE (existing color-image semantics)",
+      "RAW_DATA_TEXTURE (unsupported)",
+      "NESTED_SHADER (unsupported)"
+    ],
+    "reports": "SUPPORTED / UNSUPPORTED / UNKNOWN; stable enum reason, display message, optional minimum requirement",
+    "query_limits": "Known effect structure and supplied input requirements only; never read source, compile, populate caches, allocate graphics resources, or call uniform/frame/live providers; missing custom requirements, shader validity and allocation remain unchecked",
+    "third_party": "Without optional provider, UNKNOWN independently of isSupported; existing explicit factory fixture unchanged. Opt-in wrapper delegates render/session metadata but conservatively reports export UNKNOWN because Skia processor requires concrete built-in factory.",
+    "fallback": "Static createRenderEffectWithFallback returns ShaderRenderOutcome(result,fallbackUsed,cause). Default PreserveContent returns successful null on requested failure; Fail propagates original error; Substitute attempts one complete replacement. Failed substitute retains original cause and separate result error. No chain child dropped; no automatic clock/session in helper.",
+    "sealed_compatibility": "No new ShaderError/ShaderResult subtype. ShaderFallbackPolicy is a new sealed type; future additions would need source compatibility review.",
+    "compose": "Existing initial-creation failure preserves content; transient refresh failure retains previous successful filter. Existing API signatures/defaults unchanged."
+  },
+  "matrix": {
+    "android_api_33_plus": {
+      "static_runtime_native_blur": "supported",
+      "static_one_or_multi_child_composite": "supported if every child has a route",
+      "standalone_animated_session": "supported",
+      "composite_animated_session": "unsupported; static children have no automatic clock",
+      "image_export": "all unsupported; ProcessingError before input/effect/graphics work"
+    },
+    "skia": {
+      "static_runtime_native_blur": "supported",
+      "single_child_composite": "supported if child supported",
+      "multi_child_composite": "unsupported as whole",
+      "standalone_animated_session": "supported",
+      "composite_animated_session": "unsupported",
+      "image_export": "runtime/native blur supported; every CompositeEffect including one child rejected before decoding"
+    },
+    "all_built_in_backends": "background/brush, raw numeric and nested shader inputs unimplemented/unsupported; unknown native effect unsupported",
+    "android_api_32": "metadata decision rejects content/session including native blur; not proof library starts below minSdk33"
+  },
+  "abi": {
+    "baseline": "shaderx/api/jvm/shaderx.api",
+    "existing_declaration_blocks_changed": 0,
+    "new_declaration_blocks": 12,
+    "checkKotlinAbi": "passed",
+    "limitation": "JVM baseline against pre-SX04 development checkout; not already-compiled legacy binary linkage or Android/Klib ABI guarantee"
+  },
+  "tests": {
+    "jvmTest": {
+      "tests": 506,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 38
+    },
+    "testAndroidHostTest": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 1
+    },
+    "wasmJsBrowserTest": {
+      "tests": 441,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 26
+    },
+    "iosSimulatorArm64Test": {
+      "tests": 441,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 26
+    },
+    "sample_jvm": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "consumer_compile": {
+    "development": [
+      "Android-only consumer passed",
+      "KMP Android passed",
+      "Wasm passed",
+      "iOS simulator arm64 passed"
+    ],
+    "published_013_legacy": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "android_compile": "passed (cache reuse)",
+      "wasm_compile": "passed (cache reuse)"
+    },
+    "development_jvm": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "physical_android": {
+    "device": "Pixel 9",
+    "os": "Android 17 API37",
+    "gpu": "Mali-G715 per retained SX12 record (not remeasured)",
+    "viewport": "16x16 sRGB for new capability/fallback pixel check",
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "coverage": "prior SX12/SX01 checks plus query-cache agreement, supported-invalid-source compilation failure, original red pixels with successful-null preservation, explicit invert substitute cyan pixels, Fail propagation and complete-chain grayscale+invert pixels",
+    "reports": "shaderx/build/validation-evidence/sx04/physical",
+    "emulator": "not rerun for SX04; prior SX12 results retained separately"
+  },
+  "documentation": {
+    "install": "requirements-docs.txt installed in .venv-docs",
+    "metadata": "passed",
+    "python_unit_tests": 24,
+    "strict_build": "passed",
+    "package_playground": "passed; 10 assets, 14322192 bytes",
+    "site_check": "passed; 27 indexable pages",
+    "visual_preview": {
+      "browser": "IAB via CUA; actual local Wasm/Skia ShaderLab",
+      "desktop": "1280x720 screenshots; grayscale rendered with preview/export available guidance",
+      "mobile": "390x844; Wave animated preview, tabs and support guidance readable",
+      "guides": "platform operation queries and table inspected on desktop/mobile",
+      "evidence": "in-session screenshots; temporary viewport override reset"
+    },
+    "showcase": "flower banner and all four inline README GIFs preserved"
+  },
+  "commands": [
+    "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest :shaderx:testAndroidHostTest",
+    "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ANDROID_SERIAL=<explicit Pixel 9 serial> ./gradlew :shaderx:connectedAndroidDeviceTest",
+    "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest :shaderx:testAndroidHostTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin :validation:kmp-consumer:compileAndroidMain :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution",
+    "./gradlew :shaderx:updateKotlinAbi (reviewed additive declarations first)",
+    "./gradlew :shaderx:checkKotlinAbi",
+    "./gradlew :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin :validation:kmp-consumer:compileKotlinWasmJs -PshaderxConsumerVersion=0.1.3 -PshaderxConsumerLegacy=true",
+    ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+    ".venv-docs/bin/python scripts/check_docs.py",
+    ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+    ".venv-docs/bin/zensical build --strict",
+    ".venv-docs/bin/python scripts/package_playground.py",
+    ".venv-docs/bin/python scripts/check_site.py"
+  ],
+  "initial_validation_corrections": [
+    "Device test initially used a non-null success helper for PreserveContent; corrected to accept successful null (implementation unchanged).",
+    "Initial new test compilation used blur interface constructors and under-specified list equality types; corrected concrete imports and explicit ShaderEffect list types; full final run passed."
+  ],
+  "remaining_gates": [
+    "SX05 portable composition",
+    "SX03 animated composite clock/ownership and session identity",
+    "SX08 background/brush support",
+    "SX10 raw/nested inputs",
+    "SX11 lower Android startup/minSdk/bytecode",
+    "SX13 Android export/new export backends",
+    "SX06/SX07 generated integration output using capabilities; current call-site fixtures are not generated code",
+    "Physical iOS rendering, older Android hardware and non-sRGB destinations not validated here",
+    "SX15 already-compiled binary consumers and Android/Klib ABI baseline"
+  ],
+  "review_diff": "/tmp/sx04-review.patch; SX04-only delta from activation snapshot, excluding prior research/SX12/SX01 edits",
+  "logs": [
+    "/tmp/sx04-first-tests.log",
+    "/tmp/sx04-android-device.log",
+    "/tmp/sx04-main-checks.log",
+    "/tmp/sx04-abi-update.log",
+    "/tmp/sx04-abi-check.log",
+    "/tmp/sx04-published-consumers.log",
+    "/tmp/sx04-docs-install.log",
+    "/tmp/sx04-docs-build.log",
+    "/tmp/sx04-final-development-consumer.log"
+  ],
+  "files_changed": [
+    "CHANGELOG.md",
+    "README.md",
+    "docs/compose.md",
+    "docs/contributing.md",
+    "docs/getting-started.md",
+    "docs/image-processing.md",
+    "docs/platforms.md",
+    "docs/roadmap/04-capabilities-and-fallback.md",
+    "docs/roadmap/index.md",
+    "docs/samples.md",
+    "docs/troubleshooting.md",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderLabContent.kt",
+    "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderPreview.kt",
+    "shaderx/api/jvm/shaderx.api",
+    "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/AndroidShaderPixelTest.kt",
+    "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ImageProcessor.android.kt",
+    "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderFactory.android.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/compose/ShaderModifier.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/CompositeEffect.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ImageProcessor.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderCapabilities.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderFactory.kt",
+    "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderFallback.kt",
+    "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderCapabilitiesTest.kt",
+    "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderCapabilitiesRenderTest.kt",
+    "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/SkiaImageProcessor.kt",
+    "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/SkiaShaderFactory.kt",
+    "validation/consumer-contracts/development/CapabilityConsumer.kt",
+    "validation/kmp-consumer/src/developmentTest/kotlin/CapabilityConsumerTest.kt",
+    "validation/evidence/sx04-capabilities-and-fallback.json"
+  ],
+  "new_test_counts": {
+    "common_capability": 7,
+    "jvm_compilation_export_raster_fallback": 7,
+    "external_development_consumer": 3,
+    "android_device_capability_fallback_pixels": 1
+  }
+}

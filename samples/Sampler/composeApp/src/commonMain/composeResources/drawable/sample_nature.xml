@@ -1,0 +1,114 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="400dp"
+    android:height="300dp"
+    android:viewportWidth="400"
+    android:viewportHeight="300">
+
+    <!-- Sky -->
+    <path
+        android:fillColor="#B8D4E8"
+        android:pathData="M0,0 L400,0 L400,200 L0,200 Z" />
+
+    <!-- Clouds -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,50 Q60,30 80,40 Q100,20 120,40 Q140,25 150,45 Q145,60 120,60 Q80,65 50,50" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M280,70 Q295,50 315,60 Q335,45 350,60 Q360,50 370,65 Q365,80 340,80 Q300,85 280,70" />
+
+    <!-- Grass/Ground -->
+    <path
+        android:fillColor="#7CB342"
+        android:pathData="M0,200 L400,200 L400,300 L0,300 Z" />
+
+    <!-- Flower field background -->
+    <path
+        android:fillColor="#8BC34A"
+        android:pathData="M0,220 Q100,200 200,220 Q300,240 400,220 L400,300 L0,300 Z" />
+
+    <!-- Large flower 1 -->
+    <path
+        android:fillColor="#E91E63"
+        android:pathData="M80,240 m-8,0 a8,12 0 1,1 16,0 a8,12 0 1,1 -16,0" />
+    <path
+        android:fillColor="#E91E63"
+        android:pathData="M80,240 m-12,0 a12,8 0 1,1 24,0 a12,8 0 1,1 -24,0" />
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M80,240 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0" />
+    <path
+        android:strokeColor="#4CAF50"
+        android:strokeWidth="3"
+        android:pathData="M80,252 L80,280" />
+
+    <!-- Large flower 2 -->
+    <path
+        android:fillColor="#9C27B0"
+        android:pathData="M160,250 m-8,0 a8,12 0 1,1 16,0 a8,12 0 1,1 -16,0" />
+    <path
+        android:fillColor="#9C27B0"
+        android:pathData="M160,250 m-12,0 a12,8 0 1,1 24,0 a12,8 0 1,1 -24,0" />
+    <path
+        android:fillColor="#FFEB3B"
+        android:pathData="M160,250 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0" />
+    <path
+        android:strokeColor="#4CAF50"
+        android:strokeWidth="3"
+        android:pathData="M160,262 L160,285" />
+
+    <!-- Large flower 3 -->
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M320,235 m-8,0 a8,12 0 1,1 16,0 a8,12 0 1,1 -16,0" />
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M320,235 m-12,0 a12,8 0 1,1 24,0 a12,8 0 1,1 -24,0" />
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M320,235 m-5,0 a5,5 0 1,1 10,0 a5,5 0 1,1 -10,0" />
+    <path
+        android:strokeColor="#4CAF50"
+        android:strokeWidth="3"
+        android:pathData="M320,247 L320,275" />
+
+    <!-- Small flowers -->
+    <path
+        android:fillColor="#FFEB3B"
+        android:pathData="M40,260 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M120,270 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+    <path
+        android:fillColor="#F44336"
+        android:pathData="M200,265 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+    <path
+        android:fillColor="#E91E63"
+        android:pathData="M260,260 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+    <path
+        android:fillColor="#9C27B0"
+        android:pathData="M360,255 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+
+    <!-- Butterfly -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M230,150 Q220,140 230,130 Q240,140 230,150" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M230,150 Q240,140 230,130 Q250,140 230,150" />
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M235,150 Q225,160 235,170 Q245,160 235,150" />
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M235,150 Q245,160 235,170 Q255,160 235,150" />
+    <path
+        android:strokeColor="#3E2723"
+        android:strokeWidth="2"
+        android:pathData="M232,145 L232,175" />
+
+    <!-- Sun -->
+    <path
+        android:fillColor="#FFEB3B"
+        android:pathData="M350,50 m-25,0 a25,25 0 1,1 50,0 a25,25 0 1,1 -50,0" />
+</vector>

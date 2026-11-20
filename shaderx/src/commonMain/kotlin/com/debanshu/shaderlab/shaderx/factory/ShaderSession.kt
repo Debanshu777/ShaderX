@@ -24,7 +24,12 @@ import com.debanshu.shaderlab.shaderx.result.ShaderResult
  * Always call [close] when the composable leaves composition (typically via [DisposableEffect]).
  */
 public interface ShaderSession : AutoCloseable {
-    /** The [RenderEffect] produced when this session was created. */
+    /**
+     * The initial filter for built-in legacy native sessions, or the latest successful snapshot
+     * for definition-backed sessions. Assign the result of [refresh] for manual rendering rather
+     * than assuming this property advances. Access after [close] is invalid and built-in sessions
+     * throw [IllegalStateException].
+     */
     public val currentRenderEffect: RenderEffect
 
     /**

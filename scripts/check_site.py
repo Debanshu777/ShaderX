@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 import yaml
 
 from playground_assets import validate_package
+from package_playground import EXAMPLES
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
@@ -101,7 +102,7 @@ def check():
             errors.append("index.html: missing or incorrect configured Search Console verification tag")
         if page.canonicals != [expected]:
             errors.append(f"{relative}: expected one canonical URL: {expected}")
-        is_playground = relative == "playground/index.html"
+        is_playground = relative == "playground/index.html" or relative in {f"{slug}/index.html" for slug in EXAMPLES}
         if not is_playground:
             canonical_urls.add(expected)
         if not page.title.strip() or page.title in titles:
@@ -179,12 +180,14 @@ def check():
         errors.append(f"Invalid structured data: {error}")
 
     errors.extend(validate_package(SITE / "playground"))
+    for slug, (_, images) in EXAMPLES.items():
+        errors.extend(validate_package(SITE / slug, images))
 
     for error in errors:
         print(error, file=sys.stderr)
     if errors:
         return 1
-    print(f"Checked {len(canonical_urls)} indexable pages and the playground: metadata, links, anchors, sitemap, search, structured data, and packaged assets.")
+    print(f"Checked {len(canonical_urls)} indexable pages and the runtime demos: metadata, links, anchors, sitemap, search, structured data, and packaged assets.")
     return 0
 
 

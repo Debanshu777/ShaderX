@@ -9,14 +9,14 @@ To add a GPU shader to your Compose Multiplatform project, add ShaderX to `commo
 
 The steps below start with an existing Compose project and a built-in grayscale effect. You can then implement a [custom AGSL/SkSL shader](custom-effects.md) using the same modifier. For an Android-only Jetpack Compose project, use the Android dependency block below.
 
-These examples use the published **0.1.3** release. See [release status](index.md#releases-and-development-docs) for APIs that currently require a checkout of `main`.
+This guide targets **ShaderX 0.2.0**. See [publication status](index.md#releases-and-development-docs) before resolving the dependency.
 
 ## Requirements
 
 - An existing Jetpack Compose or Compose Multiplatform app.
-- JDK 21. ShaderX's Android library targets JVM 21.
-- Kotlin 2.3.21 and Compose Multiplatform 1.10.3, matching the published artifact's dependencies. Other version combinations are not covered by a compatibility guarantee here.
-- Android `minSdk = 33` when targeting Android.
+- JDK 21 for repository builds. ShaderX Android artifacts target Java 17 bytecode.
+- Android minSdk 31 and compileSdk 35 or newer. Native blur works on API 31–32; runtime shaders, animation sessions and procedural backgrounds require API 33. See [Android requirements](platforms.md#android-requirements) for transitive dependency and toolchain constraints.
+- Kotlin 2.3.21 and Compose Multiplatform 1.10.3, matching the library build. Other version combinations are not covered by a compatibility guarantee here.
 - A supported [Kotlin target](platforms.md). ShaderX publishes `wasmJs`, not a separate Kotlin/JS artifact.
 
 ## Gradle dependency
@@ -38,7 +38,7 @@ In the shared module's `build.gradle.kts`:
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.debanshu777:shaderx:0.1.3")
+            implementation("io.github.debanshu777:shaderx:0.2.0")
         }
     }
 }
@@ -48,7 +48,7 @@ For an Android-only app, add it to the module's regular `dependencies` block ins
 
 ```kotlin
 dependencies {
-    implementation("io.github.debanshu777:shaderx:0.1.3")
+    implementation("io.github.debanshu777:shaderx:0.2.0")
 }
 ```
 
@@ -60,7 +60,7 @@ As an alternative to the literal dependency, add to `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
-shaderx = "0.1.3"
+shaderx = "0.2.0"
 
 [libraries]
 shaderx = { module = "io.github.debanshu777:shaderx", version.ref = "shaderx" }
@@ -92,7 +92,18 @@ fun GrayscalePhoto(painter: Painter, modifier: Modifier = Modifier) {
 
 The effect transforms the content drawn by the composable. Make sure that content has a nonzero layout size. Set `intensity = 0.5f` to blend the original colors with grayscale, or pass `null` as the effect to disable it.
 
-For animated effects on `main` / 0.1.4 development, the same modifier owns and closes its animation session. Pass the effect directly; use a [scoped factory](compose.md#scope-the-shader-cache) when a screen should release its compiled cache on disposal.
+For animated built-ins, the same modifier owns and closes its animation session. For example, replace `GrayscaleEffect(...)` with `WaveEffect(amplitude = 16f, frequency = 9f)` from the same package. Pass the effect directly; use a [scoped factory](compose.md#scope-the-shader-cache) when a screen should release its compiled cache on disposal.
+
+For phase-preserving pause/resume, seeking, shared time or explicit live-input revisions, use [`rememberShaderPlayback` and `controlledShaderEffect`](compose.md#controlled-playback-in-development).
+The host supplies visibility/lifecycle and reduced-motion policy. This additive path keeps time
+independent of native session replacement; existing `shaderEffect` timing remains unchanged.
+
+## Add an existing image loader or backdrop
+
+Apply ShaderX to the pixels drawn by your existing image composable. For asynchronous loading,
+retain loader state and playback above loading/success/error presentation. The
+[Coil and Haze guide](ecosystem.md) links complete consumer recipes with exact optional
+dependency pins, source/foreground boundaries and ownership.
 
 ## Apply a shader to the background only
 
@@ -125,8 +136,24 @@ fun GradientBackground(
 }
 ```
 
+This recipe filters an existing content layer. For source-free pixel generation, use the [dedicated procedural background modifier](compose.md#procedural-backgrounds-in-development). It works in an empty sized Box and leaves foreground children unchanged. A content-dependent effect such as `GradientEffect` cannot be converted to a source-free background by omitting its input.
+
 Give the outer container a size through its modifier or foreground content. The white background supplies opaque pixels for `GradientEffect` to tint; an empty transparent layer has no visible pixels to transform. Keep `.shaderEffect(...)` before `.background(...)` so the background is drawn inside the affected layer. For an ordinary static gradient, Compose's built-in `Brush` is sufficient; use a shader when its pixel calculations or distortion are needed.
 
 ## Next steps
 
-Choose another effect in the [catalog](effects.md), learn about [animation and error handling](compose.md), or run the [ShaderLab gallery](samples.md#shaderlab).
+Choose another effect in the [catalog](effects.md), learn about [animation and error handling](compose.md), or run the [ShaderLab gallery](samples.md#shaderlab). Check [operation-specific capabilities](platforms.md#operation-queries-in-development) and choose an [explicit static fallback](compose.md#choose-an-explicit-static-fallback).
+
+## Try custom authoring { #try-authoring-in-development }
+
+Start with the [migration and onboarding guide](migration.md) for complete minimal/editable
+effects, strict versus legacy semantics, controlled playback and caller-rebound saved inputs.
+For changes beyond the release, [build a local artifact](contributing.md#try-the-library-in-another-project)
+under a unique validation coordinate.
+
+The local ShaderLab sample includes a custom shader workbench: open it from the gallery,
+choose Warm tint and use **Run shader**. Source, typed schema fields and bindings stay editable
+after failures; preview and SDK code identify the last successful rendered revision. Generated
+Kotlin uses the same documented API. See [the sample journey](samples.md#author-a-custom-shader-in-development).
+
+ShaderX also supports on-screen ordered chains on Skia. Use the [Compose pipeline guide](compose.md#chain-effects) for static chains and shared playback; offline chain export remains unsupported.

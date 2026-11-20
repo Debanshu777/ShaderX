@@ -1,0 +1,325 @@
+{
+  "recorded": "2026-11-19",
+  "roadmap": "SX02",
+  "status": "authoring and owned replacement implemented in development; dependent playback/workbench/native gates remain",
+  "branch": "codex/developer-experience-research",
+  "availability": "0.1.4 development; published 0.1.3 unchanged",
+  "preserved": "Shared prior research/SX12/SX01/SX04 and original user toolchain edits preserved; no branch switch, commit, publish, merge or deployment; shared ADB/pairing not changed",
+  "toolchain": {
+    "jdk": "Homebrew OpenJDK 21.0.12.1",
+    "gradle": "9.6.0",
+    "kotlin": "2.3.21",
+    "compose": "1.10.3",
+    "skiko": "0.9.37.4",
+    "os": "macOS 27.0.1 ARM64"
+  },
+  "api": {
+    "package": "com.debanshu.shaderlab.shaderx.authoring",
+    "added": [
+      "ShaderProgram",
+      "ShaderBinding",
+      "ShaderDefinition",
+      "DefinedShaderEffect",
+      "DefinedAnimatedShaderEffect",
+      "ShaderFrameProvider"
+    ],
+    "minimal": "id + ShaderProgram(source,bindings); displayName defaults to id and schema defaults empty",
+    "editable": "accepted ParameterSchema definitions own keys; generated typed reads/immutable updates/legacy descriptor dispatch/equality; every schema field needs a binding; host/playback flags separate",
+    "structural_escape": "ShaderBinding.uniform snapshots existing FloatUniform/IntUniform/MatrixUniform arrays, colors/images; integer vectors limited 1..4. Existing runtime interfaces unchanged",
+    "identity": "definition reference + values + playback + provider reference; time excluded; new definitions conservatively replace state regardless of display ID; source keyed backend caches only on cached routes",
+    "provider": "complete exact declared scalar FloatUniform or TextureUniform list; float arrays snapshot before validation; validates whole batch before setters; structural colors/time cannot be overridden; borrowed bitmaps remain caller-owned, valid, no concurrent mutation",
+    "bindings": "content reserved; aliases explicit; positive finite physical pixel float2 resolution, finite seconds, schema declaration-owned keys; duplicate/missing/foreign declarations reject; no shader source parsing/reflection",
+    "failure_stages": "declarations/updates throw IllegalArgumentException; provider contract/execution returns existing Unknown with effect/binding/provider stage/cause in factory/session/Skia export; actual compiler/setter exceptions retain diagnostics in CompilationError; source-omitted defaults and unmatched scalar setters cannot be universally detected",
+    "backend_limit": "resolved Skiko 0.9.37.4 silently ignores unmatched scalar setter names and exposes no compiled uniform metadata in Kotlin API; regression test records actual behavior",
+    "compatibility": "no new abstract requirements or sealed ShaderError/ShaderResult variants; reviewed additive JVM ABI dump, fresh explicit third-party factory consumer compilation; no claim about already-compiled 0.1.3 linkage"
+  },
+  "ownership": {
+    "native": "DefinitionShaderSession transactionally replaces native delegate for changed config/source/layout/values/provider/playback/size; closes old only on success and retains current on failed replacement; time changes refresh only",
+    "android_color": "declarative colors structural; generated static color effects allocate fresh RuntimeShader bypassing LRU; all animated sessions own fresh native shaders; no per-frame color setter path; conservative safety tradeoff may compile static colors each time, no performance claim",
+    "legacy_color": "ColorUniform.fromColor continues copying components; explicit sRGB conversion for wide-gamut input",
+    "skia": "shared compiled RuntimeEffect source with independent builders; existing thread confinement preserved",
+    "playback": "withPlayback and withTime seam supplied; legacy Compose clock/session behavior untouched; continuity remains SX03"
+  },
+  "color_device_evidence": {
+    "device": "physical Pixel 9",
+    "os": "Android 17/API 37",
+    "gpu": "Mali-G715",
+    "target": "16x16 HardwareBufferRenderer RGBA_FP16",
+    "destinations": [
+      "sRGB",
+      "linear-sRGB",
+      "Display-P3"
+    ],
+    "coverage": [
+      "translucent layout(color)",
+      "explicit Compose Display-P3 to sRGB conversion/packing",
+      "independent static/session instances",
+      "repeated structural color replacement",
+      "source/size replacement",
+      "failure recovery and disposal"
+    ],
+    "readback": "F16 copy may promote metadata to extended space; use actual returned Color space and convert numerically, never relabel",
+    "gate": "recorded Android non-sRGB gate closed for this measured device; broader hardware/API coverage unverified",
+    "requirements": "new tests explicitly skip API<34 or unsupported FP16; final Pixel run had zero skips"
+  },
+  "validation": {
+    "library_jvm": {
+      "path": "shaderx/build/test-results/jvmTest",
+      "tests": 521,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "html_report": "shaderx/build/reports/tests/jvmTest/index.html"
+    },
+    "library_wasm": {
+      "path": "shaderx/build/test-results/wasmJsBrowserTest",
+      "tests": 446,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "html_report": "shaderx/build/reports/tests/wasmJsBrowserTest/index.html"
+    },
+    "library_ios_simulator_common": {
+      "path": "shaderx/build/test-results/iosSimulatorArm64Test",
+      "tests": 446,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "html_report": "shaderx/build/reports/tests/iosSimulatorArm64Test/index.html"
+    },
+    "android_host": {
+      "path": "shaderx/build/test-results/testAndroidHostTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "html_report": "shaderx/build/reports/tests/testAndroidHostTest/index.html"
+    },
+    "external_consumer_jvm": {
+      "path": "validation/kmp-consumer/build/test-results/jvmTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "html_report": "validation/kmp-consumer/build/reports/tests/jvmTest/index.html"
+    },
+    "sample_jvm": {
+      "path": "samples/ShaderLab/composeApp/build/test-results/jvmTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "html_report": "samples/ShaderLab/composeApp/build/reports/tests/jvmTest/index.html"
+    },
+    "android_pixel_9": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suites": [
+        {
+          "name": "com.debanshu.shaderlab.shaderx.AndroidShaderPixelTest",
+          "tests": 7,
+          "seconds": 0.748
+        },
+        {
+          "name": "com.debanshu.shaderlab.shaderx.DefinedEffectDeviceTest",
+          "tests": 2,
+          "seconds": 0.955
+        }
+      ],
+      "html_report": "shaderx/build/validation-evidence/sx02-physical/report/index.html",
+      "xml_results": "shaderx/build/validation-evidence/sx02-physical/results/TEST-Pixel 9 - 17.xml"
+    }
+  },
+  "commands": [
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest :validation:kmp-consumer:jvmTest :validation:android-consumer:compileDebugKotlin :validation:kmp-consumer:compileAndroidMain :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 :shaderx:assembleAndroidDeviceTest :samples:ShaderLab:composeApp:jvmTest --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx02-validation.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ANDROID_SERIAL=<explicit connected Pixel 9 serial> ./gradlew :shaderx:connectedAndroidDeviceTest --console=plain",
+      "outcome": "PASS; 9 tests, no skips",
+      "log": "/tmp/sx02-device.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:updateKotlinAbi :shaderx:jvmTest :validation:kmp-consumer:jvmTest :shaderx:testAndroidHostTest :shaderx:wasmJsBrowserTest :shaderx:iosSimulatorArm64Test :samples:ShaderLab:composeApp:jvmTest :samples:ShaderLab:composeApp:wasmJsBrowserDistribution --console=plain",
+      "outcome": "PASS; existing webpack size/import warnings",
+      "log": "/tmp/sx02-final-validation.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:checkKotlinAbi :validation:android-consumer:compileDebugKotlin :validation:kmp-consumer:compileAndroidMain :validation:kmp-consumer:compileKotlinWasmJs :validation:kmp-consumer:compileKotlinIosSimulatorArm64 --console=plain",
+      "outcome": "PASS",
+      "log": "/tmp/sx02-abi-consumers.log"
+    },
+    {
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew :shaderx:jvmTest :shaderx:checkKotlinAbi --console=plain",
+      "outcome": "PASS; final caller-array snapshot assertion included",
+      "log": "/tmp/sx02-final-jvm.log"
+    },
+    {
+      "command": ".venv-docs/bin/python -m pip install -r requirements-docs.txt",
+      "outcome": "PASS; existing virtual environment"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_docs.py",
+      "outcome": "PASS; 27 guides, 30 Markdown files"
+    },
+    {
+      "command": ".venv-docs/bin/python -m unittest discover -s scripts/tests -v",
+      "outcome": "PASS; 24 tests"
+    },
+    {
+      "command": ".venv-docs/bin/zensical build --strict",
+      "outcome": "PASS"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/package_playground.py",
+      "outcome": "PASS; 10 files, 14337518 bytes"
+    },
+    {
+      "command": ".venv-docs/bin/python scripts/check_site.py",
+      "outcome": "PASS; 27 indexable pages and playground"
+    },
+    {
+      "command": "git diff --check",
+      "outcome": "PASS"
+    }
+  ],
+  "visual_review": {
+    "guide": "Chrome desktop and 390x844 mobile; code blocks readable with internal horizontal overflow",
+    "sample": "production Wasm ShaderLab desktop +390x844 mobile; custom tint selected, custom distortion selected, amplitude edited to 24.5, pause state visible",
+    "limit": "browser previews are Wasm/Skia only; no physical iOS rendering evidence"
+  },
+  "corrected_validation_findings": [
+    "new tint example reserved input variable renamed sampled; consumer assertions preserve native diagnostics via getOrThrow",
+    "removed initial frameImage bitmap; declaration is name/kind only and provider required at creation",
+    "unmatched Skiko scalar setter does not fail; documented/tested real backend limitation instead",
+    "Android F16 readback may promote space; fixed harness to honor actual metadata"
+  ],
+  "remaining_gates": [
+    "SX03 continuous playback/lifecycle across configuration edits",
+    "SX06 generalized schema controls and reuse; SX07 workbench generated Kotlin/export acceptance",
+    "SX10 raw/nested inputs, SX08 backgrounds, SX13 Android export remain unimplemented",
+    "physical iOS rendering/concurrency, broader Android API/hardware, native-memory stabilization/device frame timing",
+    "SX15 already-compiled consumer linkage and Android/Klib ABI gates"
+  ],
+  "files": {
+    "new_in_sx02": [
+      "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/ShaderBinding.kt",
+      "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/ShaderDefinition.kt",
+      "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect.kt",
+      "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/authoring/DefinitionShaderSession.kt",
+      "shaderx/src/commonTest/kotlin/com/debanshu/shaderlab/shaderx/ShaderDefinitionTest.kt",
+      "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/DefinedEffectRenderTest.kt",
+      "shaderx/src/androidDeviceTest/kotlin/com/debanshu/shaderlab/shaderx/DefinedEffectDeviceTest.kt",
+      "validation/consumer-contracts/development/AuthoringConsumer.kt",
+      "validation/kmp-consumer/src/developmentTest/kotlin/AuthoringConsumerTest.kt",
+      "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/authoring/CustomDefinitions.kt",
+      "samples/ShaderLab/composeApp/src/commonTest/kotlin/com/debanshu/shaderlab/CustomDefinitionsTest.kt",
+      "validation/evidence/sx02-custom-effect-authoring.json"
+    ],
+    "modified_in_sx02": [
+      "README.md",
+      "CHANGELOG.md",
+      "CLAUDE.md",
+      "docs/custom-effects.md",
+      "docs/effects.md",
+      "docs/compose.md",
+      "docs/samples.md",
+      "docs/contributing.md",
+      "docs/image-processing.md",
+      "docs/platforms.md",
+      "docs/troubleshooting.md",
+      "docs/roadmap/index.md",
+      "docs/roadmap/01-parameter-contract.md",
+      "docs/roadmap/02-custom-effect-authoring.md",
+      "docs/roadmap/12-validation-and-performance.md",
+      "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect.kt",
+      "shaderx/src/commonMain/kotlin/com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect.kt",
+      "shaderx/src/androidMain/kotlin/com/debanshu/shaderlab/shaderx/factory/ShaderFactory.android.kt",
+      "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/SkiaShaderFactory.kt",
+      "shaderx/src/skiaMain/kotlin/com/debanshu/shaderlab/shaderx/factory/SkiaImageProcessor.kt",
+      "shaderx/api/jvm/shaderx.api",
+      "shaderx/src/jvmTest/kotlin/com/debanshu/shaderlab/shaderx/ComposeShaderPixelTest.kt",
+      "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderControls.kt",
+      "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/ui/ShaderLabContent.kt",
+      "samples/ShaderLab/composeApp/src/commonMain/kotlin/com/debanshu/shaderlab/viewmodel/ShaderLabViewModel.kt"
+    ],
+    "count": 37,
+    "note": "modified includes prior untracked API/roadmap artifacts already present at SX02 activation; these are modified, not newly invented by SX02"
+  },
+  "review_diff": {
+    "path": "/tmp/sx02-review.patch",
+    "scope": "isolated SX02-only delta, reconstructed accepted SX04 snapshot verified against supervisor hashes; excludes earlier research/SX12/SX01/SX04/toolchain edits",
+    "base": "/tmp/sx02-accepted-base",
+    "verify": "patch --dry-run -p1 -d /tmp/sx02-accepted-base -i /tmp/sx02-review.patch"
+  },
+  "preservation_verification": {
+    "accepted_hash_source": "/private/tmp/shaderx-sx04-accepted-files.json",
+    "baseline_reconstruction": "/tmp/sx04-before plus /tmp/sx04-review.patch reconstructed into /tmp/sx02-accepted-base; all 25 modified paths exactly match accepted SHA-256 before SX02 delta",
+    "accepted_files_unchanged": 313,
+    "changed_outside_sx02_inventory": [],
+    "preserved_toolchain_hashes": {
+      ".java-version": {
+        "accepted_sha256": "6e2ae11dad0616f66bbb2b6e6556f580bb987fd911d7132aa6bee2bfc7cc7b52",
+        "final_sha256": "6e2ae11dad0616f66bbb2b6e6556f580bb987fd911d7132aa6bee2bfc7cc7b52",
+        "matches": true
+      },
+      "gradle/gradle-daemon-jvm.properties": {
+        "accepted_sha256": "e7c85e6fb79abe4ef0483446bfce1239db297b6bb6d8653f691acaf9748f85aa",
+        "final_sha256": "e7c85e6fb79abe4ef0483446bfce1239db297b6bb6d8653f691acaf9748f85aa",
+        "matches": true
+      },
+      "gradle/libs.versions.toml": {
+        "accepted_sha256": "def1c01d3b126235252221ae4c08e2d5973c14ba8b3a48bc9350d74cb8dad1a3",
+        "final_sha256": "def1c01d3b126235252221ae4c08e2d5973c14ba8b3a48bc9350d74cb8dad1a3",
+        "matches": true
+      },
+      "gradle/wrapper/gradle-wrapper.properties": {
+        "accepted_sha256": "10af740d6d50f4c4294ae3e3c2e593dbf9b5a03bf25ed0a955155ade7a1bc387",
+        "final_sha256": "10af740d6d50f4c4294ae3e3c2e593dbf9b5a03bf25ed0a955155ade7a1bc387",
+        "matches": true
+      },
+      "settings.gradle.kts": {
+        "accepted_sha256": "bace8f5d86f88a40c8dc06f13de0faaab37570500ee2d57c4421fd1faed12e91",
+        "final_sha256": "bace8f5d86f88a40c8dc06f13de0faaab37570500ee2d57c4421fd1faed12e91",
+        "matches": true
+      },
+      "shaderx/build.gradle.kts": {
+        "accepted_sha256": "dd6c29498d953fdedf4d3bf6a89a535c10b3ddf96362736df3b2644b296e54c6",
+        "final_sha256": "dd6c29498d953fdedf4d3bf6a89a535c10b3ddf96362736df3b2644b296e54c6",
+        "matches": true
+      }
+    },
+    "preserved_showcase_hashes": {
+      "assets/shader_lab.gif": "b220c46ce894c0fe3fb8e09b8900e2bf0924249b0c596c7bdee3a1414a9d612c",
+      "assets/shader_lab_web.gif": "fad80747e8159de8b3ce8f3df97d9384ab816231b0a01735cd02efc3c727b9a9",
+      "assets/ASCIICamera.gif": "02eb4a4c3710c1e32cb90dbf86d36b2ab288d09fd586cf184a1b918b2b41e3be",
+      "assets/vertical_carousal.gif": "e74cabc16865cf6979e3b5890b1dc3c72b86d0fa3e78f719f24adf1a1b58663c",
+      "docs/assets/shaderx-banner.png": "d76dcb0395ed0f079195ef5ed0570bc5055c08408180538c0dad369dc1a95748"
+    },
+    "all_unchanged_hashes_artifact": "/tmp/sx02-preserved-files.json"
+  },
+  "abi_comparison": {
+    "accepted_dump": "/private/tmp/shaderx-sx04-accepted.api",
+    "accepted_sha256": "1cfbbdb076e6e060b192b76004ca9011f688047696931c5af566ee1878b8827f",
+    "current_sha256": "fa4f9b262eb6c0fc4c89180ade91dcbd22803e2431b2fe45e5b1465b424253fa",
+    "old_blocks": 117,
+    "new_blocks": 124,
+    "removed": [],
+    "changed_old_blocks": [],
+    "added": [
+      "public final class com/debanshu/shaderlab/shaderx/authoring/DefinedAnimatedShaderEffect : com/debanshu/shaderlab/shaderx/effect/AnimatedShaderEffect {",
+      "public final class com/debanshu/shaderlab/shaderx/authoring/DefinedShaderEffect : com/debanshu/shaderlab/shaderx/effect/RuntimeShaderEffect {",
+      "public abstract class com/debanshu/shaderlab/shaderx/authoring/ShaderBinding {",
+      "public final class com/debanshu/shaderlab/shaderx/authoring/ShaderBinding$Companion {",
+      "public final class com/debanshu/shaderlab/shaderx/authoring/ShaderDefinition {",
+      "public abstract interface class com/debanshu/shaderlab/shaderx/authoring/ShaderFrameProvider {",
+      "public final class com/debanshu/shaderlab/shaderx/authoring/ShaderProgram {"
+    ],
+    "result": "all 117 old declaration blocks byte-identical; 7 additive authoring blocks; checkKotlinAbi passes; no binary-link or Android/Klib guarantee",
+    "artifact": "/tmp/sx02-abi-comparison.json"
+  }
+}

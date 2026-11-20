@@ -1,0 +1,42 @@
+// Local validation staging only: generates metadata and copies built artifacts.
+// Does not invoke Maven publication, signing, or any remote repository.
+// Run with --no-configuration-cache and -PshaderxValidationRepository=/absolute/path.
+gradle.projectsEvaluated {
+    def library = gradle.rootProject.project(':shaderx')
+    def publications = library.publishing.publications.withType(org.gradle.api.publish.maven.MavenPublication)
+    library.tasks.register('stageValidationArtifacts') {
+        group = 'verification'
+        description = 'Stages unsigned local consumer artifacts without publishing.'
+        publications.each { publication ->
+            def suffix = publication.name.capitalize() + 'Publication'
+            dependsOn library.tasks.named('generatePomFileFor' + suffix)
+            def metadata = library.tasks.findByName('generateMetadataFileFor' + suffix)
+            if (metadata != null) dependsOn metadata
+            publication.artifacts.findAll { it.extension != 'asc' && it.classifier != 'javadoc' }.each {
+                dependsOn it.buildDependencies
+            }
+        }
+        doLast {
+            def destination = library.providers.gradleProperty('shaderxValidationRepository').orNull
+            if (destination == null || !new File(destination).isAbsolute()) {
+                throw new GradleException('Supply an absolute -PshaderxValidationRepository path')
+            }
+            publications.each { publication ->
+                def directory = new File(destination, publication.groupId.replace('.', '/') + '/' + publication.artifactId + '/' + publication.version)
+                directory.mkdirs()
+                def prefix = publication.artifactId + '-' + publication.version
+                def copyFile = { File source, String name ->
+                    if (!source.isFile()) throw new GradleException('Missing staged artifact: ' + source)
+                    new File(directory, name).bytes = source.bytes
+                }
+                publication.artifacts.findAll { it.extension != 'asc' && it.classifier != 'javadoc' }.each {
+                    copyFile(it.file, prefix + (it.classifier ? '-' + it.classifier : '') + '.' + it.extension)
+                }
+                copyFile(new File(library.buildDir, 'publications/' + publication.name + '/pom-default.xml'), prefix + '.pom')
+                def module = new File(library.buildDir, 'publications/' + publication.name + '/module.json')
+                if (module.isFile()) copyFile(module, prefix + '.module')
+                logger.lifecycle('Staged local validation artifact: ' + publication.groupId + ':' + publication.artifactId + ':' + publication.version)
+            }
+        }
+    }
+}

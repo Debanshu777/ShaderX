@@ -23,9 +23,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.debanshu.shaderlab.shaderx.compose.shaderEffect
+import com.debanshu.shaderlab.shaderx.compose.controlledShaderEffect
+import com.debanshu.shaderlab.shaderx.compose.rememberShaderPlayback
+import com.debanshu.shaderlab.shaderx.authoring.DefinedAnimatedShaderEffect
+import com.debanshu.shaderlab.shaderx.effect.CompositeEffect
 import com.debanshu.shaderlab.shaderx.effect.AnimatedShaderEffect
 import com.debanshu.shaderlab.shaderx.effect.ShaderEffect
 import com.debanshu.shaderlab.shaderx.factory.ShaderFactory
+import com.debanshu.shaderlab.shaderx.factory.ShaderOperation
+import com.debanshu.shaderlab.shaderx.factory.ShaderSupportStatus
+import com.debanshu.shaderlab.shaderx.factory.querySupport
 import com.debanshu.shaderlab.ui.components.ShaderLabImage
 import com.debanshu.shaderlab.viewmodel.ImageSource
 import kotlinx.coroutines.isActive
@@ -39,10 +46,12 @@ fun ShaderPreview(
     modifier: Modifier = Modifier,
 ) {
     var fps by remember { mutableIntStateOf(0) }
-    var shaderError by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(effect?.id, effect?.hashCode()) {
-        shaderError = null
+    var shaderError by remember(effect, factory, imageSource) { mutableStateOf<String?>(null) }
+    val support = remember(factory, effect) {
+        factory.querySupport(
+            if (effect is AnimatedShaderEffect) ShaderOperation.ANIMATED_SESSION else ShaderOperation.CONTENT_RENDER,
+            effect,
+        )
     }
 
     val showFpsOverlay = showFps && effect is AnimatedShaderEffect && effect.isAnimating
@@ -124,9 +133,9 @@ fun ShaderPreview(
             }
         }
 
-        if (!factory.isSupported() && effect != null) {
+        if (support.status == ShaderSupportStatus.UNSUPPORTED && effect != null) {
             ShaderBanner(
-                text = "Shaders not supported on this device",
+                text = "Original content shown: ${support.message}",
                 containerColor = MaterialTheme.colorScheme.errorContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer,
                 modifier = Modifier.align(Alignment.BottomCenter),
@@ -135,7 +144,7 @@ fun ShaderPreview(
 
         shaderError?.let { message ->
             ShaderBanner(
-                text = message,
+                text = "Effect failed: $message. Creation keeps original content; frame update failures may keep the previous filter.",
                 containerColor = MaterialTheme.colorScheme.errorContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer,
                 modifier = Modifier.align(Alignment.BottomCenter),
@@ -176,8 +185,22 @@ private fun ImageWithEffect(
     onShaderError: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // Only definitions use the new controlled seam. Legacy live audio retains its frame loop.
+    val controlled = effect as? AnimatedShaderEffect
+    val fallbackPlayback = rememberShaderPlayback(initiallyPlaying = false, active = false)
+    val playback = LocalPlaygroundPlayback.current ?: fallbackPlayback
+
     val shaderModifier =
-        if (effect != null && factory.isSupported()) {
+        if (controlled != null) {
+            Modifier.controlledShaderEffect(
+                effect = controlled,
+                playback = playback,
+                factory = factory,
+                onError = { error -> onShaderError(error.message) },
+            )
+        } else if (effect is CompositeEffect && effect.effects.any { it is AnimatedShaderEffect }) {
+            Modifier.controlledShaderEffect(effect, playback, factory = factory, onError = { error -> onShaderError(error.message) })
+        } else if (effect != null) {
             Modifier.shaderEffect(
                 effect = effect,
                 factory = factory,

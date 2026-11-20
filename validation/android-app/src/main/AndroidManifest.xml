@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:theme="@android:style/Theme.Material.Light.NoActionBar" android:label="ShaderX adoption probe" android:allowBackup="false">
+        <activity android:name="io.github.debanshu.shaderx.validation.ComposeValidationActivity" android:exported="false" />
+        <activity android:name="io.github.debanshu.shaderx.validation.AdoptionActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

@@ -7,8 +7,12 @@ import com.debanshu.shaderlab.shaderx.effect.ParamHandler
 import com.debanshu.shaderlab.shaderx.effect.colorHandler
 import com.debanshu.shaderlab.shaderx.effect.floatHandler
 import com.debanshu.shaderlab.shaderx.effect.toArgbLong
-import com.debanshu.shaderlab.shaderx.parameter.ColorParameter
-import com.debanshu.shaderlab.shaderx.parameter.PercentageParameter
+import com.debanshu.shaderlab.shaderx.parameter.ColorParameterDefinition
+import com.debanshu.shaderlab.shaderx.parameter.FloatParameterDefinition
+import com.debanshu.shaderlab.shaderx.parameter.ParameterMetadata
+import com.debanshu.shaderlab.shaderx.parameter.ParameterSchema
+import com.debanshu.shaderlab.shaderx.parameter.legacyColor
+import com.debanshu.shaderlab.shaderx.parameter.legacyPercentage
 import com.debanshu.shaderlab.shaderx.uniform.ColorUniform
 import com.debanshu.shaderlab.shaderx.uniform.FloatUniform
 import com.debanshu.shaderlab.shaderx.uniform.Uniform
@@ -20,15 +24,19 @@ import com.debanshu.shaderlab.shaderx.uniform.Uniform
  * The gradient is calculated based on normalized distance from the bottom-left corner,
  * clamped to [0, 1] to avoid `mix()` extrapolation (L3 fix).
  *
+ * The strict parameter API exposes [SCHEMA] for strict snapshots and edits. Legacy constructors,
+ * [copy] and string updates keep their existing behavior. ARGB alpha is retained in values
+ * and uniforms; the shader blends RGB while preserving the input image alpha.
+ *
  * @property color1 First gradient color in ARGB format (bottom-left)
  * @property color2 Second gradient color in ARGB format (top-right)
  * @property intensity Blend amount between original (0.0) and gradient (1.0)
  */
 @Immutable
 public data class GradientEffect(
-    public val color1: Long = DEFAULT_COLOR_1,
-    public val color2: Long = DEFAULT_COLOR_2,
-    public val intensity: Float = 0.5f,
+    public val color1: Long = COLOR_1.defaultValue,
+    public val color2: Long = COLOR_2.defaultValue,
+    public val intensity: Float = INTENSITY.defaultValue,
 ) : AbstractRuntimeShaderEffect() {
     override val id: String = ID
     override val displayName: String = "Gradient"
@@ -63,33 +71,21 @@ public data class GradientEffect(
             PARAM_COLOR_1 to
                 colorHandler<GradientEffect>(
                     spec =
-                        ColorParameter(
-                            id = PARAM_COLOR_1,
-                            label = "Color 1",
-                            defaultColor = DEFAULT_COLOR_1,
-                        ),
+                        COLOR_1.legacyColor(),
                     read = { it.color1 },
                     write = { e, v -> e.copy(color1 = v) },
                 ),
             PARAM_COLOR_2 to
                 colorHandler<GradientEffect>(
                     spec =
-                        ColorParameter(
-                            id = PARAM_COLOR_2,
-                            label = "Color 2",
-                            defaultColor = DEFAULT_COLOR_2,
-                        ),
+                        COLOR_2.legacyColor(),
                     read = { it.color2 },
                     write = { e, v -> e.copy(color2 = v) },
                 ),
             PARAM_INTENSITY to
                 floatHandler<GradientEffect>(
                     spec =
-                        PercentageParameter(
-                            id = PARAM_INTENSITY,
-                            label = "Intensity",
-                            defaultValue = 0.5f,
-                        ),
+                        INTENSITY.legacyPercentage(),
                     read = { it.intensity },
                     write = { e, v -> e.copy(intensity = v) },
                 ),
@@ -101,9 +97,9 @@ public data class GradientEffect(
     ): List<Uniform> =
         listOf(
             FloatUniform("resolution", width, height),
-            ColorUniform("color1", color1),
-            ColorUniform("color2", color2),
-            FloatUniform("intensity", intensity),
+            ColorUniform(COLOR_1.key.id, color1),
+            ColorUniform(COLOR_2.key.id, color2),
+            FloatUniform(INTENSITY.key.id, intensity),
         )
 
     /**
@@ -145,5 +141,23 @@ public data class GradientEffect(
 
         /** Light yellow - default for color2 */
         public const val DEFAULT_COLOR_2: Long = 0xFFF8EE94
+
+        /** Strict sRGB ARGB declaration, including alpha, for the first color. */
+        public val COLOR_1: ColorParameterDefinition = ColorParameterDefinition(
+            ID, PARAM_COLOR_1, DEFAULT_COLOR_1, ParameterMetadata("Color 1", order = 0),
+        )
+
+        /** Strict sRGB ARGB declaration, including alpha, for the second color. */
+        public val COLOR_2: ColorParameterDefinition = ColorParameterDefinition(
+            ID, PARAM_COLOR_2, DEFAULT_COLOR_2, ParameterMetadata("Color 2", order = 1),
+        )
+
+        /** Blend amount; display percentage does not quantize the stored float. */
+        public val INTENSITY: FloatParameterDefinition = FloatParameterDefinition(
+            ID, PARAM_INTENSITY, 0.5f, 0f..1f, ParameterMetadata("Intensity", order = 2), unit = "%",
+        )
+
+        /** Shared strict declarations; retain these keys across effect instances. */
+        public val SCHEMA: ParameterSchema = ParameterSchema(ID, listOf(COLOR_1, COLOR_2, INTENSITY))
     }
 }
