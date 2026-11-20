@@ -43,22 +43,33 @@ jobs:
           sdk_platform=$(python3 -c 'import tomllib; version = str(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["android-compileSdk"]); print(f"{version}.0" if version.isdigit() and int(version) >= 37 else version)')
           sdkmanager "platforms;android-35" "platforms;android-$sdk_platform"
 
-      - name: Set up Chrome for Wasm tests
+      - name: Set up Chrome for Wasm tests on macOS
+        if: runner.os == 'macOS'
         id: chrome
         uses: browser-actions/setup-chrome@v2
         with:
           chrome-version: stable
-          install-dependencies: ${{ runner.os == 'Linux' }}
 
-      # Ubuntu's AppArmor profile does not cover setup-chrome's tool-cache path.
-      # Use the runner's installed setuid helper, retaining Chrome's sandbox.
-      - name: Configure Chrome sandbox on Linux
-        if: runner.os == 'Linux'
+      # Use Ubuntu's packaged browser, whose install path has an AppArmor profile.
+      # A downloaded tool-cache Chrome cannot use that profile's user namespaces.
+      - name: Select and smoke-test sandboxed Chrome
+        id: browser
+        timeout-minutes: 1
+        env:
+          DOWNLOADED_CHROME: ${{ steps.chrome.outputs.chrome-path }}
         run: |
-          chrome_sandbox=/opt/google/chrome/chrome-sandbox
-          test -x "$chrome_sandbox" && test -u "$chrome_sandbox"
-          test "$(stat -c '%u' "$chrome_sandbox")" = 0
-          printf 'CHROME_DEVEL_SANDBOX=%s\n' "$chrome_sandbox" >> "$GITHUB_ENV"
+          if [ "$RUNNER_OS" = Linux ]; then
+            chrome_binary=/usr/bin/google-chrome
+          else
+            chrome_binary="$DOWNLOADED_CHROME"
+          fi
+          test -x "$chrome_binary"
+          "$chrome_binary" --version
+          printf 'chrome-path=%s\n' "$chrome_binary" >> "$GITHUB_OUTPUT"
+          if [ "$RUNNER_OS" = Linux ]; then
+            "$chrome_binary" --headless --disable-gpu --user-data-dir="$RUNNER_TEMP/chrome-smoke" --dump-dom about:blank > "$RUNNER_TEMP/chrome-smoke.html"
+            grep -q '<html' "$RUNNER_TEMP/chrome-smoke.html"
+          fi
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -67,20 +78,20 @@ jobs:
 
       - name: Build shaderx library
         env:
-          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}
         run: ./gradlew :shaderx:build :shaderx:generateMetadataFileForKotlinMultiplatformPublication --no-daemon
 
       # Run the sample browser suite once; the library build covers its own browser tests.
       - name: Test ShaderLab workbench and pipeline in Chrome
         if: runner.os == 'Linux'
         env:
-          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}
         run: ./gradlew :samples:ShaderLab:composeApp:wasmJsBrowserTest --no-daemon
 
       - name: Build and test the visual sampler
         if: runner.os == 'Linux'
         env:
-          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}
         run: >-
           ./gradlew :samples:Sampler:composeApp:jvmTest
           :samples:Sampler:composeApp:wasmJsBrowserTest

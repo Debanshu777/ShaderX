@@ -305,11 +305,15 @@ records its measured environment, coverage and remaining gates.
 ### Linux CI browser startup
 
 Ubuntu restricts unprivileged user namespaces for downloaded Chrome binaries outside its
-packaged-browser AppArmor profile. CI exports `CHROME_DEVEL_SANDBOX` with the runner's existing
-`/opt/google/chrome/chrome-sandbox` helper after checking executable/setuid bits and root ownership.
-This follows [Chromium's documented sandbox-helper setup](https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md)
-and retains browser sandboxing. A missing helper fails during setup. Each OS matrix job completes
-independently so a browser setup failure does not hide another platform's results.
+packaged-browser AppArmor profile. CI selects the hosted runner's `/usr/bin/google-chrome`,
+which launches the normally installed browser covered by that profile. macOS uses the Chrome
+setup action. The selected path is passed explicitly to every Karma test task.
+
+Before compiling, Linux CI opens `about:blank` headlessly with a private temporary profile and
+checks its rendered HTML. This catches browser startup failures before an expensive build;
+browser sandboxing remains enabled. See [Chromium's AppArmor explanation](https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md)
+and the [runner's packaged Chrome installation](https://github.com/actions/runner-images/blob/main/images/ubuntu/scripts/build/install-google-chrome.sh).
+Each OS matrix job completes independently so a failure does not hide the other platform's results.
 
 ## Preview and check documentation
 
