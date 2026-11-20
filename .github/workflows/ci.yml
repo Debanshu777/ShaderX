@@ -14,6 +14,7 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ ubuntu-latest, macos-latest ]
 
@@ -48,6 +49,16 @@ jobs:
         with:
           chrome-version: stable
           install-dependencies: ${{ runner.os == 'Linux' }}
+
+      # Ubuntu's AppArmor profile does not cover setup-chrome's tool-cache path.
+      # Use the runner's installed setuid helper, retaining Chrome's sandbox.
+      - name: Configure Chrome sandbox on Linux
+        if: runner.os == 'Linux'
+        run: |
+          chrome_sandbox=/opt/google/chrome/chrome-sandbox
+          test -x "$chrome_sandbox" && test -u "$chrome_sandbox"
+          test "$(stat -c '%u' "$chrome_sandbox")" = 0
+          printf 'CHROME_DEVEL_SANDBOX=%s\n' "$chrome_sandbox" >> "$GITHUB_ENV"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4

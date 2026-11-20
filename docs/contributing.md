@@ -302,6 +302,15 @@ review evidence; set budgets only after product requirements and hardware measur
 The [initial validation record](https://github.com/Debanshu777/ShaderX/blob/main/validation/evidence/sx12-baseline.json)
 records its measured environment, coverage and remaining gates.
 
+### Linux CI browser startup
+
+Ubuntu restricts unprivileged user namespaces for downloaded Chrome binaries outside its
+packaged-browser AppArmor profile. CI exports `CHROME_DEVEL_SANDBOX` with the runner's existing
+`/opt/google/chrome/chrome-sandbox` helper after checking executable/setuid bits and root ownership.
+This follows [Chromium's documented sandbox-helper setup](https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md)
+and retains browser sandboxing. A missing helper fails during setup. Each OS matrix job completes
+independently so a browser setup failure does not hide another platform's results.
+
 ## Preview and check documentation
 
 Guide previews use Python 3.11+. The complete checked site also includes the production Wasm playground, and the four-tab sampler, so install JDK 21 and the Android SDK from [local setup](#local-setup); Apple tooling is not required for those bundles:
