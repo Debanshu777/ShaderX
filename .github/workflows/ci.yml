@@ -19,6 +19,9 @@ jobs:
         os: [ ubuntu-latest, macos-latest ]
 
     runs-on: ${{ matrix.os }}
+    env:
+      # Configuration caching allows concurrent Native links; keep the small Mac runner bounded.
+      GRADLE_OPTS: ${{ matrix.os == 'macos-latest' && '-Dorg.gradle.workers.max=1' || '' }}
 
     steps:
       - name: Checkout code
@@ -43,33 +46,10 @@ jobs:
           sdk_platform=$(python3 -c 'import tomllib; version = str(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["android-compileSdk"]); print(f"{version}.0" if version.isdigit() and int(version) >= 37 else version)')
           sdkmanager "platforms;android-35" "platforms;android-$sdk_platform"
 
-      - name: Set up Chrome for Wasm tests on macOS
-        if: runner.os == 'macOS'
-        id: chrome
-        uses: browser-actions/setup-chrome@v2
-        with:
-          chrome-version: stable
-
-      # Use Ubuntu's packaged browser, whose install path has an AppArmor profile.
-      # A downloaded tool-cache Chrome cannot use that profile's user namespaces.
       - name: Select and smoke-test sandboxed Chrome
         id: browser
         timeout-minutes: 1
-        env:
-          DOWNLOADED_CHROME: ${{ steps.chrome.outputs.chrome-path }}
-        run: |
-          if [ "$RUNNER_OS" = Linux ]; then
-            chrome_binary=/usr/bin/google-chrome
-          else
-            chrome_binary="$DOWNLOADED_CHROME"
-          fi
-          test -x "$chrome_binary"
-          "$chrome_binary" --version
-          printf 'chrome-path=%s\n' "$chrome_binary" >> "$GITHUB_OUTPUT"
-          if [ "$RUNNER_OS" = Linux ]; then
-            "$chrome_binary" --headless --disable-gpu --user-data-dir="$RUNNER_TEMP/chrome-smoke" --dump-dom about:blank > "$RUNNER_TEMP/chrome-smoke.html"
-            grep -q '<html' "$RUNNER_TEMP/chrome-smoke.html"
-          fi
+        run: bash scripts/select_ci_chrome.sh
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4

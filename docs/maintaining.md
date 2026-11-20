@@ -144,7 +144,7 @@ verifies Central metadata and the candidate coordinate, and reconciles the publi
 with Git tags. Existing or lower versions fail before publication. New tags use `v`, while
 Maven versions omit it. A source version bump does not claim that the artifact is published.
 
-The workflow builds/tests `:shaderx` on macOS with JDK 21, covering the library's configured
+The release job shares CI's packaged-browser smoke test and single-worker macOS Gradle setting. The workflow builds/tests `:shaderx` on macOS with JDK 21, covering the library's configured
 Android, JVM, iOS and browser targets. It then reserves the immutable version tag at the exact
 selected source commit, signs and publishes all `:shaderx` publications through
 `:shaderx:publishAndReleaseToMavenCentral`, and creates a stable GitHub release with notes and

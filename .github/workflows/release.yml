@@ -20,6 +20,8 @@ jobs:
   release:
     runs-on: macos-latest
     timeout-minutes: 90
+    env:
+      GRADLE_OPTS: -Dorg.gradle.workers.max=1
     permissions:
       contents: write
     steps:
@@ -58,18 +60,17 @@ jobs:
         run: |
           sdk_platform=$(python -c 'import tomllib; version = str(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["android-compileSdk"]); print(f"{version}.0" if version.isdigit() and int(version) >= 37 else version)')
           sdkmanager "platforms;android-35" "platforms;android-$sdk_platform"
-      - name: Set up Chrome for library browser tests
-        id: chrome
-        uses: browser-actions/setup-chrome@v2
-        with:
-          chrome-version: stable
+      - name: Select and smoke-test sandboxed Chrome
+        id: browser
+        timeout-minutes: 1
+        run: bash scripts/select_ci_chrome.sh
       - uses: gradle/actions/setup-gradle@v4
       - name: Test release tooling
         run: python -m unittest discover -s scripts/tests -v
       - name: Build and test all library targets
         env:
           RELEASE_VERSION: ${{ steps.version.outputs.version }}
-          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}
         run: ./gradlew :shaderx:build --no-daemon --no-configuration-cache "-PshaderxVersion=$RELEASE_VERSION"
       - name: Prepare curated release notes
         env:

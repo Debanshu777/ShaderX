@@ -302,18 +302,22 @@ review evidence; set budgets only after product requirements and hardware measur
 The [initial validation record](https://github.com/Debanshu777/ShaderX/blob/main/validation/evidence/sx12-baseline.json)
 records its measured environment, coverage and remaining gates.
 
-### Linux CI browser startup
+### CI browser startup and native build concurrency
 
-Ubuntu restricts unprivileged user namespaces for downloaded Chrome binaries outside its
-packaged-browser AppArmor profile. CI selects the hosted runner's `/usr/bin/google-chrome`,
-which launches the normally installed browser covered by that profile. macOS uses the Chrome
-setup action. The selected path is passed explicitly to every Karma test task.
+CI and stable publication share `scripts/select_ci_chrome.sh`. It selects the hosted runner's
+packaged `/usr/bin/google-chrome` on Linux or `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`
+on macOS. Ubuntu's packaged-browser AppArmor profile permits its sandbox; this also avoids
+replacing the Mac runner's installed browser with a separate Chrome for Testing download.
+The script records the version, opens `about:blank` headlessly with a private temporary profile,
+checks rendered HTML and exports the executable path. Both workflows impose a one-minute
+startup timeout and pass that path explicitly to Karma. Browser sandboxing stays enabled.
 
-Before compiling, Linux CI opens `about:blank` headlessly with a private temporary profile and
-checks its rendered HTML. This catches browser startup failures before an expensive build;
-browser sandboxing remains enabled. See [Chromium's AppArmor explanation](https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md)
+The macOS CI and release jobs set `org.gradle.workers.max=1` through `GRADLE_OPTS` to bound
+concurrent native linking and browser work on the small hosted runner. Configuration caching
+can otherwise overlap independent `link*` tasks; see [Kotlin's compilation guidance](https://kotlinlang.org/docs/native-improving-compilation-time.html).
+All target builds and tests remain enabled. OS jobs finish independently so a failure does not
+hide the other platform's result. See [Chromium's AppArmor explanation](https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md)
 and the [runner's packaged Chrome installation](https://github.com/actions/runner-images/blob/main/images/ubuntu/scripts/build/install-google-chrome.sh).
-Each OS matrix job completes independently so a failure does not hide the other platform's results.
 
 ## Preview and check documentation
 
