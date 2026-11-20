@@ -92,7 +92,7 @@ Custom materials, animated type, grain and motion—then the tools to make them 
 
 ## Get started
 
-This commit targets **0.2.0** for direct stable publication. [Publication status](https://debanshu777.github.io/ShaderX/#releases-and-development-docs).
+**0.2.0 is available on Maven Central.** [Release notes](https://github.com/Debanshu777/ShaderX/releases/tag/v0.2.0) · [Publication status](https://debanshu777.github.io/ShaderX/#releases-and-development-docs).
 
 Add Maven Central to your repositories, then add ShaderX to `commonMain.dependencies` in your shared module:
 

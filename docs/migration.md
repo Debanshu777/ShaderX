@@ -333,6 +333,6 @@ local results.
 
 The stable release checklist covers the final source/artifact audit, verification of every
 published target and clean consumer resolution. Installation, KDoc, changelog and `llms.txt`
-are prepared together for 0.2.0; publication status is tracked centrally. Follow the
+shipped together in 0.2.0; verified publication status is tracked centrally. Follow the
 [maintainer release procedure](maintaining.md#release-workflow) and keep unavailable hardware,
 performance and binary-compatibility evidence separate from completed checks.
