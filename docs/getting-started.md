@@ -9,7 +9,7 @@ To add a GPU shader to your Compose Multiplatform project, add ShaderX to `commo
 
 The steps below start with an existing Compose project and a built-in grayscale effect. You can then implement a [custom AGSL/SkSL shader](custom-effects.md) using the same modifier. For an Android-only Jetpack Compose project, use the Android dependency block below.
 
-This guide targets **ShaderX 0.2.0**. See [publication status](index.md#releases-and-development-docs) before resolving the dependency.
+This guide installs stable **ShaderX 0.2.0** from Maven Central. See [publication status](index.md#releases-and-development-docs) for artifact verification and release links.
 
 ## Requirements
 

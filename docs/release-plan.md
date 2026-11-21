@@ -10,7 +10,25 @@ library, samples, visual showcase, documentation and publishing safeguards toget
 [Publication status](index.md#releases-and-development-docs) is tracked centrally; a source
 version bump or a Git tag does not prove Maven Central availability.
 
-The local release validation passed: [build, consumer, artifact and documentation results](https://github.com/Debanshu777/ShaderX/blob/main/validation/evidence/release-0.2.0-validation.json), plus the [published JVM compatibility audit](https://github.com/Debanshu777/ShaderX/blob/main/validation/evidence/release-0.2.0-jvm-compatibility.json). Remote CI, publication and hosted deployment remain subsequent steps.
+The local release validation passed: [build, consumer, artifact and documentation results](https://github.com/Debanshu777/ShaderX/blob/main/validation/evidence/release-0.2.0-validation.json), plus the [published JVM compatibility audit](https://github.com/Debanshu777/ShaderX/blob/main/validation/evidence/release-0.2.0-jvm-compatibility.json).
+
+The release was completed on **20 November 2026 (UTC)** from merged commit
+`cae6d6307ae88243b8cc79b520da580e3be9fe97`:
+
+- [Merged-main CI](https://github.com/Debanshu777/ShaderX/actions/runs/44822783817) and
+  [documentation build/deployment](https://github.com/Debanshu777/ShaderX/actions/runs/44822784953) passed.
+- The manually dispatched [stable release workflow](https://github.com/Debanshu777/ShaderX/actions/runs/44829960400)
+  passed 640 JVM, 539 iOS simulator, 539 Wasm browser and 4 Android host tests, without failures or skips.
+- [GitHub release `v0.2.0`](https://github.com/Debanshu777/ShaderX/releases/tag/v0.2.0) is stable,
+  and Maven Central lists `0.2.0` as the latest release. All 30 expected publication files across
+  the root and five platform coordinates were downloaded successfully.
+- Clean external consumers resolved Central `0.2.0`: all 21 JVM tests passed, and Android
+  release assembly plus Android, Wasm and both iOS target compilations passed with the build
+  cache disabled. Resolved JVM/Wasm/iOS artifact hashes matched the direct Central downloads;
+  the downloaded Android AAR passed its minSdk 31, minCompileSdk 35 and Java 17 checks.
+
+Merging starts CI and the documentation deployment; it does **not** start the manual library
+release workflow. The steps below retain the release and recovery procedure.
 
 [CHANGELOG.md](https://github.com/Debanshu777/ShaderX/blob/main/CHANGELOG.md) owns feature
 history; [migration](migration.md) owns upgrade actions. Dated validation records retain

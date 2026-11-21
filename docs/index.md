@@ -46,12 +46,12 @@ data/child inputs, operation capabilities/fallback and bounded Skia export. Andr
 works from API 31; AGSL effects require API 33. The library AAR requires minCompileSdk 35 and
 uses Java 17 bytecode; contributors use JDK 21.
 
-**Publication status:** this release is prepared in source for direct stable publication after
-the release commit. Maven Central's latest verified artifact is **0.1.4**, checked on
-20 November 2026 against [official metadata](https://repo.maven.apache.org/maven2/io/github/debanshu777/shaderx/maven-metadata.xml).
-The `0.2.0` dependency examples are the release coordinate and become resolvable when publication
-completes. Verify the artifacts before marking publication complete. Remote `main` and the hosted
-playground may still reflect an earlier deployment.
+**Publication status:** [ShaderX 0.2.0](https://github.com/Debanshu777/ShaderX/releases/tag/v0.2.0)
+is available on Maven Central. The
+[official metadata](https://repo.maven.apache.org/maven2/io/github/debanshu777/shaderx/maven-metadata.xml)
+and all expected Android, JVM, iOS, Wasm and root publication files were verified on
+20 November 2026 (UTC). The [release verification](release-plan.md) records the source commit,
+CI results and artifact checks. Library publication and documentation deployment are separate workflows.
 
 [Stable release checklist](release-plan.md) · [Upgrade guide](migration.md) ·
 [Changelog and earlier releases](https://github.com/Debanshu777/ShaderX/blob/main/CHANGELOG.md).

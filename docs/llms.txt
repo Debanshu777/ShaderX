@@ -2,10 +2,10 @@
 
 > Kotlin Multiplatform shader effects for Jetpack Compose and Compose Multiplatform.
 
-Documentation target and stable release coordinate: io.github.debanshu777:shaderx:0.2.0.
-Publication follows the release commit; verify the overview publication-status note and Central
-metadata before claiming the coordinate is available. Central 0.1.4 was last verified on 2026-11-20.
-No beta stage is planned. The changelog owns release history and migration owns upgrade actions.
+Published stable release coordinate: io.github.debanshu777:shaderx:0.2.0.
+Maven Central metadata and all 30 expected target artifact files were verified on 2026-11-20 (UTC).
+The overview publication-status note links to the successful release workflow and GitHub release.
+The changelog owns release history and migration owns upgrade actions.
 Android minSdk 31 supports native blur; AGSL operations require API 33+. The library AAR uses
 minCompileSdk 35 and Java 17 bytecode; contributors use JDK 21. Kotlin packages use
 com.debanshu.shaderlab.shaderx.

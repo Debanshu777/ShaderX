@@ -2,7 +2,7 @@
 
 Published artifacts: [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/shaderx). Tagged release notes: [GitHub Releases](https://github.com/Debanshu777/ShaderX/releases).
 
-## 0.2.0
+## 0.2.0 — 2026-11-20
 
 ### Added
 
